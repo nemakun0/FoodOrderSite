@@ -1,0 +1,167 @@
+/* ------------------ Google Fonts ------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+/* ------------------ Temel Ayarlar ------------------ */
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: 0.2s ease;
+}
+
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+    background: #f8f9fa;
+    color: #333;
+}
+
+/* Header navigasyonu özelleþtirme */
+.navbar {
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link {
+    color: #ECEFCA !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    transition: background-color 0.2s;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        background-color: #f0f0f0;
+        color: #000 !important;
+    }
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #ffc107 !important;
+}
+
+/* Sticky navbar */
+header {
+    position: sticky;
+    top: 10px;
+    z-index: 1030;
+}
+
+.custom-spacing {
+    margin-left: 5rem;
+    margin-right: 5rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+
+/* ------------------ Footer Stili ------------------ */
+footer {
+    background-color: #111;
+    color: #eee;
+    padding: 40px 0;
+    text-align: center;
+    font-size: 1rem;
+}
+
+    footer a {
+        color: #ffc107;
+        text-decoration: none;
+        margin: 0 10px;
+        font-weight: 500;
+    }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+/* ------------------ Buton ve Form Odak Stilleri ------------------ */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    outline: none;
+}
+
+/* Menü butonunu özelleþtir - beyaz renk */
+.custom-toggler {
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1.5rem;
+}
+
+    .custom-toggler:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+/* ------------------ Navbar Özelleþtirme ------------------ */
+.navbar {
+    background-color: #212529 !important;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white !important;
+    transition: color 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: #ffc107 !important;
+        text-decoration: underline;
+    }
+
+/* ------------------ Kart Stilleri ------------------ */
+.card-food {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card-food:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+/* ------------------ Hero Banner ------------------ */
+.hero-section {
+    background: url('/images/food-bg.jpg') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
