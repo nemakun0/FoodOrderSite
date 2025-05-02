@@ -1,7 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
+﻿@model IEnumerable<FoodOrderSite.Models.Product>
 @{
     ViewData["Title"] = "Lezzetli Yemekler Dünyası";
 }
@@ -16,7 +13,7 @@
                 <button class="btn btn-primary btn-lg hero-button">Hemen Keşfet</button>
             </div>
             <div class="col-lg-6">
-                <img src="/images/hero-food.jpg" alt="Çeşitli lezzetli yemekler" class="img-fluid hero-image">
+                <img src="~/images/hero-food.jpg" alt="Çeşitli lezzetli yemekler" class="img-fluid hero-image">
             </div>
         </div>
     </div>
@@ -27,42 +24,37 @@
     <div class="container">
         <h2 class="section-title">Yemek Kategorileri</h2>
         <p class="section-subtitle">Favori lezzetlerinizi keşfedin</p>
-
         <div class="row">
-            <!-- Kategori Kartları -->
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-burger.jpg" alt="Hamburger" class="category-image">
+                    <img src="~/images/category-burger.jpg" alt="Hamburger" class="category-image">
                     <div class="category-overlay">
                         <h3>Fast Food</h3>
                         <a href="#" class="btn btn-outline-light">Gözat</a>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-pizza.jpg" alt="Pizza" class="category-image">
+                    <img src="~/images/category-pizza.jpg" alt="Pizza" class="category-image">
                     <div class="category-overlay">
                         <h3>Pizza</h3>
                         <a href="#" class="btn btn-outline-light">Gözat</a>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-salad.jpg" alt="Salata" class="category-image">
+                    <img src="~/images/category-salad.jpg" alt="Salata" class="category-image">
                     <div class="category-overlay">
                         <h3>Sağlıklı</h3>
                         <a href="#" class="btn btn-outline-light">Gözat</a>
                     </div>
                 </div>
             </div>
-
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-dessert.jpg" alt="Tatlı" class="category-image">
+                    <img src="~/images/category-dessert.jpg" alt="Tatlı" class="category-image">
                     <div class="category-overlay">
                         <h3>Tatlılar</h3>
                         <a href="#" class="btn btn-outline-light">Gözat</a>
@@ -78,379 +70,32 @@
     <div class="container">
         <h2 class="section-title">Popüler Ürünler</h2>
         <p class="section-subtitle">En çok tercih edilen lezzetler</p>
-
         <div class="row">
-            <!-- Ürün Kartları -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <div class="product-badge">Çok Satan</div>
-                    <img src="/images/product-burger.jpg" alt="Double Cheeseburger" class="product-image">
-                    <div class="product-body">
-                        <h3>Double Cheeseburger</h3>
-                        <p class="product-description">Çift katlı et, cheddar peyniri ve özel sos</p>
-                        <div class="product-price">₺49.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
+            @foreach (var p in Model)
+            {
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="product-card">
+                        @if (p.IsBestSeller)
+                        {
+                            <div class="product-badge">Çok Satan</div>
+                        }
+                        @if (p.IsNew)
+                        {
+                            <div class="product-badge bg-success">Yeni</div>
+                        }
+                        <img src="~/images/product-placeholder.jpg" alt="@p.Name" class="product-image">
+                        <div class="product-body">
+                            <h3>@p.Name</h3>
+                            <p class="product-description">@p.Description</p>
+                            <div class="product-price">@p.Price.ToString("C2")</div>
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                <input type="hidden" name="id" value="@p.Id" />
+                                <button type="submit" class="btn btn-primary btn-block">Sepete Ekle</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <img src="/images/product-pizza.jpg" alt="Pepperoni Pizza" class="product-image">
-                    <div class="product-body">
-                        <h3>Pepperoni Pizza</h3>
-                        <p class="product-description">Bol pepperoni ve mozzarella peyniri</p>
-                        <div class="product-price">₺69.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <div class="product-badge">Yeni</div>
-                    <img src="/images/product-sushi.jpg" alt="Sushi Tabağı" class="product-image">
-                    <div class="product-body">
-                        <h3>Sushi Tabağı</h3>
-                        <p class="product-description">12 parça çeşitli sushi</p>
-                        <div class="product-price">₺89.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <img src="/images/product-pasta.jpg" alt="Carbonara" class="product-image">
-                    <div class="product-body">
-                        <h3>Carbonara</h3>
-                        <p class="product-description">Klasik İtalyan usulü carbonara</p>
-                        <div class="product-price">₺54.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </section>
-
-<!-- Footer Bölümü -->
-<footer class="footer-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <h4>Yemek Sipariş</h4>
-                <p>Binlerce restoran ve yemek çeşidi ile hızlı ve güvenli sipariş deneyimi.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>Hızlı Linkler</h5>
-                <ul class="footer-links">
-                    <li><a href="#">Anasayfa</a></li>
-                    <li><a href="#">Restoranlar</a></li>
-                    <li><a href="#">Kampanyalar</a></li>
-                    <li><a href="#">Hakkımızda</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>Yardım</h5>
-                <ul class="footer-links">
-                    <li><a href="#">Sipariş Takibi</a></li>
-                    <li><a href="#">Sık Sorulanlar</a></li>
-                    <li><a href="#">İletişim</a></li>
-                    <li><a href="#">Gizlilik Politikası</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-4 mb-4">
-                <h5>Bültenimize Kaydolun</h5>
-                <p>Kampanya ve indirimlerden haberdar olun.</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="E-posta adresiniz" class="form-control mb-2">
-                    <button type="submit" class="btn btn-primary">Abone Ol</button>
-                </form>
-            </div>
-        </div>
-        <hr>
-        <div class="footer-bottom">
-            <p class="text-center">© 2023 Yemek Sipariş. Tüm hakları saklıdır.</p>
-        </div>
-    </div>
-</footer>
-
-@section Styles {
-    <style>
-        /* Hero Bölümü Stilleri */
-        .hero-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #ffe8e8 100%);
-            padding: 80px 0;
-            margin-bottom: 40px;
-        }
-
-        .hero-title {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            color: #666;
-        }
-
-        .hero-button {
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: 600;
-        }
-
-        .hero-image {
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Kategoriler Bölümü Stilleri */
-        .categories-section {
-            padding: 60px 0;
-            background-color: #fff;
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .section-subtitle {
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 40px;
-            color: #666;
-        }
-
-        .category-card {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-            .category-card:hover {
-                transform: translateY(-10px);
-            }
-
-        .category-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .category-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-            .category-overlay h3 {
-                font-size: 1.3rem;
-                margin-bottom: 10px;
-            }
-
-        /* Popüler Ürünler Bölümü Stilleri */
-        .popular-products-section {
-            padding: 60px 0;
-            background-color: #f9f9f9;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-            .product-card:hover {
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                transform: translateY(-5px);
-            }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff4757;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 1;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .product-body {
-            padding: 20px;
-        }
-
-            .product-body h3 {
-                font-size: 1.2rem;
-                margin-bottom: 10px;
-                color: #333;
-            }
-
-        .product-description {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 15px;
-            min-height: 40px;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ff6b81;
-            margin-bottom: 15px;
-        }
-
-        /* Footer Bölümü Stilleri */
-        .footer-section {
-            background: #2f3542;
-            color: white;
-            padding: 60px 0 0;
-        }
-
-            .footer-section h4, .footer-section h5 {
-                color: white;
-                margin-bottom: 20px;
-                font-weight: 600;
-            }
-
-            .footer-section p {
-                color: #dfe4ea;
-                margin-bottom: 20px;
-            }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-            .footer-links li {
-                margin-bottom: 10px;
-            }
-
-            .footer-links a {
-                color: #dfe4ea;
-                text-decoration: none;
-                transition: color 0.3s;
-            }
-
-                .footer-links a:hover {
-                    color: #ff6b81;
-                }
-
-        .social-icons a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
-            color: white;
-            margin-right: 10px;
-            transition: all 0.3s;
-        }
-
-            .social-icons a:hover {
-                background: #ff6b81;
-                transform: translateY(-3px);
-            }
-
-        .newsletter-form input {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-        }
-
-            .newsletter-form input::placeholder {
-                color: #dfe4ea;
-            }
-
-        .footer-bottom {
-            padding: 20px 0;
-            color: #dfe4ea;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Ayarlar */
-        @@media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .category-card, .product-card {
-                margin-bottom: 20px;
-            }
-
-            .footer-section .col-lg-4, .footer-section .col-lg-2 {
-                margin-bottom: 30px;
-            }
-        }
-    </style>
-}
-
-@section Scripts {
-    <script>
-        // Hero butonuna tıklama işlemi
-        document.querySelector('.hero-button').addEventListener('click', function () {
-            document.querySelector('.categories-section').scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-
-        // Ürün kartlarına hover efekti (mobilde çalışmaması için)
-        if (window.innerWidth > 768) {
-            const productCards = document.querySelectorAll('.product-card');
-
-            productCards.forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.15)';
-                });
-
-                card.addEventListener('mouseleave', function () {
-                    this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
-                });
-            });
-        }
-    </script>
-}
-
