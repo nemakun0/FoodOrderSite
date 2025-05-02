@@ -1,101 +1,106 @@
 ﻿@model IEnumerable<FoodOrderSite.Models.Product>
 @{
-    ViewData["Title"] = "Lezzetli Yemekler Dünyası";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<!-- Hero Bölümü -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="hero-title">Lezzetin En Taze Hali Kapınızda!</h1>
-                <p class="hero-subtitle">Binlerce çeşit yemek, yüzlerce restoran ve hızlı teslimat ile damak tadınıza uygun lezzetleri keşfedin.</p>
-                <button class="btn btn-primary btn-lg hero-button">Hemen Keşfet</button>
+<!-- Özel Başlık -->
+<header class="custom-header">
+    <div class="container-fluid position-relative px-3">
+        <div class="position-absolute start-0 top-50 translate-middle-y ps-3">
+            <i id="profileIcon" class="fas fa-user-circle fa-2x profile-icon"></i>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a class="logo" asp-controller="Home" asp-action="Index">ForkBase</a>
+        </div>
+        <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
+            <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
+                <i class="fas fa-shopping-cart fa-2x"></i>
+                @{
+                    var data = Context.Session.GetString("Cart");
+                    var count = data != null
+                    ? (Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.ViewModels.CartItemViewModel>>(data)?.Sum(x => x.Quantity) ?? 0)
+                    : 0;
+                }
+                @if (count > 0)
+                {
+                    <span class="badge bg-danger rounded-circle position-absolute top-0 end-0">@count</span>
+                }
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Profil Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Hoş geldin!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-            <div class="col-lg-6">
-                <img src="~/images/hero-food.jpg" alt="Çeşitli lezzetli yemekler" class="img-fluid hero-image">
+            <div class="modal-body text-center">
+                <p>Devam etmek için giriş yap veya kayıt ol</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">Giriş Yap</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Kayıt Ol</button>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Hero-Search Bölümü: Yeni Tasarım -->
+<section class="hero-search-section">
+    <div class="container-fluid px-3 text-center text-black">
+        <h2 class="search-title mb-4">Discover Restaurants And More Near You.</h2>
+        <div class="d-flex justify-content-center">
+            <div class="input-group search-input-group" style="max-width:500px;">
+                <span class="input-group-text bg-white"><i class="fas fa-map-marker-alt text-danger"></i></span>
+                <input type="text" class="form-control" placeholder="Enter delivery address" />
+                <button class="btn btn-danger"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        <button class="btn btn-warning mt-3">Sign in for saved address</button>
     </div>
 </section>
 
 <!-- Kategoriler Bölümü -->
-<section class="categories-section">
-    <div class="container">
-        <h2 class="section-title">Yemek Kategorileri</h2>
-        <p class="section-subtitle">Favori lezzetlerinizi keşfedin</p>
-        <div class="row">
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="~/images/category-burger.jpg" alt="Hamburger" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Fast Food</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="~/images/category-pizza.jpg" alt="Pizza" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Pizza</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="~/images/category-salad.jpg" alt="Salata" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Sağlıklı</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="~/images/category-dessert.jpg" alt="Tatlı" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Tatlılar</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Popüler Ürünler Bölümü -->
-<section class="popular-products-section">
-    <div class="container">
-        <h2 class="section-title">Popüler Ürünler</h2>
-        <p class="section-subtitle">En çok tercih edilen lezzetler</p>
-        <div class="row">
-            @foreach (var p in Model)
+<section class="categories-section py-5 bg-light">
+    <div class="container-fluid px-3">
+        <h2 class="section-title text-center mb-4">Yemek Kategorileri</h2>
+        <div class="row justify-content-center">
+            @{
+                var cats = new[] {
+            "/images/category-burger.jpg",
+            "/images/category-pizza.jpg",
+            "/images/category-salad.jpg",
+            "/images/category-dessert.jpg"
+            };
+            }
+            @foreach (var img in cats)
             {
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="product-card">
-                        @if (p.IsBestSeller)
-                        {
-                            <div class="product-badge">Çok Satan</div>
-                        }
-                        @if (p.IsNew)
-                        {
-                            <div class="product-badge bg-success">Yeni</div>
-                        }
-                        <img src="~/images/product-placeholder.jpg" alt="@p.Name" class="product-image">
-                        <div class="product-body">
-                            <h3>@p.Name</h3>
-                            <p class="product-description">@p.Description</p>
-                            <div class="product-price">@p.Price.ToString("C2")</div>
-                            <form asp-controller="Cart" asp-action="Add" method="post">
-                                <input type="hidden" name="id" value="@p.Id" />
-                                <button type="submit" class="btn btn-primary btn-block">Sepete Ekle</button>
-                            </form>
+                <div class="col-sm-6 col-md-3 mb-4">
+                    <div class="category-card">
+                        <div class="thumb-wrap">
+                            <img src="@Url.Content(img)" alt="Category" />
                         </div>
                     </div>
                 </div>
             }
         </div>
+        <p class="text-center fw-bold mt-4">And More</p>
+    </div>
+</section>
+
+<!-- Sizi Neler Bekliyor Bölümü -->
+<section class="expectations-section py-5">
+    <div class="container-fluid px-3">
+        <h2 class="section-title text-center mb-4">ForkBase'de Sizi Neler Bekliyor?</h2>
+        <ul class="list-unstyled fs-5">
+            <li>✓ Yemek siparişinde onlarca kategori, binlerce çeşit ürün!</li>
+            <li>✓ Yemek siparişlerinizde her gün on binlerce indirim!</li>
+            <li>✓ Online ya da kapıda, dilediğiniz gibi ödeme seçeneği!</li>
+            <li>✓ Siparişinizle ilgili size her zaman destek olmaya hazır, 7/24 Canlı Yardım ekibi!</li>
+        </ul>
     </div>
 </section>

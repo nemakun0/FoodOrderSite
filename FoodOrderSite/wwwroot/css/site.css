@@ -10,192 +10,136 @@
     outline: none;
     border: none;
     text-decoration: none;
-    text-transform: capitalize;
     transition: 0.2s ease;
 }
-
 html {
-    font-size: 14px;
-    position: relative;
-    min-height: 100%;
+    font-size: 16px;
 }
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
 body {
     margin-bottom: 60px;
     background: #f8f9fa;
     color: #333;
 }
 
-/* Header navigasyonu özelleþtirme */
-.navbar {
-    transition: all 0.3s ease;
-    background-color: #212529 !important;
-}
-
-.navbar-nav .nav-link {
-    color: #ECEFCA !important;
-    font-weight: 500;
+/* ------------------ Custom Header ------------------ */
+.custom-header {
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     padding: 0.5rem 1rem;
-    border-radius: 30px;
-    transition: background-color 0.2s;
-}
-
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.active {
-        background-color: #f0f0f0;
-        color: #000 !important;
-    }
-
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
-    color: #ffc107 !important;
-}
-
-/* Sticky navbar */
-header {
     position: sticky;
-    top: 10px;
-    z-index: 1030;
+    top: 0;
+    z-index: 1000;
+}
+.custom-header .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #d63384 !important;
+    text-decoration: none;
+}
+.custom-header .profile-icon {
+    color: #555;
+    cursor: pointer;
 }
 
-.custom-spacing {
-    margin: 0 5rem;
-    padding: 4rem 0;
-}
-
-/* ------------------ Kart Stilleri ------------------ */
-.card-food, .product-card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-    .card-food:hover, .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-
-/* ------------------ Hero Banner ------------------ */
-.hero-section {
-    /* eski shorthand yerine ayrý özellikler kullanýldý */
-    background-image: url('/images/food-bg.jpg');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    color: white;
-    text-align: center;
-    padding: 100px 20px;
-}
-
-    .hero-section h1 {
-        font-size: 3rem;
-        font-weight: bold;
-    }
-
-    .hero-section p {
-        font-size: 1.2rem;
-        margin-top: 1rem;
-    }
-
-/* ------------------ Popüler Ürünler ve Liste Stilleri ------------------ */
-.popular-products-section, .product-list {
-    padding: 60px 0;
-}
-
-.product-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.product-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+/* ------------------ Hero-Search Bölümü ------------------ */
+.hero-search-section {
     position: relative;
-    width: 200px;
-    text-align: center;
+    background: url('/images/hero-food.jpg') center center / cover no-repeat;
+    height: 500px;
+}
+.hero-search-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(4px);
+    background: rgba(255,255,255,0.15);
+}
+.hero-search-section .container-fluid {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 1rem;
+}
+.search-title {
+    color: #000;
+    font-size: 2rem;
+    font-weight: 700;
+}
+.search-input-group .form-control {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+.search-input-group .btn-danger {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+.search-section .btn-warning {
+    background: #ffc107;
+    border: none;
 }
 
-.product-image {
+/* ------------------ Kategoriler Bölümü ------------------ */
+.categories-section {
+    padding: 60px 1rem;
+}
+.category-card .thumb-wrap {
     width: 100%;
-    height: 180px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px 10px 0 0;
+}
+.category-card .thumb-wrap img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
-
-.product-body {
-    padding: 20px;
+.categories-section p.text-center.fw-bold.mt-4 {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: #333;
 }
 
-    .product-card h4, .product-body h3 {
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-.product-card p, .product-description {
-    font-size: 0.9rem;
-    color: #666;
-    min-height: 40px;
-    margin-bottom: 1rem;
+/* ------------------ Expectations Bölümü ------------------ */
+.expectations-section {
+    background: #f8f9fa;
+    padding: 60px 1rem;
+}
+.expectations-section .section-title {
+    margin-bottom: 2rem;
+}
+.expectations-section ul li {
+    margin-bottom: 0.5rem;
 }
 
-.product-price {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #ff6b81;
-    margin-bottom: 15px;
-}
-
-/* ------------------ Footer Stili ------------------ */
+/* ------------------ Footer ------------------ */
 footer {
     background-color: #111;
     color: #eee;
-    padding: 40px 0;
+    padding: 40px 1rem;
     text-align: center;
     font-size: 1rem;
 }
+footer a {
+    color: #ffc107;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+}
+footer a:hover {
+    color: #fff;
+}
 
-    footer a {
-        color: #ffc107;
-        text-decoration: none;
-        margin: 0 10px;
-        font-weight: 500;
-    }
-
-        footer a:hover {
-            color: #fff;
-        }
-
-/* ------------------ Responsive Ayarlar ------------------ */
+/* ------------------ Responsive ------------------ */
 @media (max-width: 768px) {
-    .hero-section {
-        padding: 60px 10px;
+    .hero-search-section {
+        height: auto;
+        padding: 3rem 1rem;
     }
-
-        .hero-section h1 {
-            font-size: 2rem;
-        }
-
-        .hero-section p {
-            font-size: 1rem;
-        }
-
-    .product-list, .popular-products-section .row {
-        justify-content: center;
+    .hero-search-section::before {
+        backdrop-filter: blur(2px);
     }
-
-    .product-card {
-        width: 100%;
-        max-width: 300px;
+    .categories-section, .expectations-section {
+        padding: 40px 1rem;
+    }
+    .category-card .thumb-wrap {
+        height: 150px;
     }
 }
