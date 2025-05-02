@@ -2,40 +2,36 @@
     ViewData["Title"] = "Home Page";
 }
 
-@{
-    ViewData["Title"] = "Lezzetli Yemekler Dünyası";
-}
-
-<!-- Hero Bölümü -->
+<!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="hero-title">Lezzetin En Taze Hali Kapınızda!</h1>
-                <p class="hero-subtitle">Binlerce çeşit yemek, yüzlerce restoran ve hızlı teslimat ile damak tadınıza uygun lezzetleri keşfedin.</p>
-                <button class="btn btn-primary btn-lg hero-button">Hemen Keşfet</button>
+                <h1 class="hero-title">The Freshest Flavors Delivered to Your Door!</h1>
+                <p class="hero-subtitle">Discover thousands of food varieties from hundreds of restaurants with fast delivery tailored to your taste.</p>
+                <button class="btn btn-primary btn-lg hero-button">Explore Now</button>
             </div>
             <div class="col-lg-6">
-                <img src="/images/hero-food.jpg" alt="Çeşitli lezzetli yemekler" class="img-fluid hero-image">
+                <img src="/images/hero-food.jpg" alt="Various delicious foods" class="img-fluid hero-image">
             </div>
         </div>
     </div>
 </section>
 
-<!-- Kategoriler Bölümü -->
+<!-- Categories Section -->
 <section class="categories-section">
     <div class="container">
-        <h2 class="section-title">Yemek Kategorileri</h2>
-        <p class="section-subtitle">Favori lezzetlerinizi keşfedin</p>
+        <h2 class="section-title">Food Categories</h2>
+        <p class="section-subtitle">Discover your favorite flavors</p>
 
         <div class="row">
-            <!-- Kategori Kartları -->
+            <!-- Category Cards -->
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
                     <img src="/images/category-burger.jpg" alt="Hamburger" class="category-image">
                     <div class="category-overlay">
                         <h3>Fast Food</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
+                        <a href="#" class="btn btn-outline-light">Browse</a>
                     </div>
                 </div>
             </div>
@@ -45,27 +41,27 @@
                     <img src="/images/category-pizza.jpg" alt="Pizza" class="category-image">
                     <div class="category-overlay">
                         <h3>Pizza</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
+                        <a href="#" class="btn btn-outline-light">Browse</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-salad.jpg" alt="Salata" class="category-image">
+                    <img src="/images/category-salad.jpg" alt="Salad" class="category-image">
                     <div class="category-overlay">
-                        <h3>Sağlıklı</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
+                        <h3>Healthy</h3>
+                        <a href="#" class="btn btn-outline-light">Browse</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="category-card">
-                    <img src="/images/category-dessert.jpg" alt="Tatlı" class="category-image">
+                    <img src="/images/category-dessert.jpg" alt="Dessert" class="category-image">
                     <div class="category-overlay">
-                        <h3>Tatlılar</h3>
-                        <a href="#" class="btn btn-outline-light">Gözat</a>
+                        <h3>Desserts</h3>
+                        <a href="#" class="btn btn-outline-light">Browse</a>
                     </div>
                 </div>
             </div>
@@ -73,23 +69,23 @@
     </div>
 </section>
 
-<!-- Popüler Ürünler Bölümü -->
+<!-- Popular Products Section -->
 <section class="popular-products-section">
     <div class="container">
-        <h2 class="section-title">Popüler Ürünler</h2>
-        <p class="section-subtitle">En çok tercih edilen lezzetler</p>
+        <h2 class="section-title">Popular Products</h2>
+        <p class="section-subtitle">Most preferred flavors</p>
 
         <div class="row">
-            <!-- Ürün Kartları -->
+            <!-- Product Cards -->
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="product-card">
-                    <div class="product-badge">Çok Satan</div>
+                    <div class="product-badge">Best Seller</div>
                     <img src="/images/product-burger.jpg" alt="Double Cheeseburger" class="product-image">
                     <div class="product-body">
                         <h3>Double Cheeseburger</h3>
-                        <p class="product-description">Çift katlı et, cheddar peyniri ve özel sos</p>
-                        <div class="product-price">₺49.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
+                        <p class="product-description">Double patty, cheddar cheese and special sauce</p>
+                        <div class="product-price">$5.99</div>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -99,22 +95,22 @@
                     <img src="/images/product-pizza.jpg" alt="Pepperoni Pizza" class="product-image">
                     <div class="product-body">
                         <h3>Pepperoni Pizza</h3>
-                        <p class="product-description">Bol pepperoni ve mozzarella peyniri</p>
-                        <div class="product-price">₺69.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
+                        <p class="product-description">Lots of pepperoni and mozzarella cheese</p>
+                        <div class="product-price">$8.99</div>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="product-card">
-                    <div class="product-badge">Yeni</div>
-                    <img src="/images/product-sushi.jpg" alt="Sushi Tabağı" class="product-image">
+                    <div class="product-badge">New</div>
+                    <img src="/images/product-sushi.jpg" alt="Sushi Plate" class="product-image">
                     <div class="product-body">
-                        <h3>Sushi Tabağı</h3>
-                        <p class="product-description">12 parça çeşitli sushi</p>
-                        <div class="product-price">₺89.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
+                        <h3>Sushi Plate</h3>
+                        <p class="product-description">12 pieces of assorted sushi</p>
+                        <div class="product-price">$12.99</div>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -124,9 +120,9 @@
                     <img src="/images/product-pasta.jpg" alt="Carbonara" class="product-image">
                     <div class="product-body">
                         <h3>Carbonara</h3>
-                        <p class="product-description">Klasik İtalyan usulü carbonara</p>
-                        <div class="product-price">₺54.90</div>
-                        <button class="btn btn-primary btn-block">Sepete Ekle</button>
+                        <p class="product-description">Classic Italian style carbonara</p>
+                        <div class="product-price">$7.99</div>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -134,56 +130,9 @@
     </div>
 </section>
 
-<!-- Footer Bölümü -->
-<footer class="footer-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <h4>Yemek Sipariş</h4>
-                <p>Binlerce restoran ve yemek çeşidi ile hızlı ve güvenli sipariş deneyimi.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>Hızlı Linkler</h5>
-                <ul class="footer-links">
-                    <li><a href="#">Anasayfa</a></li>
-                    <li><a href="#">Restoranlar</a></li>
-                    <li><a href="#">Kampanyalar</a></li>
-                    <li><a href="#">Hakkımızda</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h5>Yardım</h5>
-                <ul class="footer-links">
-                    <li><a href="#">Sipariş Takibi</a></li>
-                    <li><a href="#">Sık Sorulanlar</a></li>
-                    <li><a href="#">İletişim</a></li>
-                    <li><a href="#">Gizlilik Politikası</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-4 mb-4">
-                <h5>Bültenimize Kaydolun</h5>
-                <p>Kampanya ve indirimlerden haberdar olun.</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="E-posta adresiniz" class="form-control mb-2">
-                    <button type="submit" class="btn btn-primary">Abone Ol</button>
-                </form>
-            </div>
-        </div>
-        <hr>
-        <div class="footer-bottom">
-            <p class="text-center">© 2023 Yemek Sipariş. Tüm hakları saklıdır.</p>
-        </div>
-    </div>
-</footer>
-
 @section Styles {
     <style>
-        /* Hero Bölümü Stilleri */
+        /* Hero Section Styles */
         .hero-section {
             background: linear-gradient(135deg, #f5f7fa 0%, #ffe8e8 100%);
             padding: 80px 0;
@@ -207,6 +156,8 @@
             padding: 12px 30px;
             border-radius: 30px;
             font-weight: 600;
+            background: linear-gradient(to right, #ff6b6b, #ff8e53);
+            border: none;
         }
 
         .hero-image {
@@ -214,7 +165,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* Kategoriler Bölümü Stilleri */
+        /* Categories Section Styles */
         .categories-section {
             padding: 60px 0;
             background-color: #fff;
@@ -241,6 +192,7 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         }
 
             .category-card:hover {
@@ -269,14 +221,14 @@
                 margin-bottom: 10px;
             }
 
-        /* Popüler Ürünler Bölümü Stilleri */
+        /* Popular Products Section Styles */
         .popular-products-section {
             padding: 60px 0;
             background-color: #f9f9f9;
         }
 
         .product-card {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -293,7 +245,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background: #ff4757;
+            background: linear-gradient(to right, #ff4757, #ff6b81);
             color: white;
             padding: 5px 10px;
             border-radius: 20px;
@@ -332,78 +284,7 @@
             margin-bottom: 15px;
         }
 
-        /* Footer Bölümü Stilleri */
-        .footer-section {
-            background: #2f3542;
-            color: white;
-            padding: 60px 0 0;
-        }
-
-            .footer-section h4, .footer-section h5 {
-                color: white;
-                margin-bottom: 20px;
-                font-weight: 600;
-            }
-
-            .footer-section p {
-                color: #dfe4ea;
-                margin-bottom: 20px;
-            }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-            .footer-links li {
-                margin-bottom: 10px;
-            }
-
-            .footer-links a {
-                color: #dfe4ea;
-                text-decoration: none;
-                transition: color 0.3s;
-            }
-
-                .footer-links a:hover {
-                    color: #ff6b81;
-                }
-
-        .social-icons a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
-            color: white;
-            margin-right: 10px;
-            transition: all 0.3s;
-        }
-
-            .social-icons a:hover {
-                background: #ff6b81;
-                transform: translateY(-3px);
-            }
-
-        .newsletter-form input {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-        }
-
-            .newsletter-form input::placeholder {
-                color: #dfe4ea;
-            }
-
-        .footer-bottom {
-            padding: 20px 0;
-            color: #dfe4ea;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Ayarlar */
+        /* Responsive Settings */
         @@media (max-width: 768px) {
             .hero-title {
                 font-size: 2rem;
@@ -420,24 +301,20 @@
             .category-card, .product-card {
                 margin-bottom: 20px;
             }
-
-            .footer-section .col-lg-4, .footer-section .col-lg-2 {
-                margin-bottom: 30px;
-            }
         }
     </style>
 }
 
 @section Scripts {
     <script>
-        // Hero butonuna tıklama işlemi
+        // Hero button click action
         document.querySelector('.hero-button').addEventListener('click', function () {
             document.querySelector('.categories-section').scrollIntoView({
                 behavior: 'smooth'
             });
         });
 
-        // Ürün kartlarına hover efekti (mobilde çalışmaması için)
+        // Product card hover effects (disabled for mobile)
         if (window.innerWidth > 768) {
             const productCards = document.querySelectorAll('.product-card');
 
@@ -453,4 +330,3 @@
         }
     </script>
 }
-
