@@ -1,4 +1,6 @@
-﻿@model IEnumerable<FoodOrderSite.Models.Product>
+﻿@using System.IO
+@using System.Globalization
+@model IEnumerable<FoodOrderSite.Models.Product>
 @{
     ViewData["Title"] = "Ana Sayfa";
 }
@@ -93,11 +95,17 @@
             @for (int i = 0; i < cats.Length; i++)
             {
                 var hiddenClass = i < 4 ? "" : "d-none";
+                // dosya adını al, prefix'i kaldır, ilk harfleri büyüt
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(cats[i]);           // e.g. "category-seafood"
+                var rawName = fileName.Replace("category-", "");                   // e.g. "seafood"
+                var displayName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(rawName); // "Seafood"
+
                 <div class="col-sm-6 col-md-3 mb-4 category-item @hiddenClass">
-                    <div class="category-card">
+                    <div class="category-card text-center">
                         <div class="thumb-wrap">
-                            <img src="@Url.Content(cats[i])" alt="Category @i" />
+                            <img src="@Url.Content(cats[i])" alt="@displayName" class="img-fluid" />
                         </div>
+                        <p class="mt-2 fw-semibold">@displayName</p>
                     </div>
                 </div>
             }
@@ -110,7 +118,6 @@
         </div>
     </div>
 </section>
-
 @section scripts {
     <script>
         const loadBtn = document.getElementById('loadMoreCategories');
