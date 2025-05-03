@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+@model FoodOrderSite.Models.ViewModels.SellerRegisterViewModel
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -147,6 +148,10 @@
             .form-row .form-group {
                 flex: 1;
             }
+
+        .date-input {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -154,46 +159,58 @@
         <div class="logo">ForkBase</div>
         <h1>Satıcı Hesabı Oluştur</h1>
 
-        <form action="#" method="POST" id="registerForm">
+        <form asp-action="Index" method="post" id="registerForm">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="name">Ad</label>
-                    <input type="text" id="name" name="name" placeholder="Adınız" required>
+                    <label asp-for="Name">Ad</label>
+                    <input asp-for="Name" class="form-control" placeholder="Adınız" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="surname">Soyad</label>
-                    <input type="text" id="surname" name="surname" placeholder="Soyadınız" required>
+                    <label asp-for="Surname">Soyad</label>
+                    <input asp-for="Surname" class="form-control" placeholder="Soyadınız" required />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="email">E-posta Adresi</label>
-                <input type="email" id="email" name="email" placeholder="ornek@email.com" required>
+            <div class="form-group date-input">
+                <label asp-for="BirthDate">Doğum Tarihi</label>
+                <input asp-for="BirthDate" type="date" class="form-control" required />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="phone">Telefon Numarası</label>
-                <input type="tel" id="phone" name="phone" placeholder="(5__) ___ __ __" required oninput="formatPhoneNumber(event)">
+                <label asp-for="Email">E-posta Adresi</label>
+                <input asp-for="Email" class="form-control" placeholder="ornek@email.com" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="password">Şifre</label>
+                <label asp-for="Phone">Telefon Numarası</label>
+                <input asp-for="Phone" class="form-control" placeholder="(5__) ___ __ __" required oninput="formatPhoneNumber(event)" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Şifre</label>
                 <div class="password-wrapper">
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <input asp-for="Password" type="password" id="password" class="form-control" placeholder="••••••••" required />
                     <span class="toggle-password" onclick="togglePassword()">
                         <i id="eyeIcon" class="fa-solid fa-eye"></i>
                     </span>
                 </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="shopname">Mağaza Adı</label>
-                <input type="text" id="shopname" name="shopname" placeholder="Mağaza adınız" required>
+                <label asp-for="RestaurantName">Mağaza Adı</label>
+                <input asp-for="RestaurantName" class="form-control" placeholder="Mağaza adınız" required />
+                <span asp-validation-for="RestaurantName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="shoptype">Mağaza Türü</label>
-                <select id="shoptype" name="shoptype" required>
+                <label asp-for="RestaurantType">Mağaza Türü</label>
+                <select asp-for="RestaurantType" class="form-control" required>
                     <option value="" disabled selected>Seçiniz</option>
                     <option value="restaurant">Restoran</option>
                     <option value="bakery">Fırın/Pastane</option>
@@ -201,21 +218,25 @@
                     <option value="butcher">Kasap</option>
                     <option value="other">Diğer</option>
                 </select>
+                <span asp-validation-for="RestaurantType" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label for="address">Adres</label>
-                <input type="text" id="address" name="address" placeholder="Tam adres bilgisi" required>
+                <label asp-for="Address">Adres</label>
+                <input asp-for="Address" class="form-control" placeholder="Tam adres bilgisi" required />
+                <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="city">Şehir</label>
-                    <input type="text" id="city" name="city" placeholder="Şehir" required>
+                    <label asp-for="City">Şehir</label>
+                    <input asp-for="City" class="form-control" placeholder="Şehir" required />
+                    <span asp-validation-for="City" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="district">İlçe/Semt</label>
-                    <input type="text" id="district" name="district" placeholder="İlçe/Semt" required>
+                    <label asp-for="District">İlçe/Semt</label>
+                    <input asp-for="District" class="form-control" placeholder="İlçe/Semt" required />
+                    <span asp-validation-for="District" class="text-danger"></span>
                 </div>
             </div>
 
@@ -223,7 +244,10 @@
         </form>
 
         <div class="login-link">
-            Zaten hesabınız var mı? <a href="#">Giriş Yap</a>
+            <div class="login-link">
+                Zaten hesabınız var mı? <a asp-controller="SignIn" asp-action="Index">Giriş Yap</a>
+            </div>
+
         </div>
     </div>
 
