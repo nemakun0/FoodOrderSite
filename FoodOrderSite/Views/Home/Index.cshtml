@@ -70,27 +70,72 @@
         <h2 class="section-title text-center mb-4">Yemek Kategorileri</h2>
         <div class="row justify-content-center">
             @{
+                // 16 kategori resmi
                 var cats = new[] {
             "/images/category-burger.jpg",
             "/images/category-pizza.jpg",
             "/images/category-salad.jpg",
-            "/images/category-dessert.jpg"
+            "/images/category-dessert.jpg",
+            "/images/category-soup.jpg",
+            "/images/category-steak.jpg",
+            "/images/category-seafood.jpg",
+            "/images/category-pasta.jpg",
+            "/images/category-sandwich.jpg",
+            "/images/category-sushi.jpg",
+            "/images/category-taco.jpg",
+            "/images/category-noodles.jpg",
+            "/images/category-curry.jpg",
+            "/images/category-ramen.jpg",
+            "/images/category-smoothie.jpg",
+            "/images/category-coffee.jpg"
             };
             }
-            @foreach (var img in cats)
+            @for (int i = 0; i < cats.Length; i++)
             {
-                <div class="col-sm-6 col-md-3 mb-4">
+                var hiddenClass = i < 4 ? "" : "d-none";
+                <div class="col-sm-6 col-md-3 mb-4 category-item @hiddenClass">
                     <div class="category-card">
                         <div class="thumb-wrap">
-                            <img src="@Url.Content(img)" alt="Category" />
+                            <img src="@Url.Content(cats[i])" alt="Category @i" />
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <p class="text-center fw-bold mt-4">And More</p>
+
+        <!-- Butonlar -->
+        <div class="text-center mt-3">
+            <button id="loadMoreCategories" class="btn btn-primary">And More</button>
+            <button id="showLessCategories" class="btn btn-danger d-none">Less</button>
+        </div>
     </div>
 </section>
+
+@section scripts {
+    <script>
+        const loadBtn = document.getElementById('loadMoreCategories');
+        const lessBtn = document.getElementById('showLessCategories');
+        const items = document.querySelectorAll('.category-item');
+
+        loadBtn.addEventListener('click', function() {
+          // 4'ten sonrası zaten d-none, onları göster
+          items.forEach(el => el.classList.remove('d-none'));
+          // Butonları değiştir
+          loadBtn.classList.add('d-none');
+          lessBtn.classList.remove('d-none');
+        });
+
+        lessBtn.addEventListener('click', function() {
+          // İlk 4'ü bırak, geri kalanları gizle
+          items.forEach((el, idx) => {
+            if (idx >= 4) el.classList.add('d-none');
+          });
+          // Butonları tekrar değiştir
+          lessBtn.classList.add('d-none');
+          loadBtn.classList.remove('d-none');
+        });
+    </script>
+}
 
 <!-- Sizi Neler Bekliyor Bölümü -->
 <section class="expectations-section py-5">
