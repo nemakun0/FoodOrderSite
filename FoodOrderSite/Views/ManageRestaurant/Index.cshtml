@@ -1,0 +1,51 @@
+﻿<!-- Views/Home/Index.cshtml -->
+@{
+    Layout = null; // veya ana layout
+}
+<style>
+    body {
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .blocks-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 sütun */
+        gap: 20px; /* aralık */
+        justify-items: center; /* blokları ortala */
+        max-width: 600px; /* veya istediğiniz genişlik */
+        margin: 0 auto; /* ortala sayfa içinde */
+    }
+
+    .block {
+        width: 250px; /* veya istediğiniz genişlik */
+        height: 150px; /* veya istediğiniz yükseklik */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ff7f50;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 15px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+
+        .block:hover {
+            background-color: #ffb36b;
+            transform: scale(1.05);
+        }
+</style>
+
+<div class="blocks-container">
+    <div class="block" onclick="location.href='@Url.Action("Index", "RestaurantSettings")'">Restaurant Settings</div>
+    <div class="block" onclick="location.href='@Url.Action("Index", "ProductandMenu")'">Product and Menu</div>
+    <div class="block" onclick="location.href='@Url.Action("Index", "OrdersandCustomer")'">Orders and Customer</div>
+    <div class="block" onclick="location.href='@Url.Action("Index", "ReportsandAnalysis")'">Reports and Analysis</div>
+</div>

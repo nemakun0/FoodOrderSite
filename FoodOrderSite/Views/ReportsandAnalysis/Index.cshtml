@@ -1,0 +1,179 @@
+﻿@{
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml"; // kendi layout'unuz
+    ViewBag.Title = "Performans ve Raporlar";
+}
+<h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+<!-- Satış Grafikleri -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <h5 class="text-center">Günlük Satışlar</h5>
+        <canvas id="dailySalesChart"></canvas>
+    </div>
+    <div class="col-md-4 mb-3">
+        <h5 class="text-center">Haftalık Satışlar</h5>
+        <canvas id="weeklySalesChart"></canvas>
+    </div>
+    <div class="col-md-4 mb-3">
+        <h5 class="text-center">Aylık Satışlar</h5>
+        <canvas id="monthlySalesChart"></canvas>
+    </div>
+</div>
+
+<!-- En Çok Satan Ürünler ve Kategoriler -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <h5 class="text-center">En Çok Satan Ürünler</h5>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Pizza Margherita
+                <span class="badge bg-primary rounded-pill">150 Satış</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Kola 330ml
+                <span class="badge bg-primary rounded-pill">120 Satış</span>
+            </li>
+            <!-- Diğer ürünler -->
+        </ul>
+    </div>
+    <div class="col-md-6 mb-3">
+        <h5 class="text-center">En Çok Satan Kategoriler</h5>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Pizzalar
+                <span class="badge bg-success rounded-pill">350 Satış</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                İçecekler
+                <span class="badge bg-success rounded-pill">200 Satış</span>
+            </li>
+            <!-- Diğer kategoriler -->
+        </ul>
+    </div>
+</div>
+
+<!-- Toplam Gelir ve Kar -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body text-center">
+                <h5 class="card-title">Toplam Gelir</h5>
+                <p class="card-text" style="font-size:2rem;">₺45,000</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body text-center">
+                <h5 class="card-title">Kar Oranı</h5>
+                <p class="card-text" style="font-size:2rem;">%25</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card p-4" style="width: 100%; max-width: 700px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+        <h5 class="text-center mb-4">Müşteri Yorumları</h5>
+        <!-- Yorumlar Listesi -->
+        <div class="mb-4">
+            <!-- Yorum 1 -->
+            <div class="d-flex align-items-center mb-3">
+                <img src="/images/category-pizza.jpg" alt="Pizza" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:15px;">
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <!-- Yıldızlar -->
+                        <span class="text-warning me-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </span>
+                        <small class="text-muted">5 Yıldız</small>
+                    </div>
+                    <p class="mb-0">"Yemekler çok lezzetli ve hızlı geldi."</p>
+                    <small class="text-muted">- Mehmet A.</small>
+                </div>
+            </div>
+            <!-- Yorum 2 -->
+            <div class="d-flex align-items-center mb-3">
+                <img src="/images/category-dessert.jpg" alt="Kebab" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:15px;">
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <!-- Yıldızlar -->
+                        <span class="text-warning me-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </span>
+                        <small class="text-muted">4 Yıldız</small>
+                    </div>
+                    <p class="mb-0">"Servis çok iyi, fiyatlar uygun."</p>
+                    <small class="text-muted">- Ayşe K.</small>
+                </div>
+            </div>
+            <!-- Diğer yorumlar -->
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome ve Bootstrap Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Chart.js Kütüphanesi -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+        // Günlük Satışlar Grafiği
+    const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
+    const dailyChart = new Chart(ctxDaily, {
+        type: 'line',
+        data: {
+            labels: ['09:00', '12:00', '15:00', '18:00', '21:00'],
+            datasets: [{
+                label: 'Satış (TL)',
+                data: [500, 1500, 1000, 2000, 1800],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        }
+    });
+
+    // Haftalık Satışlar Grafiği
+    const ctxWeekly = document.getElementById('weeklySalesChart').getContext('2d');
+    const weeklyChart = new Chart(ctxWeekly, {
+        type: 'bar',
+        data: {
+            labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+            datasets: [{
+                label: 'Satış (TL)',
+                data: [3000, 4000, 3500, 5000, 4500, 6000, 5500],
+                backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Aylık Satışlar Grafiği
+    const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
+    const monthlyChart = new Chart(ctxMonthly, {
+        type: 'line',
+        data: {
+            labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+            datasets: [{
+                label: 'Satış (TL)',
+                data: [25000, 30000, 28000, 35000, 33000, 40000, 42000, 39000, 37000, 41000, 43000, 45000],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: true,
+                tension: 0.4
+            }]
+        }
+    });
+</script>

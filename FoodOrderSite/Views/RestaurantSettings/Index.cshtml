@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
+}
+@{
+    ViewBag.Title = "Restoran Ayarları";
+}
+<h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+<form>
+    <div class="row mb-4">
+        <!-- Restoran Adı -->
+        <div class="col-md-6 mb-3">
+            <label>Restoran Adı</label>
+            <input type="text" class="form-control" value="Lezzet Durağı" />
+        </div>
+        <!-- Telefon -->
+        <div class="col-md-6 mb-3">
+            <label>Telefon</label>
+            <input type="text" class="form-control" value="0555 123 45 67" />
+        </div>
+        <!-- E-posta -->
+        <div class="col-md-6 mb-3">
+            <label>E-posta</label>
+            <input type="email" class="form-control" value="info@lezzetdurağı.com" />
+        </div>
+        <!-- Şehir -->
+        <div class="col-md-6 mb-3">
+            <label>Şehir</label>
+            <input type="text" class="form-control" value="İstanbul" />
+        </div>
+        <!-- İlçe -->
+        <div class="col-md-6 mb-3">
+            <label>İlçe</label>
+            <input type="text" class="form-control" value="Kadıköy" />
+        </div>
+        <!-- Adres -->
+        <div class="col-12 mb-3">
+            <label>Adres</label>
+            <input type="text" class="form-control" value="Bahariye Cd. No:12" />
+        </div>
+        <!-- Açıklama -->
+        <div class="col-12 mb-3">
+            <label>Açıklama</label>
+            <textarea class="form-control" rows="3">En lezzetli yemekler burada!</textarea>
+        </div>
+        <!-- Fotoğraf -->
+        <div class="col-12 mb-3">
+            <label>Fotoğraf</label>
+            <input type="file" class="form-control" />
+            <img src="/images/restaurant.jpg" class="mt-2" style="max-width:200px; border-radius:8px;" />
+        </div>
+    </div>
+
+    <!-- Haftanın günleri ve saatleri -->
+    <h4 class="mb-3 text-primary">Haftalık Çalışma Saatleri</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Gün</th>
+                    <th>Açılış Saati</th>
+                    <th>Kapanış Saati</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var gun in new[] { "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" })
+                {
+                    <tr>
+                        <td>@gun</td>
+                        <td>
+                            <input type="time" class="form-control" value="09:00" />
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" value="22:00" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-success">Güncelle</button>
+    </div>
+</form>

@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Ürün ve Menü Yönetimi";
+}
+<h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+<!-- Yeni ürün ekle linki -->
+<div class="container mb-4 ">
+    <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yeniUrunModal">Yeni Ürün Ekle</a>
+</div>
+
+<!-- Modal içeriği -->
+<div class="modal fade" id="yeniUrunModal" tabindex="-1" aria-labelledby="yeniUrunModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:15px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="yeniUrunModalLabel">Yeni Ürün Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <!-- Ürün Adı -->
+                    <div class="mb-3">
+                        <label>Ürün Adı</label>
+                        <input type="text" class="form-control" placeholder="Ürün adı girin" />
+                    </div>
+                    <!-- Fiyat -->
+                    <div class="mb-3">
+                        <label>Fiyat</label>
+                        <input type="number" class="form-control" placeholder="Fiyat" />
+                    </div>
+                    <!-- Resim -->
+                    <div class="mb-3">
+                        <label>Resim</label>
+                        <input type="file" class="form-control" />
+                    </div>
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea class="form-control" rows="3" placeholder="Ürün açıklaması"></textarea>
+                    </div>
+                    <!-- Is Available (Radio Buttons) -->
+                    <div class="mb-3">
+                        <label>Sunulacak mı?</label><br />
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="isAvailable" id="availableYes" value="true" />
+                            <label class="form-check-label" for="availableYes">Evet</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="isAvailable" id="availableNo" value="false" />
+                            <label class="form-check-label" for="availableNo">Hayır</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Ürünleri listeleme bölümü -->
+<div class="container mb-5">
+    <h4 class="mb-3 text-primary">Mevcut Ürünler</h4>
+    <div class="row g-3">
+        <!-- Örnek ürün kartları -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100" style="border-radius:15px;">
+                <img src="/images/yemek1.jpg" class="card-img-top" style="height:180px; object-fit:cover; border-top-left-radius:15px; border-top-right-radius:15px;">
+                <div class="card-body">
+                    <h5 class="card-title">Pizza Margherita</h5>
+                    <p class="card-text">Fiyat: 75₺</p>
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-success">Düzenle</button>
+                        <button class="btn btn-sm btn-danger">Sil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Daha fazla ürün kartı ekleyebilirsiniz -->
+    </div>
+</div>
+

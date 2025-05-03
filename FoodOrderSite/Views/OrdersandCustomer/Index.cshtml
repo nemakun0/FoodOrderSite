@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
+    ViewBag.Title = "Siparişler ve Müşteri Bilgileri";
+}
+<h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+<!-- Arama ve Tarih Seçimi -->
+<div class="mb-4 d-flex justify-content-between">
+    <!-- Tarih Seçici -->
+    <div>
+        <label for="orderDate" class="form-label">Sipariş Tarihi</label>
+        <input type="date" id="orderDate" class="form-control" onchange="filterOrdersByDate()" />
+    </div>
+    <!-- Müşteri Adı veya Sipariş No Arama -->
+    <div>
+        <label for="orderSearch" class="form-label">Arama (Müşteri Adı / Sipariş No)</label>
+        <input type="text" id="orderSearch" class="form-control" onkeyup="searchOrders()" placeholder="Müşteri Adı veya Sipariş No" />
+    </div>
+</div>
+
+<!-- Sipariş detaylarını göstermek için -->
+<div class="accordion" id="ordersAccordion">
+    <!-- Sipariş 1 -->
+    <div class="accordion-item order-item" data-order-date="2024-04-25" data-customer-name="Ahmet Yılmaz" data-order-id="1001">
+        <h2 class="accordion-header" id="heading1">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                Sipariş #1001 - 2024-04-25 14:30 - Ahmet Yılmaz
+            </button>
+        </h2>
+        <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#ordersAccordion">
+            <div class="accordion-body">
+                <h5>Ürünler</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ürün Adı</th>
+                            <th>Miktar</th>
+                            <th>Birim Fiyat</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pizza Margherita</td>
+                            <td>2</td>
+                            <td>75₺</td>
+                            <td>150₺</td>
+                        </tr>
+                        <tr>
+                            <td>Kola 330ml</td>
+                            <td>2</td>
+                            <td>15₺</td>
+                            <td>30₺</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5>Müşteri Bilgileri</h5>
+                <p>
+                    <strong>İsim:</strong> Ahmet Yılmaz<br />
+                    <strong>Telefon:</strong> 0555 123 45 67<br />
+                    <strong>Adres:</strong> Kadıköy, Bahariye Cd. No:12
+                </p>
+
+                <h5>Sipariş Durumu</h5>
+                <select class="form-select" onchange="updateOrderStatus(this, 1001)">
+                    <option value="Pending" selected>Pending</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Out for Delivery">Yolda</option>
+                    <option value="Delivered">Teslim Edildi</option>
+                    <option value="Cancelled">İptal</option>
+                </select>
+
+                <h5>Ödeme Durumu</h5>
+                <span class="badge bg-success">Ödendi</span><br />
+                <strong>Ödeme Yöntemi:</strong> Kapıda Ödeme<br />
+                <strong>Ödeme Tarihi:</strong> 2024-04-25 15:00
+
+                <div class="mt-3">
+                    <button class="btn btn-danger btn-sm" onclick="cancelOrder(1001)">İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diğer siparişler buraya eklenebilir -->
+</div>
+
+<script>
+    // Tarihe göre filtreleme fonksiyonu
+    function filterOrdersByDate() {
+        var selectedDate = document.getElementById('orderDate').value;
+        var orders = document.querySelectorAll('.order-item');
+
+        orders.forEach(order => {
+            var orderDate = order.getAttribute('data-order-date');
+            if (selectedDate && orderDate !== selectedDate) {
+                order.style.display = 'none';  // Bu siparişi gizle
+            } else {
+                order.style.display = '';  // Bu siparişi göster
+            }
+        });
+    }
+
+    // Sipariş adı veya numarasına göre arama fonksiyonu
+    function searchOrders() {
+        var searchText = document.getElementById('orderSearch').value.toLowerCase();
+        var orders = document.querySelectorAll('.order-item');
+
+        orders.forEach(order => {
+            var customerName = order.getAttribute('data-customer-name').toLowerCase();
+            var orderId = order.getAttribute('data-order-id').toString();
+
+            if (customerName.includes(searchText) || orderId.includes(searchText)) {
+                order.style.display = '';  // Siparişi göster
+            } else {
+                order.style.display = 'none';  // Siparişi gizle
+            }
+        });
+    }
+</script>
