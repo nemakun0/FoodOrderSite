@@ -41,10 +41,94 @@
         </main>
     </div>
 
-    <footer class="bg-dark text-white text-center py-3 mt-auto">
-        <div class="container">
-            &copy; @DateTime.Now.Year - FoodOrderSite |
-            <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-white text-decoration-underline">Gizlilik</a>
+    <!-- Footer Section -->
+    <footer class="footer-section mt-auto">
+        <div class="container-fluid px-5">
+            <div class="row g-4">
+                <!-- About Column -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand mb-3">
+                        <i class="fas fa-utensils me-2"></i>ForkBase
+                    </div>
+                    <p class="footer-about-text">
+                        Delivering happiness through delicious food. Order from your favorite restaurants with lightning-fast delivery.
+                    </p>
+                    <div class="social-links mt-4">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <ul class="footer-menu">
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Home</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Restaurants</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>How It Works</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Testimonials</a></li>
+                    </ul>
+                </div>
+
+                <!-- Help Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-heading">Help & Info</h5>
+                    <ul class="footer-menu">
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>My Account</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Track Order</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>FAQs</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Contact Us</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Column -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-heading">Newsletter</h5>
+                    <p class="footer-newsletter-text">
+                        Subscribe to get 10% discount and be the first to know about new restaurants and special offers!
+                    </p>
+                    <form class="newsletter-form mt-3">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your email address" required>
+                            <button class="btn btn-subscribe" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="payment-methods mt-4">
+                        <p class="mb-2">We Accept:</p>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                            <i class="fab fa-cc-apple-pay"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom mt-5 pt-4 border-top">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">&copy; 2025 ForkBase. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="footer-app-links">
+                            <a href="#" class="app-link me-2">
+                                <i class="fab fa-apple me-1"></i> App Store
+                            </a>
+                            <a href="#" class="app-link">
+                                <i class="fab fa-google-play me-1"></i> Google Play
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -53,6 +137,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    @RenderSection("Styles", required: false)
+    @await RenderSectionAsync("Styles", required: false)
 </body>
 </html>
