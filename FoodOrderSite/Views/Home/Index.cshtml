@@ -51,14 +51,35 @@
     </div>
 </div>
 
-<!-- Hero-Search Bölümü: Yeni Tasarım -->
+<!-- Hero-Search Bölümü -->
 <section class="hero-search-section">
-    <div class="container-fluid px-3 text-center text-black">
+    <!-- Video Container -->
+    <div class="video-container">
+        <!-- Videolar (kendi süreleri kadar oynayacak) -->
+        <video muted class="bg-video">
+            <source src="/videos/1_hamburger.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/2_doner.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/3_pide.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/4_pizza.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/5_kunefe.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- İçerik Overlay -->
+    <div class="content-overlay container text-center">
         <h2 class="search-title mb-4">Discover Restaurants And More Near You.</h2>
         <div class="d-flex justify-content-center">
             <div class="input-group search-input-group" style="max-width:500px;">
                 <span class="input-group-text bg-white"><i class="fas fa-map-marker-alt text-danger"></i></span>
-                <input type="text" class="form-control" placeholder="Enter delivery address" />
+                <input type="text" class="form-control" placeholder="Enter delivery address">
                 <button class="btn btn-danger"><i class="fas fa-arrow-right"></i></button>
             </div>
         </div>

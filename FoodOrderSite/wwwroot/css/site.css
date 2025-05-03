@@ -53,40 +53,103 @@ body {
     position: relative;
     width: 100vw;
     left: 50%;
-    transform: translateX(-50%);
-    max-width: 100vw;
-    background: #06229f /*url('/images/hero-food.jpg') center center / cover no-repeat*/;
-    height: 450px;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 450px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
 }
-.hero-search-section::before {
-    content: '';
+.video-container {
     position: absolute;
-    inset: 0;
-    backdrop-filter: blur(4px);
-    background: rgba(255,255,255,0.15);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
 }
-.hero-search-section .container-fluid {
-    position: relative;
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-video {
+    position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    padding: 0 1rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+    display: none; /* Baþlangýçta tüm videolar gizli */
 }
+
+    .bg-video.active {
+        display: block;
+    }
+
+.content-overlay {
+    position: relative;
+    background-color: rgba(6, 34, 159, 0.85);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+.content-wrapper {
+    position: relative;
+    background-color: rgba(6, 34, 159, 0.85);
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 2rem;
+    max-width: 800px;
+    width: 90%;
+}
+
 .search-title {
-    color: #000;
+    color: #fff;
     font-size: 2rem;
     font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
+
 .search-input-group .form-control {
     border-radius: 0 0.25rem 0.25rem 0;
 }
+
 .search-input-group .btn-danger {
     border-radius: 0 0.25rem 0.25rem 0;
 }
-.search-section .btn-warning {
+
+.btn-warning {
     background: #ffc107;
     border: none;
+    font-weight: 500;
 }
 
+/* Mobil uyumluluk */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .search-title {
+        font-size: 1.5rem;
+    }
+}
 /* ------------------ Kategoriler Bölümü ------------------ */
 .categories-section {
     padding: 60px 1rem;
