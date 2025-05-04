@@ -12,6 +12,7 @@ namespace FoodOrderSite.Models
         public DbSet<UserTable> UserTables { get; set; }
         public DbSet<RestaurantTable> RestaurantTables { get; set; }
         public DbSet<CustomerDeliveryAdderss> CustomerDeliveryAdderss { get; set; }
+        public DbSet<ScheduleTable> Schedules { get; set; }
 
         // Diğer tablolar da buraya eklenecek
     }
