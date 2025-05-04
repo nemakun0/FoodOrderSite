@@ -26,6 +26,19 @@ namespace FoodOrderSite.Controllers
         {
             if (ModelState.IsValid)
             {
+                // ✅ Email kontrolü
+                if (_context.UserTables.Any(u => u.Email == model.Email))
+                {
+                    ModelState.AddModelError("Email", "Bu email zaten kayıtlı.");
+                    return View(model);
+                }
+
+                // ✅ Telefon kontrolü
+                if (_context.UserTables.Any(u => u.Phone == model.Phone))
+                {
+                    ModelState.AddModelError("Phone", "Bu telefon numarası zaten kayıtlı.");
+                    return View(model);
+                }
                 // 1. UserTable modelini oluştur
                 var user = new UserTable
                 {
@@ -92,15 +105,3 @@ namespace FoodOrderSite.Controllers
         }
     }
 }
-//using Microsoft.AspNetCore.Mvc;
-
-//namespace FoodOrderSite.Controllers
-//{
-//    public class CustomerSignUpController : Controller
-//    {
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-//    }
-//}

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoodOrderSite.Models.ViewModels
 {
@@ -18,10 +19,12 @@ namespace FoodOrderSite.Models.ViewModels
 
             [Required]
             [EmailAddress]
+            [Remote(action: "VerifyEmail", controller: "CustomerSignUp", ErrorMessage = "Bu email adresi zaten kayıtlı.")]
             public string Email { get; set; }
 
             [Required]
             [Phone]
+            [Remote(action: "VerifyPhone", controller: "CustomerSignUp", ErrorMessage = "Bu telefon numarası zaten kayıtlı.")]
             public string Phone { get; set; }
 
             [Required]

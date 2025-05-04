@@ -21,6 +21,19 @@ namespace FoodOrderSite.Controllers
         {
             if (ModelState.IsValid)
             {
+                // ✅ Email kontrolü
+                if (_context.UserTables.Any(u => u.Email == model.Email))
+                {
+                    ModelState.AddModelError("Email", "Bu email zaten kayıtlı.");
+                    return View(model);
+                }
+
+                // ✅ Telefon kontrolü
+                if (_context.UserTables.Any(u => u.Phone == model.Phone))
+                {
+                    ModelState.AddModelError("Phone", "Bu telefon numarası zaten kayıtlı.");
+                    return View(model);
+                }
                 var user = new UserTable
                 {
                     Name = model.Name,
