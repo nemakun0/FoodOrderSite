@@ -1,57 +1,48 @@
-﻿@{
-    Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
-}
+﻿@model FoodOrderSite.Models.ViewModels.RestaurantSettingsViewModel
+
 @{
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
     ViewBag.Title = "Restoran Ayarları";
 }
+
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<form>
+<form asp-action="UpdateSettings" asp-controller="RestaurantSettings" method="post">
+    <input type="hidden" asp-for="RestaurantId" />
+    <input type="hidden" asp-for="UserId" />
+
     <div class="row mb-4">
-        <!-- Restoran Adı -->
         <div class="col-md-6 mb-3">
-            <label>Restoran Adı</label>
-            <input type="text" class="form-control" value="Lezzet Durağı" />
+            <label asp-for="RestaurantName"></label>
+            <input asp-for="RestaurantName" class="form-control" />
         </div>
-        <!-- Telefon -->
         <div class="col-md-6 mb-3">
-            <label>Telefon</label>
-            <input type="text" class="form-control" value="0555 123 45 67" />
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" class="form-control" />
         </div>
-        <!-- E-posta -->
         <div class="col-md-6 mb-3">
-            <label>E-posta</label>
-            <input type="email" class="form-control" value="info@lezzetdurağı.com" />
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" />
         </div>
-        <!-- Şehir -->
         <div class="col-md-6 mb-3">
-            <label>Şehir</label>
-            <input type="text" class="form-control" value="İstanbul" />
+            <label asp-for="City"></label>
+            <input asp-for="City" class="form-control" />
         </div>
-        <!-- İlçe -->
         <div class="col-md-6 mb-3">
-            <label>İlçe</label>
-            <input type="text" class="form-control" value="Kadıköy" />
+            <label asp-for="District"></label>
+            <input asp-for="District" class="form-control" />
         </div>
-        <!-- Adres -->
         <div class="col-12 mb-3">
-            <label>Adres</label>
-            <input type="text" class="form-control" value="Bahariye Cd. No:12" />
+            <label asp-for="Address"></label>
+            <input asp-for="Address" class="form-control" />
         </div>
-        <!-- Açıklama -->
         <div class="col-12 mb-3">
-            <label>Açıklama</label>
-            <textarea class="form-control" rows="3">En lezzetli yemekler burada!</textarea>
-        </div>
-        <!-- Fotoğraf -->
-        <div class="col-12 mb-3">
-            <label>Fotoğraf</label>
-            <input type="file" class="form-control" />
-            <img src="/images/restaurant.jpg" class="mt-2" style="max-width:200px; border-radius:8px;" />
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
         </div>
     </div>
 
-    <!-- Haftanın günleri ve saatleri -->
+    <!-- Haftalık Çalışma Saatleri -->
     <h4 class="mb-3 text-primary">Haftalık Çalışma Saatleri</h4>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
@@ -63,23 +54,24 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var gun in new[] { "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" })
+                @for (int i = 0; i < Model.Schedules.Count; i++)
                 {
                     <tr>
-                        <td>@gun</td>
+                        <td>@Model.Schedules[i].DayOfWeek</td>
                         <td>
-                            <input type="time" class="form-control" value="09:00" />
+                            <input type="time" name="Schedules[@i].OpeningTime" class="form-control" value="@Model.Schedules[i].OpeningTime.ToString(@"hh\:mm")" />
                         </td>
                         <td>
-                            <input type="time" class="form-control" value="22:00" />
+                            <input type="time" name="Schedules[@i].ClosingTime" class="form-control" value="@Model.Schedules[i].ClosingTime.ToString(@"hh\:mm")" />
                         </td>
                     </tr>
                 }
+
             </tbody>
         </table>
     </div>
 
     <div class="mt-4">
-        <button class="btn btn-success">Güncelle</button>
+        <button type="submit" class="btn btn-success">Güncelle</button>
     </div>
 </form>
