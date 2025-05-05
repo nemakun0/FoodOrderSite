@@ -64,6 +64,8 @@ namespace FoodOrderSite.Controllers
                 var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, user.Email),
+        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // UserId ekleniyor
+        new Claim("UserId", user.UserId.ToString()), // Alternatif olarak custom claim
         new Claim(ClaimTypes.Role, user.Role)
     };
 

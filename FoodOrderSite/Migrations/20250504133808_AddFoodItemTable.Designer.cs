@@ -4,6 +4,7 @@ using FoodOrderSite.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodOrderSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250504133808_AddFoodItemTable")]
+    partial class AddFoodItemTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,28 +24,6 @@ namespace FoodOrderSite.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("FoodOrderSite.Models.CategoriesTable", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("CategoriesTables");
-                });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
                 {
@@ -75,21 +56,6 @@ namespace FoodOrderSite.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("CustomerDeliveryAdderss");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.FoodItemCategoriesTable", b =>
-                {
-                    b.Property<int>("FoodItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FoodItemId", "CategoryId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("FoodItemCategoriesTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemTable", b =>
@@ -239,25 +205,6 @@ namespace FoodOrderSite.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.FoodItemCategoriesTable", b =>
-                {
-                    b.HasOne("FoodOrderSite.Models.CategoriesTable", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FoodOrderSite.Models.FoodItemTable", "FoodItem")
-                        .WithMany()
-                        .HasForeignKey("FoodItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("FoodItem");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemTable", b =>
