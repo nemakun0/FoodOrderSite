@@ -8,7 +8,7 @@ namespace FoodOrderSite.Controllers
 {
     public class DiscoverController : Controller
     {
-        private const int PageSize = 12;
+        private const int PageSize = 8; // Reduced for better mobile display
         private List<Restaurant> _restaurants;
 
         public DiscoverController()
@@ -25,7 +25,7 @@ namespace FoodOrderSite.Controllers
                 SortBy = sortBy,
                 SearchTerm = searchTerm,
                 CurrentPage = page,
-                CuisineTypes = _restaurants.Select(r => r.CuisineType).Distinct().ToList(),
+                CuisineTypes = _restaurants.Select(r => r.CuisineType).Distinct().OrderBy(t => t).ToList(),
                 TotalRestaurants = _restaurants.Count,
                 PageSize = PageSize
             };
@@ -71,6 +71,7 @@ namespace FoodOrderSite.Controllers
                 "rating" => restaurants.OrderByDescending(r => r.Rating).ToList(),
                 "deliveryTime" => restaurants.OrderBy(r => r.DeliveryTime).ToList(),
                 "deliveryFee" => restaurants.OrderBy(r => r.DeliveryFee).ToList(),
+                "minOrder" => restaurants.OrderBy(r => r.MinOrderAmount).ToList(),
                 _ => restaurants.OrderByDescending(r => r.IsPromoted)
                                .ThenBy(r => r.Name)
                                .ToList()
@@ -81,15 +82,40 @@ namespace FoodOrderSite.Controllers
         {
             return new List<Restaurant>
             {
-                new Restaurant { Id = 1, Name = "Lezzet Durağı", CuisineType = "Türk",
-                    DeliveryFee = 5.99m, MinOrderAmount = 20.00m, Rating = 4.5,
-                    ImageUrl = "/images/rest1.jpg", DeliveryTime = 35, IsPromoted = true },
-                new Restaurant { Id = 2, Name = "Pizza Palace", CuisineType = "İtalyan",
-                    DeliveryFee = 7.99m, MinOrderAmount = 25.00m, Rating = 4.2,
-                    ImageUrl = "/images/rest2.jpg", DeliveryTime = 40, IsPromoted = false },
-                new Restaurant { Id = 3, Name = "Burger Town", CuisineType = "Fast Food",
-                    DeliveryFee = 4.99m, MinOrderAmount = 15.00m, Rating = 4.0,
-                    ImageUrl = "/images/rest3.jpg", DeliveryTime = 25, IsPromoted = true }
+                new Restaurant {
+                    Id = 1,
+                    Name = "Lezzet Durağı - Geleneksel Türk Mutfağı",
+                    CuisineType = "Türk",
+                    DeliveryFee = 5.99m,
+                    MinOrderAmount = 20.00m,
+                    Rating = 4.5,
+                    ImageUrl = "/images/rest1.jpg",
+                    DeliveryTime = 35,
+                    IsPromoted = true
+                },
+                new Restaurant {
+                    Id = 2,
+                    Name = "Pizza Palace",
+                    CuisineType = "İtalyan",
+                    DeliveryFee = 7.99m,
+                    MinOrderAmount = 25.00m,
+                    Rating = 4.2,
+                    ImageUrl = "/images/rest2.jpg",
+                    DeliveryTime = 40,
+                    IsPromoted = false
+                },
+                new Restaurant {
+                    Id = 3,
+                    Name = "Burger Town",
+                    CuisineType = "Fast Food",
+                    DeliveryFee = 4.99m,
+                    MinOrderAmount = 15.00m,
+                    Rating = 4.0,
+                    ImageUrl = "", // Will use default image
+                    DeliveryTime = 25,
+                    IsPromoted = true
+                },
+                // Add more sample data...
             };
         }
     }
