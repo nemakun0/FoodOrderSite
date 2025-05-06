@@ -95,24 +95,137 @@
         </div>
     </div>
 </div>
+
+<!-- Ürünleri Düzenleme Modal bölümü -->
+<div class="modal fade" id="duzenleUrunModal" tabindex="-1" aria-labelledby="duzenleUrunModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:15px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="duzenleUrunModalLabel">Ürün Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="EditProduct" asp-controller="ProductandMenu" method="post" enctype="multipart/form-data">
+                    @Html.HiddenFor(m => m.FoodItemId)
+                    <!-- Ürün Adı -->
+                    <div class="mb-3">
+                        <label asp-for="Name">Ürün Adı</label>
+                        <input asp-for="Name" class="form-control" placeholder="Ürün adı girin" id="productName" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <!-- Kategori Seçimi -->
+                    <div class="mb-3">
+                        <label asp-for="SelectedCategoryId" class="form-label">Kategori</label>
+                        <select asp-for="SelectedCategoryId" class="form-select"
+                                asp-items="@(new SelectList(Model.AllCategories, "CategoryId", "Name"))" id="productCategoryId">
+                            <option selected disabled>Kategori seçin</option>
+                        </select>
+                        <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
+                    </div>
+                    <!-- Fiyat -->
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label">Fiyat</label>
+                        <input asp-for="Price" class="form-control" placeholder="Fiyat" id="productPrice" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <!-- Resim -->
+                    <div class="mb-3">
+                        <label asp-for="ImageFile" class="form-label">Resim</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" id="productImageFile" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" id="productDescription" placeholder="Ürün açıklaması"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <!-- Is Available (Radio Buttons) -->
+                    <div class="mb-3">
+                        <label>
+                            Sunulacak mı?
+                            <i class="bi bi-info-circle"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="right"
+                               title="Evet demeniz halinde kaydettiğinizde ürün müşteriler tarafından sipariş edilebilir durumda olacaktır">
+                            </i>
+                        </label><br />
+                        <div class="form-check form-check-inline">
+                            <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableYes" value="true" />
+                            <label class="form-check-label" for="availableYes">Evet</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableNo" value="false" />
+                            <label class="form-check-label" for="availableNo">Hayır</label>
+                        </div>
+                        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                            });
+                        });
+                    </script>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Ürünleri listeleme bölümü -->
-<div class="container mb-5">
-    <h4 class="mb-3 text-primary">Mevcut Ürünler</h4>
-    <div class="row g-3">
-        <!-- Örnek ürün kartları -->
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100" style="border-radius:15px;">
-                <img src="/images/yemek1.jpg" class="card-img-top" style="height:180px; object-fit:cover; border-top-left-radius:15px; border-top-right-radius:15px;">
-                <div class="card-body">
-                    <h5 class="card-title">Pizza Margherita</h5>
-                    <p class="card-text">Fiyat: 75₺</p>
-                    <div class="d-flex justify-content-between">
-                        <button class="btn btn-sm btn-success">Düzenle</button>
-                        <button class="btn btn-sm btn-danger">Sil</button>
+
+    <div class="container mb-5">
+        <h4 class="mb-3 text-primary">Mevcut Ürünler</h4>
+        <div class="row g-3">
+            <!-- Örnek ürün kartları -->
+        @foreach (var item in Model.ExistingProducts)
+        {
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100" style="border-radius:15px;">
+                    <img src="@item.Image" class="card-img-top" style="height:180px; object-fit:cover; border-top-left-radius:15px; border-top-right-radius:15px;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">@item.Price:₺</p>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-sm btn-success"
+                                    onclick="editProduct(@item.FoodItemId, '@item.Name', '@item.Description', @item.Price, '@item.Image', @item.CategoryId, @item.IsAvailable.ToString().ToLower())"
+                                    data-bs-target="#duzenleUrunModal">
+                                Düzenle
+                            </button>
+                            <button class="btn btn-sm btn-danger">Sil</button>
+                        </div>
                     </div>
                 </div>
             </div>
+        }
+            <!-- Daha fazla ürün kartı ekleyebilirsiniz -->
         </div>
-        <!-- Daha fazla ürün kartı ekleyebilirsiniz -->
     </div>
-</div>
+<script>
+    // Edit product function to populate the modal form fields
+    function editProduct(id, name, description, price, image, categoryId, isAvailable) {
+        // Modal'ı açma
+        var myModal = new bootstrap.Modal(document.getElementById('duzenleUrunModal'), {
+            keyboard: false
+        });
+        myModal.show();
+
+        // Populate the modal form fields
+        document.querySelector("[name='FoodItemId']").value = id;
+        document.getElementById("productName").value = name;
+        document.getElementById("productCategoryId").value = categoryId;
+        document.getElementById("productPrice").value = price;
+        document.getElementById("productDescription").value = description;
+
+        // IsAvailable radyo butonlarını set etme
+        if (isAvailable) {
+            document.getElementById("availableYes").checked = true;
+        } else {
+            document.getElementById("availableNo").checked = true;
+        }
+    }
+</script>
