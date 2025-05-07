@@ -15,6 +15,7 @@ namespace FoodOrderSite.Models
         public DbSet<FoodItemTable> FoodItemTables { get; set;}
         public DbSet<CategoriesTable> CategoriesTables { get; set; }
         public DbSet<FoodItemCategoriesTable> FoodItemCategoriesTables { get; set; }
+        public DbSet<ScheduleTable> Schedules { get; set; }
 
         // Diğer tablolar da buraya eklenecek
         protected override void OnModelCreating(ModelBuilder modelBuilder)
