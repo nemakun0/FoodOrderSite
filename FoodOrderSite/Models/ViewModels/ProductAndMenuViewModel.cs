@@ -41,5 +41,6 @@ namespace FoodOrderSite.Models.ViewModels
         public string? Image { get; set; }
         public bool IsAvailable { get; set; }
         public int CategoryId { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

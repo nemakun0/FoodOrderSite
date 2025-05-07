@@ -193,6 +193,26 @@ namespace FoodOrderSite.Controllers
 
             return RedirectToAction("Index"); // Veya istediğiniz sayfaya yönlendirebilirsiniz
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFoodItem(int foodItemId)
+        {
+            var product = await _context.FoodItemTables
+                .FirstOrDefaultAsync(p => p.FoodItemId == foodItemId);
+
+            if (product == null)
+            {
+                return NotFound("Ürün bulunamadı.");
+            }
+
+            // Soft delete
+            product.IsDeleted = true;
+            _context.FoodItemTables.Update(product);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
         public IActionResult Index()
         {
             var categories = _context.CategoriesTables.ToList();
@@ -203,6 +223,7 @@ namespace FoodOrderSite.Controllers
                     CategoryId = c.CategoryId,
                     Name = c.Name
                 }).ToList();
+
             // Ürünleri çek
             var products = _context.FoodItemTables.ToList();
 
@@ -214,7 +235,10 @@ namespace FoodOrderSite.Controllers
                     Description = p.Description,
                     Price = p.Price,
                     Image = p.Image,
-                    IsAvailable = p.IsAvailable
+                    IsAvailable = p.IsAvailable,
+                    IsDeleted = p.IsDeleted
+                    //    CategoryId = _context.FoodItemCategoriesTables
+                    //.FirstOrDefault(fic => fic.FoodItemId == p.FoodItemId)?.CategoryId
                 }).ToList();
 
             var viewModel = new ProductAndMenuViewModel

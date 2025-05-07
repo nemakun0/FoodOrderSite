@@ -182,21 +182,29 @@
         <h4 class="mb-3 text-primary">Mevcut Ürünler</h4>
         <div class="row g-3">
             <!-- Örnek ürün kartları -->
-        @foreach (var item in Model.ExistingProducts)
+        @foreach (var item in Model.ExistingProducts.OrderBy(p => p.IsDeleted))
         {
+            var isDeletedClass = item.IsDeleted ? "opacity-50 bg-light border border-danger" : "";
+            var textDecoration = item.IsDeleted ? "text-decoration-line-through" : "";
             <div class="col-md-4">
-                <div class="card shadow-sm h-100" style="border-radius:15px;">
+                <div class="card shadow-sm h-100 @isDeletedClass" style="border-radius:15px;">
                     <img src="@item.Image" class="card-img-top" style="height:180px; object-fit:cover; border-top-left-radius:15px; border-top-right-radius:15px;">
                     <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">@item.Price:₺</p>
+                        <h5 class="card-title @textDecoration">@item.Name</h5>
+                        <p class="card-text">@item.Price₺</p>
                         <div class="d-flex justify-content-between">
-                            <button class="btn btn-sm btn-success"
-                                    onclick="editProduct(@item.FoodItemId, '@item.Name', '@item.Description', @item.Price, '@item.Image', @item.CategoryId, @item.IsAvailable.ToString().ToLower())"
-                                    data-bs-target="#duzenleUrunModal">
-                                Düzenle
-                            </button>
-                            <button class="btn btn-sm btn-danger">Sil</button>
+                            @if(!item.IsDeleted)
+                            {
+                                <button class="btn btn-sm btn-success"
+                                        onclick="editProduct(@item.FoodItemId, '@item.Name', '@item.Description', @item.Price, '@item.Image', @item.CategoryId, @item.IsAvailable.ToString().ToLower())"
+                                        data-bs-target="#duzenleUrunModal">
+                                    Düzenle
+                                </button>
+                                <form asp-action="DeleteFoodItem" asp-controller="ProductandMenu" method="post">
+                                    <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                    <button class="btn btn-sm btn-danger" type="submit">Sil</button>
+                                </form>
+                            }
                         </div>
                     </div>
                 </div>
