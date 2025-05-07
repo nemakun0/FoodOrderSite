@@ -1,332 +1,179 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System.IO
+@using System.Globalization
+@model IEnumerable<FoodOrderSite.Models.Product>
+@{
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="hero-title">The Freshest Flavors Delivered to Your Door!</h1>
-                <p class="hero-subtitle">Discover thousands of food varieties from hundreds of restaurants with fast delivery tailored to your taste.</p>
-                <button class="btn btn-primary btn-lg hero-button">Explore Now</button>
-            </div>
-            <div class="col-lg-6">
-                <img src="/images/hero-food.jpg" alt="Various delicious foods" class="img-fluid hero-image">
-            </div>
+<!-- Özel Başlık -->
+<header class="custom-header">
+    <div class="container-fluid position-relative px-3">
+        <div class="position-absolute start-0 top-50 translate-middle-y ps-3">
+            <i id="profileIcon" class="fas fa-user-circle fa-2x profile-icon"></i>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a class="logo" asp-controller="Home" asp-action="Index">ForkBase</a>
+        </div>
+        <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
+            <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
+                <i class="fas fa-shopping-cart fa-2x"></i>
+                @{
+                    var data = Context.Session.GetString("Cart");
+                    var count = data != null
+                    ? (Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.ViewModels.CartItemViewModel>>(data)?.Sum(x => x.Quantity) ?? 0)
+                    : 0;
+                }
+                @if (count > 0)
+                {
+                    <span class="badge bg-danger rounded-circle position-absolute top-0 end-0">@count</span>
+                }
+            </a>
         </div>
     </div>
-</section>
+</header>
 
-<!-- Categories Section -->
-<section class="categories-section">
-    <div class="container">
-        <h2 class="section-title">Food Categories</h2>
-        <p class="section-subtitle">Discover your favorite flavors</p>
-
-        <div class="row">
-            <!-- Category Cards -->
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="/images/category-burger.jpg" alt="Hamburger" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Fast Food</h3>
-                        <a href="#" class="btn btn-outline-light">Browse</a>
-                    </div>
-                </div>
+<!-- Profil Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Hoş geldin!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="/images/category-pizza.jpg" alt="Pizza" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Pizza</h3>
-                        <a href="#" class="btn btn-outline-light">Browse</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="/images/category-salad.jpg" alt="Salad" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Healthy</h3>
-                        <a href="#" class="btn btn-outline-light">Browse</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="category-card">
-                    <img src="/images/category-dessert.jpg" alt="Dessert" class="category-image">
-                    <div class="category-overlay">
-                        <h3>Desserts</h3>
-                        <a href="#" class="btn btn-outline-light">Browse</a>
-                    </div>
+            <div class="modal-body text-center">
+                <p>Devam etmek için giriş yap veya kayıt ol</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">Giriş Yap</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Kayıt Ol</button>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<!-- Popular Products Section -->
-<section class="popular-products-section">
-    <div class="container">
-        <h2 class="section-title">Popular Products</h2>
-        <p class="section-subtitle">Most preferred flavors</p>
+<!-- Hero-Search Bölümü -->
+<section class="hero-search-section">
+    <!-- Video Container -->
+    <div class="video-container">
+        <!-- Videolar (kendi süreleri kadar oynayacak) -->
+        <video muted class="bg-video">
+            <source src="/videos/1_hamburger.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/2_doner.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/3_pide.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/4_pizza.mp4" type="video/mp4">
+        </video>
+        <video muted class="bg-video">
+            <source src="/videos/5_kunefe.mp4" type="video/mp4">
+        </video>
+    </div>
 
-        <div class="row">
-            <!-- Product Cards -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <div class="product-badge">Best Seller</div>
-                    <img src="/images/product-burger.jpg" alt="Double Cheeseburger" class="product-image">
-                    <div class="product-body">
-                        <h3>Double Cheeseburger</h3>
-                        <p class="product-description">Double patty, cheddar cheese and special sauce</p>
-                        <div class="product-price">$5.99</div>
-                        <button class="btn btn-primary btn-block">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <img src="/images/product-pizza.jpg" alt="Pepperoni Pizza" class="product-image">
-                    <div class="product-body">
-                        <h3>Pepperoni Pizza</h3>
-                        <p class="product-description">Lots of pepperoni and mozzarella cheese</p>
-                        <div class="product-price">$8.99</div>
-                        <button class="btn btn-primary btn-block">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <div class="product-badge">New</div>
-                    <img src="/images/product-sushi.jpg" alt="Sushi Plate" class="product-image">
-                    <div class="product-body">
-                        <h3>Sushi Plate</h3>
-                        <p class="product-description">12 pieces of assorted sushi</p>
-                        <div class="product-price">$12.99</div>
-                        <button class="btn btn-primary btn-block">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="product-card">
-                    <img src="/images/product-pasta.jpg" alt="Carbonara" class="product-image">
-                    <div class="product-body">
-                        <h3>Carbonara</h3>
-                        <p class="product-description">Classic Italian style carbonara</p>
-                        <div class="product-price">$7.99</div>
-                        <button class="btn btn-primary btn-block">Add to Cart</button>
-                    </div>
-                </div>
+    <!-- İçerik Overlay -->
+    <div class="content-overlay container text-center">
+        <h2 class="search-title mb-4">Discover Restaurants And More Near You.</h2>
+        <div class="d-flex justify-content-center">
+            <div class="input-group search-input-group" style="max-width:500px;">
+                <span class="input-group-text bg-white"><i class="fas fa-map-marker-alt text-danger"></i></span>
+                <input type="text" class="form-control" placeholder="Enter delivery address">
+                <button class="btn btn-danger"><i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
+        <button class="btn btn-warning mt-3">Sign in for saved address</button>
     </div>
 </section>
 
-@section Styles {
-    <style>
-        /* Hero Section Styles */
-        .hero-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #ffe8e8 100%);
-            padding: 80px 0;
-            margin-bottom: 40px;
-        }
-
-        .hero-title {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            color: #666;
-        }
-
-        .hero-button {
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: 600;
-            background: linear-gradient(to right, #ff6b6b, #ff8e53);
-            border: none;
-        }
-
-        .hero-image {
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Categories Section Styles */
-        .categories-section {
-            padding: 60px 0;
-            background-color: #fff;
-        }
-
-        .section-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .section-subtitle {
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 40px;
-            color: #666;
-        }
-
-        .category-card {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        }
-
-            .category-card:hover {
-                transform: translateY(-10px);
+<!-- Kategoriler Bölümü -->
+<section class="categories-section py-5 bg-light">
+    <div class="container-fluid px-3">
+        <h2 class="section-title text-center mb-4">Yemek Kategorileri</h2>
+        <div class="row justify-content-center">
+            @{
+                // 16 kategori resmi
+                var cats = new[] {
+            "/images/category-burger.jpg",
+            "/images/category-pizza.jpg",
+            "/images/category-salad.jpg",
+            "/images/category-dessert.jpg",
+            "/images/category-soup.jpg",
+            "/images/category-steak.jpg",
+            "/images/category-seafood.jpg",
+            "/images/category-pasta.jpg",
+            "/images/category-sandwich.jpg",
+            "/images/category-sushi.jpg",
+            "/images/category-taco.jpg",
+            "/images/category-noodles.jpg",
+            "/images/category-curry.jpg",
+            "/images/category-ramen.jpg",
+            "/images/category-smoothie.jpg",
+            "/images/category-coffee.jpg"
+            };
             }
+            @for (int i = 0; i < cats.Length; i++)
+            {
+                var hiddenClass = i < 4 ? "" : "d-none";
+                // dosya adını al, prefix'i kaldır, ilk harfleri büyüt
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(cats[i]);           // e.g. "category-seafood"
+                var rawName = fileName.Replace("category-", "");                   // e.g. "seafood"
+                var displayName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(rawName); // "Seafood"
 
-        .category-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .category-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-            .category-overlay h3 {
-                font-size: 1.3rem;
-                margin-bottom: 10px;
+                <div class="col-sm-6 col-md-3 mb-4 category-item @hiddenClass">
+                    <div class="category-card text-center">
+                        <div class="thumb-wrap">
+                            <img src="@Url.Content(cats[i])" alt="@displayName" class="img-fluid" />
+                        </div>
+                        <p class="mt-2 fw-semibold">@displayName</p>
+                    </div>
+                </div>
             }
+        </div>
 
-        /* Popular Products Section Styles */
-        .popular-products-section {
-            padding: 60px 0;
-            background-color: #f9f9f9;
-        }
-
-        .product-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-            .product-card:hover {
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                transform: translateY(-5px);
-            }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(to right, #ff4757, #ff6b81);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 1;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .product-body {
-            padding: 20px;
-        }
-
-            .product-body h3 {
-                font-size: 1.2rem;
-                margin-bottom: 10px;
-                color: #333;
-            }
-
-        .product-description {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 15px;
-            min-height: 40px;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ff6b81;
-            margin-bottom: 15px;
-        }
-
-        /* Responsive Settings */
-        @@media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .category-card, .product-card {
-                margin-bottom: 20px;
-            }
-        }
-    </style>
-}
-
-@section Scripts {
+        <!-- Butonlar -->
+        <div class="text-center mt-3">
+            <button id="loadMoreCategories" class="btn btn-primary">And More</button>
+            <button id="showLessCategories" class="btn btn-danger d-none">Less</button>
+        </div>
+    </div>
+</section>
+@section scripts {
     <script>
-        // Hero button click action
-        document.querySelector('.hero-button').addEventListener('click', function () {
-            document.querySelector('.categories-section').scrollIntoView({
-                behavior: 'smooth'
-            });
+        const loadBtn = document.getElementById('loadMoreCategories');
+        const lessBtn = document.getElementById('showLessCategories');
+        const items = document.querySelectorAll('.category-item');
+
+        loadBtn.addEventListener('click', function() {
+          // 4'ten sonrası zaten d-none, onları göster
+          items.forEach(el => el.classList.remove('d-none'));
+          // Butonları değiştir
+          loadBtn.classList.add('d-none');
+          lessBtn.classList.remove('d-none');
         });
 
-        // Product card hover effects (disabled for mobile)
-        if (window.innerWidth > 768) {
-            const productCards = document.querySelectorAll('.product-card');
-
-            productCards.forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.15)';
-                });
-
-                card.addEventListener('mouseleave', function () {
-                    this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
-                });
-            });
-        }
+        lessBtn.addEventListener('click', function() {
+          // İlk 4'ü bırak, geri kalanları gizle
+          items.forEach((el, idx) => {
+            if (idx >= 4) el.classList.add('d-none');
+          });
+          // Butonları tekrar değiştir
+          lessBtn.classList.add('d-none');
+          loadBtn.classList.remove('d-none');
+        });
     </script>
 }
+
+<!-- Sizi Neler Bekliyor Bölümü -->
+<section class="expectations-section py-5">
+    <div class="container-fluid px-3">
+        <h2 class="section-title text-center mb-4">ForkBase'de Sizi Neler Bekliyor?</h2>
+        <ul class="list-unstyled fs-5">
+            <li>✓ Yemek siparişinde onlarca kategori, binlerce çeşit ürün!</li>
+            <li>✓ Yemek siparişlerinizde her gün on binlerce indirim!</li>
+            <li>✓ Online ya da kapıda, dilediğiniz gibi ödeme seçeneği!</li>
+            <li>✓ Siparişinizle ilgili size her zaman destek olmaya hazır, 7/24 Canlı Yardım ekibi!</li>
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,48 @@
+﻿@model FoodOrderSite.Models.Restaurant
+
+<div class="card h-100 restaurant-card">
+    @if (Model.IsPromoted)
+    {
+        <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+            <i class="fas fa-crown me-1"></i>Öne Çıkan
+        </span>
+    }
+    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-restaurant.jpg" : Model.ImageUrl)"
+         class="card-img-top restaurant-image"
+         alt="@Model.Name"
+         onerror="this.src='/images/default-restaurant.jpg'">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-secondary">@Model.CuisineType</span>
+            <span class="text-warning">
+                @for (int j = 0; j < 5; j++)
+                {
+                    if (j < Math.Floor(Model.Rating))
+                    {
+                        <i class="fas fa-star"></i>
+                    }
+                    else if (j < Model.Rating)
+                    {
+                        <i class="fas fa-star-half-alt"></i>
+                    }
+                    else
+                    {
+                        <i class="far fa-star"></i>
+                    }
+                }
+                <span class="text-dark ms-1">(@Model.Rating.ToString("0.0"))</span>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between text-muted small">
+            <span><i class="fas fa-clock me-1"></i>@Model.DeliveryTime dk</span>
+            <span><i class="fas fa-shopping-bag me-1"></i>Min. @Model.MinOrderAmount.ToString("C")</span>
+        </div>
+    </div>
+    <div class="card-footer bg-white border-0 pt-0">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted"><i class="fas fa-motorcycle me-1"></i>@Model.DeliveryFee.ToString("C")</span>
+            <a href="#" class="btn btn-sm btn-outline-primary">Sipariş Ver</a>
+        </div>
+    </div>
+</div>

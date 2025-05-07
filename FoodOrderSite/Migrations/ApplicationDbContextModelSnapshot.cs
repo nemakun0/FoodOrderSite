@@ -41,7 +41,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("CategoriesTables");
+                    b.ToTable("CategoriesTables", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
@@ -74,7 +74,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CustomerDeliveryAdderss");
+                    b.ToTable("CustomerDeliveryAdderss", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemCategoriesTable", b =>
@@ -89,7 +89,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("FoodItemCategoriesTables");
+                    b.ToTable("FoodItemCategoriesTables", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemTable", b =>
@@ -129,7 +129,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("FoodItemTables");
+                    b.ToTable("FoodItemTables", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantTable", b =>
@@ -178,35 +178,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RestaurantTables");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.ScheduleTable", b =>
-                {
-                    b.Property<int>("ScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleId"));
-
-                    b.Property<TimeSpan>("ClosingTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<TimeSpan>("OpeningTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ScheduleId");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("Schedules");
+                    b.ToTable("RestaurantTables", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.UserTable", b =>
@@ -255,7 +227,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserTables");
+                    b.ToTable("UserTables", (string)null);
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
@@ -308,17 +280,6 @@ namespace FoodOrderSite.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.ScheduleTable", b =>
-                {
-                    b.HasOne("FoodOrderSite.Models.RestaurantTable", "Restaurant")
-                        .WithMany()
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Restaurant");
                 });
 #pragma warning restore 612, 618
         }

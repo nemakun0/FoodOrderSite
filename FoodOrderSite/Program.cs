@@ -1,49 +1,54 @@
-using FoodOrderSite.Models;
+using System;
+using FoodOrderSite.Models;       // yeni: DbContext burada
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews()
-    .AddViewOptions(options =>
-    {
-        options.HtmlHelperOptions.ClientValidationEnabled = true;
-    })
-    .AddDataAnnotationsLocalization();
+builder.Services.AddDistributedMemoryCache();
 
-// Session servisini ekleyelim
-builder.Services.AddDistributedMemoryCache(); // Oturum verilerini bellekte tutmak için
-//builder.Services.AddSession(options =>
-//{
-//    options.IdleTimeout = TimeSpan.FromMinutes(30); // Oturum zaman aþýmýný belirliyoruz
-//    options.Cookie.HttpOnly = true; // Güvenlik için HttpOnly olarak ayarlýyoruz
-//});
-
-// Add services to the container
+// 2) Session servisini ekleyin
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromDays(7); // RememberMe için 7 gün
+    options.IdleTimeout = TimeSpan.FromMinutes(30);    // Örnek timeout
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    options.Cookie.IsEssential = true;                 // GDPR uyumluluðu
 });
 
-// Remember me butonu için cookie ayarlamasý
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddHttpContextAccessor();
+
+// Cookie Authentication servisini kaydet
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/SignIn/Index";
-        options.AccessDeniedPath = "/SignIn/AccessDenied"; // Opsiyonel
+        options.LoginPath = "/SignIn/Index";      // Giriþ sayfanýzýn route’u
+        options.AccessDeniedPath = "/SignIn/AccessDenied"; // Ýsterseniz ayrý bir eriþim reddedildi sayfasý
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);  // Opsiyonel: cookie ömrü
+        options.SlidingExpiration = true;                 // Opsiyonel
     });
 
-// DbContext servisini ekle
+// Yetkilendirme servislerini ekleyin (MVC zaten bunu çaðýrýr ama açýkça koymak da iyi)
+builder.Services.AddAuthorization();
+
+// 3) DbContext ve MVC desteði
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon"))
+);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// ----------------- MIDDLEWARE PIPELINE -----------------
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
@@ -54,15 +59,18 @@ app.UseStaticFiles();
 
 // Session middleware'ini ekliyoruz
 app.UseRouting();
-app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession();
+
+// MapControllerRoute çaðý ve noktalý virgül unutulmuþtu:
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Uygulamayý baþlatmayý unutmayýn:
 app.Run();
 
 //using FoodOrderSite.Models;

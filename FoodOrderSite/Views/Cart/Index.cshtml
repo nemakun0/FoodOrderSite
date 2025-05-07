@@ -1,0 +1,29 @@
+﻿@model List<FoodOrderSite.ViewModels.CartItemViewModel>
+@{
+    ViewData["Title"] = "Sepetim";
+    decimal total = 0;
+}
+<h2>Sepetim</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Yemek</th>
+            <th>Adet</th>
+            <th>Birim Fiyat</th>
+            <th>Toplam</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price.ToString("C2")</td>
+                <td>@item.Subtotal.ToString("C2")</td>
+            </tr>
+            total += item.Subtotal;
+        }
+    </tbody>
+</table>
+<p><strong>Genel Toplam: @total.ToString("C2")</strong></p>
