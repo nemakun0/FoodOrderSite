@@ -14,27 +14,36 @@
 }
 html {
     font-size: 16px;
+    height: 100%; /* Ensure html takes full viewport height */
 }
 body {
-    margin-bottom: 60px;
+    /* margin-bottom: 60px; */ /* Removed to prevent conflict with sticky footer */
     background: #f8f9fa;
     color: #333;
     overflow-x: hidden;
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    min-height: 100%; /* Ensure body takes at least full viewport height */
+}
+
+/* Main content wrapper (you might need to add a div around your main content in _Layout.cshtml and give it this class) */
+.main-content {
+    flex-grow: 1; /* Allows this element to grow and push the footer down */
 }
 
 /* ------------------ Custom Header ------------------ */
 .custom-header {
-    background: #4a6bff;
+    background: #ede4d6;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     padding: 0.5rem 1rem;
     position:/* sticky*/fixed;
     top: 0;
-    left: 0; /* Sol kenara s�f�r bo�luk */
-    right: 0; /* Sa� kenara s�f�r bo�luk */
-    width: 100%; /* Ebeveyninin de�il, viewport�un geni�li�ini hedefler */
-    max-width: 100vw; /* Ta�may� engellemek i�in */
-    margin: 0; /* Varsay�lan margin�leri s�f�rla */
-    box-sizing: border-box; /* Padding dahil geni�li�i korur */
+    left: 0; /* Sol kenara sıfır boşluk */
+    right: 0; /* Sağ kenara sıfır boşluk */
+    width: 100%; /* Ebeveyninin değil, viewport'un genişliğini hedefler */
+    max-width: 100vw; /* Taşmayı engellemek için */
+    margin: 0; /* Varsayılan margin'leri sıfırla */
+    box-sizing: border-box; /* Padding dahil genişliği korur */
     z-index: 1000;
 }
 .custom-header .logo {
@@ -48,7 +57,7 @@ body {
     cursor: pointer;
 }
 
-/* ------------------ Hero-Search B�l�m� ------------------ */
+/* ------------------ Hero-Search Bölümü ------------------ */
 .hero-search-section {
     position: relative;
     width: 100vw;
@@ -56,7 +65,7 @@ body {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    min-height: 450px;
+    min-height: 800px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -91,7 +100,7 @@ body {
     width: auto;
     height: auto;
     object-fit: cover;
-    display: none; /* Ba�lang��ta t�m videolar gizli */
+    display: none; /* Başlangıçta tüm videolar gizli */
 }
 
     .bg-video.active {
@@ -100,12 +109,17 @@ body {
 
 .content-overlay {
     position: relative;
-    background-color: rgba(6, 34, 159, 0.85);
+    background-color: #cac8a0c3;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 150px;
     margin: 0 auto;
     width: 90%;
+    min-height: 300px;
     max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .content-wrapper {
@@ -150,7 +164,7 @@ body {
         font-size: 1.5rem;
     }
 }
-/* ------------------ Kategoriler B�l�m� ------------------ */
+/* ------------------ Kategoriler Bölümü ------------------ */
 .categories-section {
     padding: 60px 1rem;
 }
@@ -171,7 +185,7 @@ body {
     color: #333;
 }
 
-/* ------------------ Expectations B�l�m� ------------------ */
+/* ------------------ Expectations Bölümü ------------------ */
 .expectations-section {
     position: relative;
     width: 100vw;
@@ -180,7 +194,7 @@ body {
     max-width: 100vw;
     background: #06229f;
     padding: 60px 1rem;
-    color: #fff; /* iste�e ba�l�: metni okunabilir yapmak i�in */
+    color: #fff; /* isteğe bağlı: metni okunabilir yapmak için */
 }
 
     .expectations-section .section-title {
@@ -191,23 +205,222 @@ body {
         margin-bottom: 0.5rem;
     }
 
+/* ------------------ Footer Section ------------------ */
+.footer-section {
+    /* background-color: #2c3e50; */ /* Bu satır yorumda kalacak veya silinecek */
+    background: linear-gradient(to bottom, #3a506b, #2c3e50); /* Gradyan eklenecek */
+    color: #bdc3c7;
+    padding: 60px 0;
+    width: 100%;
+    margin-top: auto;
+}
 
-/* ------------------ Footer ------------------ */
-footer {
-    background-color: #111;
-    color: #eee;
-    padding: 40px 1rem;
+.footer-section .footer-brand {
+    font-size: 2rem;
+    font-weight: 700;
+    /* color: #ecf0f1; Eski renk, eğer varsa */
+    color: #f1c40f; /* Logo metni - ikonuyla aynı sarı renk */
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.footer-section .footer-brand .fa-utensils {
+    color: #f1c40f; /* Çatal-bıçak ikonu - sarı */
+}
+
+.footer-section .footer-about-text,
+.footer-section .footer-newsletter-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-section .social-links a.social-icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
-    font-size: 1rem;
+    border-radius: 50%;
+    /* background-color: #34495e; */ /* Bu satır yorumda kalacak veya silinecek */
+    background: linear-gradient(135deg, #34495e, #2b3e50); /* Gradyan eklenecek */
+    color: #ecf0f1;
+    margin-right: 8px;
+    /* transition: background-color 0.3s ease; */ /* Bu satır değiştirilecek */
+    transition: background 0.3s ease, transform 0.3s ease; /* transform eklenecek */
 }
-footer a {
-    color: #ffc107;
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: 500;
-}
-footer a:hover {
+
+.footer-section .social-links a.social-icon:hover {
+    /* background-color: #e74c3c; */ /* Bu satır yorumda kalacak veya silinecek */
+    background: linear-gradient(135deg, #e74c3c, #c0392b); /* Gradyan eklenecek */
     color: #fff;
+    transform: translateY(-3px); /* Bu satır eklenecek */
+}
+
+.footer-section .footer-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    /* border-bottom: none; Eski hali */
+    border-bottom: 2px solid #46607a; /* Soluk bir alt çizgi, normal durumda */
+    display: inline-block;
+    
+    /* Normal Durum: Düz renk */
+    color: #ecf0f1; /* Çok açık gri/beyaz */
+    /* background: linear-gradient(45deg, #f1c40f, #e74c3c); Normal durumda gradyan yok */
+    /* -webkit-background-clip: text; */
+    /* background-clip: text; */
+    /* color: transparent; */ /* Gradyan olmayınca bu da kalkar */
+    
+    transition: color 0.3s ease, border-color 0.3s ease; /* Sadece renk ve border için geçiş */
+    /* transform transition'ı kaldırıldı */
+}
+
+.footer-section .footer-heading:hover {
+    /* transform: translateY(-2px); Bu kaldırıldı */
+    /* Hover Durumu: Gradyan aktif */
+    background: linear-gradient(45deg, #f1c40f, #e74c3c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    border-bottom-color: #f1c40f; /* Hover'da çizgi rengi de gradyanla uyumlu olsun */
+}
+
+.footer-section .footer-menu {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-section .footer-menu li {
+    margin-bottom: 10px;
+}
+
+.footer-section .footer-menu li a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    
+    /* Normal Durum: Düz renk */
+    color: #bdc3c7; /* Açık gri */
+    /* background: linear-gradient(45deg, #f1c40f, #e74c3c); Normal durumda gradyan yok */
+    /* -webkit-background-clip: text; */
+    /* background-clip: text; */
+    /* color: transparent; */ /* Gradyan olmayınca bu da kalkar */
+    
+    /* transition: transform 0.3s ease, padding-left 0.3s ease; */ /* Eski transition */
+    transition: padding-left 0.3s ease, color 0.3s ease; /* Sadece padding ve renk için */
+}
+
+.footer-section .footer-menu li a:hover {
+    padding-left: 5px;
+    /* transform: translateY(-2px); Bu kaldırıldı */
+    
+    /* Hover Durumu: Gradyan aktif */
+    background: linear-gradient(45deg, #f1c40f, #e74c3c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Menü linklerindeki > ikonları için */
+.footer-section .footer-menu li a .fa-chevron-right {
+    font-size: 0.8em;
+    margin-right: 8px;
+    display: inline-block;
+    
+    /* Normal Durum: Ana link metniyle aynı düz renk */
+    color: #bdc3c7; /* Açık gri, parent'tan miras alabilir veya direkt atanabilir */
+    /* background: inherit; Normal durumda parent'ta gradyan yok */
+    /* -webkit-background-clip: text; */
+    /* background-clip: text; */
+    /* color: transparent; */
+    /* transition: background 0.3s ease; */ /* Eski transition */
+    transition: color 0.3s ease; /* Sadece renk geçişi */
+}
+
+.footer-section .footer-menu li a:hover .fa-chevron-right {
+    /* Hover Durumu: Ana link metniyle aynı gradyan */
+    background: linear-gradient(45deg, #f1c40f, #e74c3c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.footer-section .newsletter-form .form-control {
+    background-color: #34495e; /* Email giriş alanı arka planı */
+    border: 1px solid #46607a;
+    color: #ecf0f1; /* Email giriş alanı yazı rengi */
+    border-radius: 0.25rem 0 0 0.25rem; /* Sol kenarlar yuvarlak */
+}
+
+.footer-section .newsletter-form .form-control::placeholder {
+    color: #95a5a6;
+}
+
+.footer-section .newsletter-form .btn-subscribe {
+    background-color: #e74c3c; /* Abone ol butonu arka planı - vurgu rengi */
+    color: #ffffff; /* Abone ol butonu ikon rengi */
+    border: none;
+    border-radius: 0 0.25rem 0.25rem 0; /* Sağ kenarlar yuvarlak */
+}
+.footer-section .newsletter-form .btn-subscribe:hover {
+    background-color: #c0392b; /* Hover için biraz daha koyu */
+}
+
+.footer-section .payment-methods p {
+    font-size: 0.9rem;
+    margin-bottom: 10px !important; /* Bootstrap mb-2'yi ezebilir */
+    color: #ecf0f1;
+}
+
+.footer-section .payment-icons i {
+    font-size: 2rem;
+    color: #bdc3c7;
+    margin-right: 15px;
+    /* Aşağıdaki satırlar eklenecek */
+    display: inline-block;
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease, background 0.3s ease;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Bu yeni :hover kuralı eklenecek */
+.footer-section .payment-icons i:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(45deg, #f1c40f, #e74c3c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.footer-section .footer-bottom {
+    padding-top: 30px; /* Üst boşluk artırıldı */
+    margin-top: 40px; /* Üst boşluk artırıldı */
+    border-top: 1px solid #3a536a; /* Ayırıcı çizgi rengi */
+}
+
+.footer-section .footer-bottom p {
+    color: #95a5a6; /* Telif hakkı yazısı rengi */
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.footer-section .footer-app-links a.app-link {
+    color: #bdc3c7; /* App store link rengi */
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section .footer-app-links a.app-link:hover {
+    color: #ffffff;
+}
+
+.footer-section .footer-app-links a.app-link i {
+    margin-right: 5px;
+    font-size: 1.1rem;
 }
 
 /* ------------------ Responsive ------------------ */

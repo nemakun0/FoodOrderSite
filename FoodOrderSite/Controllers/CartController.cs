@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using FoodOrderSite.Data;
+using FoodOrderSite.Models;
 using FoodOrderSite.ViewModels;
 using Newtonsoft.Json;
 using System.Collections.Generic;

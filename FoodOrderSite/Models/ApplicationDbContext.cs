@@ -9,6 +9,7 @@ namespace FoodOrderSite.Models
         {
         }
 
+        public DbSet<Product> Products { get; set; }
         public DbSet<UserTable> UserTables { get; set; }
         public DbSet<RestaurantTable> RestaurantTables { get; set; }
         public DbSet<CustomerDeliveryAdderss> CustomerDeliveryAdderss { get; set; }
