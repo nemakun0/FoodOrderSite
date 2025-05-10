@@ -1,0 +1,94 @@
+@model List<FoodOrderSite.Models.RestaurantTable>
+@{
+    ViewData["Title"] = "Restoranlar";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid" style="margin-top: 4rem;">
+    <div class="custom-card">
+        <div class="custom-card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Restoranlar</h5>
+            <span class="badge bg-primary">@Model.Count Restoran</span>
+        </div>
+        <div class="custom-card-body">
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Restoran Adı</th>
+                            <th>Restoran Tipi</th>
+                            <th>Adres</th>
+                            <th>Şehir</th>
+                            <th>İlçe</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var restaurant in Model)
+                        {
+                            <tr>
+                                <td>@restaurant.RestaurantName</td>
+                                <td>@restaurant.RestaurantType</td>
+                                <td>@restaurant.Address</td>
+                                <td>@restaurant.City</td>
+                                <td>@restaurant.District</td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input status-toggle" 
+                                               type="checkbox" 
+                                               id="status-@restaurant.RestaurantId" 
+                                               @(restaurant.IsActive ? "checked" : "")
+                                               data-restaurant-id="@restaurant.RestaurantId">
+                                        <label class="form-check-label" for="status-@restaurant.RestaurantId">
+                                            @(restaurant.IsActive ? "Aktif" : "Pasif")
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info me-2" title="Detaylar">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.status-toggle').change(function() {
+                const restaurantId = $(this).data('restaurant-id');
+                const isActive = $(this).prop('checked');
+                const label = $(this).next('label');
+
+                $.ajax({
+                    url: '/Restaurants/ToggleStatus',
+                    type: 'POST',
+                    data: {
+                        restaurantId: restaurantId,
+                        status: isActive
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            label.text(isActive ? 'Aktif' : 'Pasif');
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error(response.message);
+                            $(this).prop('checked', !isActive);
+                        }
+                    },
+                    error: function(xhr) {
+                        toastr.error('Bir hata oluştu: ' + xhr.responseText);
+                        $(this).prop('checked', !isActive);
+                    }
+                });
+            });
+        });
+    </script>
+}
