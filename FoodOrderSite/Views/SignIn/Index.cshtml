@@ -173,8 +173,25 @@
         }
 
         .alert.alert-danger {
-            color: red; /* Kırmızı renk */
-            border-color: #f5c6cb; /* Hafif kırmızımsı border */
+            color: #721c24;
+            background-color: #fff2f2;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .alert.alert-danger div {
+            margin-bottom: 5px;
+        }
+
+        .alert.alert-danger div:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -183,9 +200,16 @@
         <div class="logo">ForkBase</div>
         <h1>Hesabınıza Giriş Yapın</h1>
 
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" style="margin-bottom: 20px; padding: 10px; border-radius: 5px; background-color: #fff2f2;">
+                @TempData["Error"]
+            </div>
+        }
+
         @if (!ViewData.ModelState.IsValid)
         {
-            <div class="alert alert-danger" style="margin-bottom: 20px;">
+            <div class="alert alert-danger" style="margin-bottom: 20px; padding: 10px; border-radius: 5px; background-color: #fff2f2;">
                 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                 {
                     <div>@error.ErrorMessage</div>
