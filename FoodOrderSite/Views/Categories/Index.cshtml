@@ -5,6 +5,173 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    
+    <script>
+        $(document).ready(function() {
+            // DataTables initialization
+            try {
+                var table = $('#categoriesTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+                    },
+                    order: [[0, 'asc']],
+                    responsive: true,
+                    pageLength: 10
+                });
+            } catch (error) {
+                console.error('DataTables initialization error:', error);
+            }
+
+            // Toastr configuration
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 3000
+            };
+        });
+
+        function showAddModal() {
+            $('#categoryName').val('');
+            $('#categoryDescription').val('');
+            $('#addCategoryModal').modal('show');
+        }
+
+        function addCategory() {
+            const name = $('#categoryName').val().trim();
+            const description = $('#categoryDescription').val().trim();
+
+            if (!name) {
+                toastr.error('Kategori adı zorunludur');
+                return;
+            }
+
+            $.ajax({
+                url: '/Categories/AddCategory',
+                type: 'POST',
+                data: { 
+                    name: name, 
+                    description: description,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#addCategoryModal').modal('hide');
+                        toastr.success(response.message);
+                        if (response.redirectUrl) {
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            window.location.reload();
+                        }
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Add Category Error:', error);
+                    toastr.error('Bir hata oluştu: ' + error);
+                }
+            });
+        }
+
+        function updateCategory() {
+            const categoryId = $('#editCategoryId').val();
+            const name = $('#editCategoryName').val().trim();
+            const description = $('#editCategoryDescription').val().trim();
+
+            if (!name) {
+                toastr.error('Kategori adı zorunludur');
+                return;
+            }
+
+            $.ajax({
+                url: '/Categories/UpdateCategory',
+                type: 'POST',
+                data: { 
+                    categoryId: categoryId,
+                    name: name,
+                    description: description,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#editCategoryModal').modal('hide');
+                        toastr.success(response.message);
+                        if (response.redirectUrl) {
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            window.location.reload();
+                        }
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Update Category Error:', error);
+                    toastr.error('Bir hata oluştu: ' + error);
+                }
+            });
+        }
+
+        function deleteCategory(categoryId) {
+            if (confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) {
+                $.ajax({
+                    url: '/Categories/DeleteCategory',
+                    type: 'POST',
+                    data: { 
+                        categoryId: categoryId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            if (response.redirectUrl) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                window.location.reload();
+                            }
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Delete Category Error:', error);
+                        toastr.error('Bir hata oluştu: ' + error);
+                    }
+                });
+            }
+        }
+
+        function editCategory(categoryId) {
+            $.ajax({
+                url: '/Categories/GetCategory',
+                type: 'GET',
+                data: { categoryId: categoryId },
+                success: function(response) {
+                    if (response.success) {
+                        $('#editCategoryId').val(categoryId);
+                        $('#editCategoryName').val(response.category.name);
+                        $('#editCategoryDescription').val(response.category.description);
+                        $('#editCategoryModal').modal('show');
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Get Category Error:', error);
+                    toastr.error('Bir hata oluştu: ' + error);
+                }
+            });
+        }
+    </script>
+}
+
 <div class="container-fluid px-4">
     <h1 class="mt-4">Kategoriler</h1>
     <ol class="breadcrumb mb-4">
@@ -113,154 +280,4 @@
             </div>
         </div>
     </div>
-</div>
-
-@section Scripts {
-    <script>
-        let categoriesTable;
-
-        $(document).ready(function() {
-            categoriesTable = $('#categoriesTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
-                }
-            });
-        });
-
-        function showAddModal() {
-            $('#categoryName').val('');
-            $('#categoryDescription').val('');
-            $('#addCategoryModal').modal('show');
-        }
-
-        function refreshTable() {
-            $.get('/Categories/Index', function(data) {
-                let tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data;
-                let newTableBody = $(tempDiv).find('#categoriesTable tbody').html();
-                categoriesTable.destroy();
-                $('#categoriesTable tbody').html(newTableBody);
-                categoriesTable = $('#categoriesTable').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
-                    }
-                });
-            });
-        }
-
-        function addCategory() {
-            const name = $('#categoryName').val().trim();
-            const description = $('#categoryDescription').val().trim();
-
-            if (!name) {
-                toastr.error('Kategori adı zorunludur');
-                return;
-            }
-
-            $.ajax({
-                url: '/Categories/AddCategory',
-                type: 'POST',
-                data: { 
-                    name: name, 
-                    description: description,
-                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $('#addCategoryModal').modal('hide');
-                        refreshTable();
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Hata:', error);
-                    toastr.error('Bir hata oluştu: ' + error);
-                }
-            });
-        }
-
-        function editCategory(categoryId) {
-            $.ajax({
-                url: '/Categories/GetCategory',
-                type: 'GET',
-                data: { categoryId: categoryId },
-                success: function(response) {
-                    if (response.success) {
-                        $('#editCategoryId').val(categoryId);
-                        $('#editCategoryName').val(response.category.name);
-                        $('#editCategoryDescription').val(response.category.description);
-                        $('#editCategoryModal').modal('show');
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Hata:', error);
-                    toastr.error('Bir hata oluştu: ' + error);
-                }
-            });
-        }
-
-        function updateCategory() {
-            const categoryId = $('#editCategoryId').val();
-            const name = $('#editCategoryName').val().trim();
-            const description = $('#editCategoryDescription').val().trim();
-
-            if (!name) {
-                toastr.error('Kategori adı zorunludur');
-                return;
-            }
-
-            $.ajax({
-                url: '/Categories/UpdateCategory',
-                type: 'POST',
-                data: { 
-                    categoryId: categoryId,
-                    name: name,
-                    description: description,
-                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        $('#editCategoryModal').modal('hide');
-                        refreshTable();
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Hata:', error);
-                    toastr.error('Bir hata oluştu: ' + error);
-                }
-            });
-        }
-
-        function deleteCategory(categoryId) {
-            if (confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) {
-                $.ajax({
-                    url: '/Categories/DeleteCategory',
-                    type: 'POST',
-                    data: { 
-                        categoryId: categoryId,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            refreshTable();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Hata:', error);
-                        toastr.error('Bir hata oluştu: ' + error);
-                    }
-                });
-            }
-        }
-    </script>
-} 
+</div> 

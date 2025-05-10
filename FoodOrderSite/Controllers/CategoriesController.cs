@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodOrderSite.Models;
+using System;
 
 namespace FoodOrderSite.Controllers
 {
@@ -15,8 +16,17 @@ namespace FoodOrderSite.Controllers
 
         public IActionResult Index()
         {
-            var categories = _context.CategoriesTables.ToList();
-            return View(categories);
+            try
+            {
+                var categories = _context.CategoriesTables.ToList();
+                return View(categories);
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Console.WriteLine($"Error in Index: {ex.Message}");
+                return View(new List<CategoriesTable>());
+            }
         }
 
         [HttpPost]
@@ -39,7 +49,7 @@ namespace FoodOrderSite.Controllers
                 _context.CategoriesTables.Add(category);
                 _context.SaveChanges();
 
-                return Json(new { success = true, message = "Kategori başarıyla eklendi" });
+                return Json(new { success = true, message = "Kategori başarıyla eklendi", redirectUrl = Url.Action("Index") });
             }
             catch (Exception ex)
             {
@@ -62,7 +72,7 @@ namespace FoodOrderSite.Controllers
                 _context.CategoriesTables.Remove(category);
                 _context.SaveChanges();
 
-                return Json(new { success = true, message = "Kategori başarıyla silindi" });
+                return Json(new { success = true, message = "Kategori başarıyla silindi", redirectUrl = Url.Action("Index") });
             }
             catch (Exception ex)
             {
@@ -73,13 +83,20 @@ namespace FoodOrderSite.Controllers
         [HttpGet]
         public IActionResult GetCategory(int categoryId)
         {
-            var category = _context.CategoriesTables.Find(categoryId);
-            if (category == null)
+            try
             {
-                return Json(new { success = false, message = "Kategori bulunamadı" });
-            }
+                var category = _context.CategoriesTables.Find(categoryId);
+                if (category == null)
+                {
+                    return Json(new { success = false, message = "Kategori bulunamadı" });
+                }
 
-            return Json(new { success = true, category = category });
+                return Json(new { success = true, category = category });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Bir hata oluştu: " + ex.Message });
+            }
         }
 
         [HttpPost]
@@ -100,7 +117,7 @@ namespace FoodOrderSite.Controllers
                 _context.Entry(category).State = EntityState.Modified;
                 _context.SaveChanges();
 
-                return Json(new { success = true, message = "Kategori başarıyla güncellendi" });
+                return Json(new { success = true, message = "Kategori başarıyla güncellendi", redirectUrl = Url.Action("Index") });
             }
             catch (Exception ex)
             {
