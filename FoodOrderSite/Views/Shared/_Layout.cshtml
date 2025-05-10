@@ -1,4 +1,5 @@
-﻿@* @{
+﻿@using FoodOrderSite.Models.ViewModels
+@* @{
     Layout = /* null */;
 } *@
 
@@ -24,16 +25,24 @@
     @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
     @{
         var session = HttpContextAccessor.HttpContext?.Session;
-        var cartData = session?.GetString("Cart");
+        // Ensure "Cart" matches CartSessionKey in CartController
+        var cartData = session?.GetString("Cart"); 
         var count = 0;
         if (!string.IsNullOrEmpty(cartData))
         {
-            var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.ViewModels.CartItemViewModel>>(cartData);
-            count = items?.Sum(i => i.Quantity) ?? 0;
+            try
+            {
+                var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.Models.ViewModels.CartItemViewModel>>(cartData);
+                count = items?.Sum(i => i.Quantity) ?? 0;
+            }
+            catch 
+            {
+                // Handle potential deserialization error, maybe clear cart or log
+                session.Remove("Cart"); // Clear corrupted cart data
+                count = 0;
+            }
         }
     }
-
-    <!-- NAVBAR KALDIRILDI -->
 
     <div class="container py-4">
         <main role="main" class="pb-3">
@@ -138,6 +147,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("Styles", required: false)
-    <script src="~/js/site.js"></script>
+    <!-- Ensure Styles section is rendered after main styles to allow override/additions -->
 </body>
 </html>

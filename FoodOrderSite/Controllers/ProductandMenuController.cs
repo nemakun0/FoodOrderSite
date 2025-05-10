@@ -3,6 +3,7 @@ using FoodOrderSite.Models;
 using Microsoft.EntityFrameworkCore;
 using FoodOrderSite.Models.ViewModels;
 using System.Security.Claims;
+using System.Linq;
 using static FoodOrderSite.Models.ViewModels.ProductAndMenuViewModel;
 
 namespace FoodOrderSite.Controllers
@@ -95,7 +96,7 @@ namespace FoodOrderSite.Controllers
                 _context.FoodItemTables.Add(newItem);
                 await _context.SaveChangesAsync();
 
-                // Kategori ilişkilendirmesi (FoodItemCategoriesTable’a kayıt)
+                // Kategori ilişkilendirmesi (FoodItemCategoriesTable'a kayıt)
                 var categoryRelation = new FoodItemCategoriesTable
                 {
                     FoodItemId = newItem.FoodItemId,
@@ -193,34 +194,59 @@ namespace FoodOrderSite.Controllers
 
             return RedirectToAction("Index"); // Veya istediğiniz sayfaya yönlendirebilirsiniz
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var categories = _context.CategoriesTables.ToList();
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            List<FoodItemViewModel> productViewModels = new List<FoodItemViewModel>();
+            RestaurantTable userRestaurant = null;
 
+            if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int userId))
+            {
+                // Find the restaurant associated with the current user
+                userRestaurant = await _context.RestaurantTables
+                                             .FirstOrDefaultAsync(r => r.UserId == userId && r.IsActive);
+
+                if (userRestaurant != null)
+                {
+                    // Fetch products only for the user's restaurant
+                    var products = await _context.FoodItemTables
+                                               .Where(p => p.RestaurantId == userRestaurant.RestaurantId && !p.IsDeleted)
+                                               .OrderBy(p => p.Name) // Optional: order products
+                                               .ToListAsync();
+
+                    productViewModels = products
+                        .Select(p => new FoodItemViewModel
+                        {
+                            FoodItemId = p.FoodItemId,
+                            Name = p.Name,
+                            Description = p.Description,
+                            Price = p.Price,
+                            Image = p.Image,         // Assuming Image is just the filename/path part
+                            IsAvailable = p.IsAvailable
+                            // TODO: Consider adding CategoryId/Name if needed for display in the list
+                        }).ToList();
+                }
+                // If userRestaurant is null, productViewModels remains empty, 
+                // the view should ideally handle this (e.g., "No restaurant registered" or "Add your first product")
+            }
+            // If userIdString is null or invalid, user is not properly logged in or ID is not an int,
+            // productViewModels remains empty.
+
+            // Categories are still needed for the "Create Product" part of the view, if it's on the same page.
+            var categories = await _context.CategoriesTables.ToListAsync();
             var categoryViewModels = categories
                 .Select(c => new CategoryViewModel
                 {
                     CategoryId = c.CategoryId,
                     Name = c.Name
                 }).ToList();
-            // Ürünleri çek
-            var products = _context.FoodItemTables.ToList();
-
-            var productViewModels = products
-                .Select(p => new FoodItemViewModel
-                {
-                    FoodItemId = p.FoodItemId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Image = p.Image,
-                    IsAvailable = p.IsAvailable
-                }).ToList();
 
             var viewModel = new ProductAndMenuViewModel
             {
                 AllCategories = categoryViewModels,
                 ExistingProducts = productViewModels
+                // You might want to add UserRestaurant's details to the ViewModel if needed by the View
+                // e.g., RestaurantName = userRestaurant?.RestaurantName
             };
 
             return View(viewModel);

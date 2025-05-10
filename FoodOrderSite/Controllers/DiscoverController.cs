@@ -1,42 +1,86 @@
 ﻿using FoodOrderSite.Models;
+using FoodOrderSite.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoodOrderSite.Controllers
 {
     public class DiscoverController : Controller
     {
-        private const int PageSize = 8; // Reduced for better mobile display
-        private List<Restaurant> _restaurants;
+        private const int PageSize = 8;
+        private readonly ApplicationDbContext _db;
+        private const string CartSessionKey = "Cart";
 
-        public DiscoverController()
+        public DiscoverController(ApplicationDbContext db)
         {
-            _restaurants = GenerateSampleData();
+            _db = db;
         }
 
-        public IActionResult Index(string cuisineType = null, string sortBy = null,
+        private int GetCartItemCountFromSession()
+        {
+            var cartJson = HttpContext.Session.GetString(CartSessionKey);
+            if (string.IsNullOrEmpty(cartJson)) return 0;
+            try
+            {
+                var items = JsonConvert.DeserializeObject<List<FoodOrderSite.Models.ViewModels.CartItemViewModel>>(cartJson);
+                return items?.Sum(i => i.Quantity) ?? 0;
+            }
+            catch
+            {
+                HttpContext.Session.Remove(CartSessionKey);
+                return 0;
+            }
+        }
+
+        public async Task<IActionResult> Index(string district = null, string restaurantType = null, string sortBy = null,
                                 string searchTerm = null, int page = 1)
         {
+            var allRestaurantsQuery = _db.RestaurantTables.Where(r => r.IsActive).AsQueryable();
+            var totalRestaurantCount = await allRestaurantsQuery.CountAsync();
+
+            var allDistricts = await _db.RestaurantTables
+                                  .Where(r => r.IsActive && r.District != null)
+                                  .Select(r => r.District)
+                                  .Distinct()
+                                  .OrderBy(d => d)
+                                  .ToListAsync();
+
+            var allRestaurantTypes = await _db.RestaurantTables
+                                     .Where(r => r.IsActive && r.RestaurantType != null)
+                                     .Select(r => r.RestaurantType)
+                                     .Distinct()
+                                     .OrderBy(rt => rt)
+                                     .ToListAsync();
+
+            int cartItemCount = GetCartItemCountFromSession();
+
             var model = new DiscoverViewModel
             {
-                SelectedCuisineType = cuisineType,
+                SelectedDistrict = district,
+                AllDistricts = allDistricts,
+                SelectedRestaurantType = restaurantType,
+                AllRestaurantTypes = allRestaurantTypes,
                 SortBy = sortBy,
                 SearchTerm = searchTerm,
                 CurrentPage = page,
-                CuisineTypes = _restaurants.Select(r => r.CuisineType).Distinct().OrderBy(t => t).ToList(),
-                TotalRestaurants = _restaurants.Count,
-                PageSize = PageSize
+                TotalRestaurants = totalRestaurantCount,
+                PageSize = PageSize,
+                CartItemCount = cartItemCount
             };
 
-            var filteredRestaurants = FilterRestaurants(_restaurants, cuisineType, searchTerm);
-            filteredRestaurants = SortRestaurants(filteredRestaurants, sortBy);
+            var filteredRestaurantTablesQuery = FilterRestaurantTables(allRestaurantsQuery, district, restaurantType, searchTerm);
+            var filteredRestaurantTablesList = await filteredRestaurantTablesQuery.ToListAsync();
+            var mappedRestaurants = MapRestaurantTablesToRestaurants(filteredRestaurantTablesList);
+            var sortedRestaurants = SortRestaurants(mappedRestaurants, sortBy);
 
-            model.FilteredCount = filteredRestaurants.Count;
-            model.TotalPages = (int)Math.Ceiling((double)filteredRestaurants.Count / PageSize);
-
-            model.Restaurants = filteredRestaurants
+            model.FilteredCount = sortedRestaurants.Count;
+            model.TotalPages = (int)Math.Ceiling((double)sortedRestaurants.Count / PageSize);
+            model.Restaurants = sortedRestaurants
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
@@ -44,79 +88,76 @@ namespace FoodOrderSite.Controllers
             return View(model);
         }
 
-        private List<Restaurant> FilterRestaurants(List<Restaurant> restaurants,
-                                                 string cuisineType, string searchTerm)
+        private IQueryable<RestaurantTable> FilterRestaurantTables(IQueryable<RestaurantTable> restaurants,
+                                                                 string district, string restaurantType, string searchTerm)
         {
-            var filtered = restaurants.AsQueryable();
+            var filtered = restaurants;
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
+                string lowerSearchTerm = searchTerm.ToLower();
                 filtered = filtered.Where(r =>
-                    r.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    r.CuisineType.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                    (r.RestaurantName != null && r.RestaurantName.ToLower().Contains(lowerSearchTerm)) ||
+                    (r.Description != null && r.Description.ToLower().Contains(lowerSearchTerm)) ||
+                    (r.RestaurantType != null && r.RestaurantType.ToLower().Contains(lowerSearchTerm)));
             }
 
-            if (!string.IsNullOrEmpty(cuisineType))
+            if (!string.IsNullOrEmpty(district))
             {
-                filtered = filtered.Where(r => r.CuisineType == cuisineType);
+                filtered = filtered.Where(r => r.District == district);
             }
 
-            return filtered.ToList();
-        }
+            if (!string.IsNullOrEmpty(restaurantType))
+            {
+                filtered = filtered.Where(r => r.RestaurantType == restaurantType);
+            }
 
+            return filtered;
+        }
+        
         private List<Restaurant> SortRestaurants(List<Restaurant> restaurants, string sortBy)
         {
             return sortBy switch
             {
-                "rating" => restaurants.OrderByDescending(r => r.Rating).ToList(),
-                "deliveryTime" => restaurants.OrderBy(r => r.DeliveryTime).ToList(),
-                "deliveryFee" => restaurants.OrderBy(r => r.DeliveryFee).ToList(),
-                "minOrder" => restaurants.OrderBy(r => r.MinOrderAmount).ToList(),
+                "rating" => restaurants.OrderByDescending(r => r.Rating).ThenBy(r=>r.Name).ToList(),
+                "deliveryTime" => restaurants.OrderBy(r => r.DeliveryTime).ThenBy(r=>r.Name).ToList(),
+                "deliveryFee" => restaurants.OrderBy(r => r.DeliveryFee).ThenBy(r=>r.Name).ToList(),
+                "minOrder" => restaurants.OrderBy(r => r.MinOrderAmount).ThenBy(r=>r.Name).ToList(),
                 _ => restaurants.OrderByDescending(r => r.IsPromoted)
                                .ThenBy(r => r.Name)
                                .ToList()
             };
         }
 
-        private List<Restaurant> GenerateSampleData()
+        private Restaurant MapRestaurantTableToRestaurant(RestaurantTable rt)
         {
-            return new List<Restaurant>
+            if (rt == null) return null;
+
+            return new Restaurant
             {
-                new Restaurant {
-                    Id = 1,
-                    Name = "Lezzet Durağı - Geleneksel Türk Mutfağı",
-                    CuisineType = "Türk",
-                    DeliveryFee = 5.99m,
-                    MinOrderAmount = 20.00m,
-                    Rating = 4.5,
-                    ImageUrl = "/images/rest1.jpg",
-                    DeliveryTime = 35,
-                    IsPromoted = true
-                },
-                new Restaurant {
-                    Id = 2,
-                    Name = "Pizza Palace",
-                    CuisineType = "İtalyan",
-                    DeliveryFee = 7.99m,
-                    MinOrderAmount = 25.00m,
-                    Rating = 4.2,
-                    ImageUrl = "/images/rest2.jpg",
-                    DeliveryTime = 40,
-                    IsPromoted = false
-                },
-                new Restaurant {
-                    Id = 3,
-                    Name = "Burger Town",
-                    CuisineType = "Fast Food",
-                    DeliveryFee = 4.99m,
-                    MinOrderAmount = 15.00m,
-                    Rating = 4.0,
-                    ImageUrl = "", // Will use default image
-                    DeliveryTime = 25,
-                    IsPromoted = true
-                },
-                // Add more sample data...
+                Id = rt.RestaurantId,
+                Name = rt.RestaurantName,
+                RestaurantType = rt.RestaurantType ?? "N/A",
+                City = rt.City ?? "N/A",
+                District = rt.District ?? "N/A",
+                ShortDescription = rt.Description?.Length > 100 ? rt.Description.Substring(0, 97) + "..." : rt.Description ?? "No description available.",
+                DeliveryFee = 5.99m,    
+                MinOrderAmount = 20.00m, 
+                Rating = CalculateRating(rt.RestaurantId), 
+                ImageUrl = "",
+                DeliveryTime = 30,      
+                IsPromoted = (rt.RestaurantId % 4 == 0)
             };
+        }
+        
+        private double CalculateRating(int restaurantId)
+        {
+            return Math.Round(3.5 + (restaurantId % 15) / 10.0, 1);
+        }
+
+        private List<Restaurant> MapRestaurantTablesToRestaurants(List<RestaurantTable> rts)
+        {
+            return rts.Select(rt => MapRestaurantTableToRestaurant(rt)).ToList();
         }
     }
 }

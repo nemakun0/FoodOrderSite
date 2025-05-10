@@ -1,5 +1,6 @@
-﻿@using System.IO
-@using System.Globalization
+﻿@using System.Globalization
+@using System.IO
+@using FoodOrderSite.Models.ViewModels
 @model IEnumerable<FoodOrderSite.Models.Product>
 @{
     ViewData["Title"] = "Ana Sayfa";
@@ -15,12 +16,12 @@
             <a class="logo" asp-controller="Home" asp-action="Index">ForkBase</a>
         </div>
         <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
-            <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
+            <a asp-controller="Cart" asp-action="Index" id="cartIconLink" class="text-dark position-relative">
                 <i class="fas fa-shopping-cart fa-2x"></i>
                 @{
                     var data = Context.Session.GetString("Cart");
                     var count = data != null
-                    ? (Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.ViewModels.CartItemViewModel>>(data)?.Sum(x => x.Quantity) ?? 0)
+                    ? (Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartItemViewModel>>(data)?.Sum(x => x.Quantity) ?? 0)
                     : 0;
                 }
                 @if (count > 0)
@@ -43,8 +44,8 @@
             <div class="modal-body text-center">
                 <p>Devam etmek için giriş yap veya kayıt ol</p>
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">Giriş Yap</button>
-                    <button class="btn btn-primary" data-bs-dismiss="modal">Kayıt Ol</button>
+                    <a href="/Signin/Index" class="btn btn-outline-primary">Giriş Yap</a> 
+                    <a href="/Signup/Index" class="btn btn-primary">Kayıt Ol</a>
                 </div>
             </div>
         </div>
@@ -78,14 +79,31 @@
         <h2 class="search-title mb-4">Discover Restaurants And More Near You.</h2>
         <div class="d-flex justify-content-center">
             <div class="input-group search-input-group" style="max-width:500px;">
-                <span class="input-group-text bg-white"><i class="fas fa-map-marker-alt text-danger"></i></span>
-                <input type="text" class="form-control" placeholder="Enter delivery address">
-                <button class="btn btn-danger"><i class="fas fa-arrow-right"></i></button>
+                <span class="input-group-text bg-white"> <i class="fas fa-map-marker-alt text-danger"></i>
+                </span>
+                @if (ViewBag.Districts != null && ((List<string>)ViewBag.Districts).Any())
+                {
+                    <select class="form-select" id="districtSelect">
+                        <option selected disabled>Enter delivery address district</option>
+                        @foreach (var district in (List<string>)ViewBag.Districts)
+                        {
+                            <option value="@district">@district</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <input type="text" class="form-control" placeholder="Enter delivery address district" id="districtSelect">
+                }
+                <button class="btn btn-danger" id="searchDistrictBtn"><i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
-        <button class="btn btn-warning mt-3">Sign in for saved address</button>
+        <button class="btn btn-warning mt-3" id="signInForSavedAddressBtn">Sign in for saved address</button>
     </div>
 </section>
+
+<!-- Harita Modalı (Leaflet için Geri Döndü) -->
+<!-- Bu bölüm kaldırılacak -->
 
 <!-- Kategoriler Bölümü -->
 <section class="categories-section py-5 bg-light">
@@ -140,27 +158,98 @@
     </div>
 </section>
 @section scripts {
+    @* Leaflet JS Kütüphanesi kaldırılacak *@
+
     <script>
-        const loadBtn = document.getElementById('loadMoreCategories');
-        const lessBtn = document.getElementById('showLessCategories');
-        const items = document.querySelectorAll('.category-item');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sadece Profil, Sepet, "Sign in for saved address", Kategori ve LoadMore scriptleri kalacak
+            const profileIcon = document.getElementById('profileIcon');
+            const profileModalElement = document.getElementById('profileModal');
+            let userProfileModalInstance; 
+            if (profileModalElement) {
+                 userProfileModalInstance = new bootstrap.Modal(profileModalElement);
+            }
+            const profileModalTitleElement = profileModalElement ? profileModalElement.querySelector('.modal-title') : null;
 
-        loadBtn.addEventListener('click', function() {
-          // 4'ten sonrası zaten d-none, onları göster
-          items.forEach(el => el.classList.remove('d-none'));
-          // Butonları değiştir
-          loadBtn.classList.add('d-none');
-          lessBtn.classList.remove('d-none');
-        });
+            if (profileIcon && userProfileModalInstance) {
+                profileIcon.addEventListener('click', function (event) {
+                    event.preventDefault(); 
+                    userProfileModalInstance.show();
+                });
+            }
 
-        lessBtn.addEventListener('click', function() {
-          // İlk 4'ü bırak, geri kalanları gizle
-          items.forEach((el, idx) => {
-            if (idx >= 4) el.classList.add('d-none');
-          });
-          // Butonları tekrar değiştir
-          lessBtn.classList.add('d-none');
-          loadBtn.classList.remove('d-none');
+            const signInForSavedAddressBtn = document.getElementById('signInForSavedAddressBtn');
+            if (signInForSavedAddressBtn && userProfileModalInstance) {
+                signInForSavedAddressBtn.addEventListener('click', function() {
+                    userProfileModalInstance.show();
+                });
+            }
+
+            const cartIconLink = document.getElementById('cartIconLink');
+            if (cartIconLink && userProfileModalInstance) { 
+                cartIconLink.addEventListener('click', function (event) {
+                    let isLoggedIn = false; 
+                    if (profileModalTitleElement && profileModalTitleElement.textContent.trim() !== 'Hoş geldin!') {
+                        isLoggedIn = true;
+                    }
+                    if (!isLoggedIn) {
+                        event.preventDefault(); 
+                        userProfileModalInstance.show();
+                    }
+                });
+            }
+
+            const categoryItems = document.querySelectorAll('.category-item');
+            categoryItems.forEach(function (item) {
+                const card = item.querySelector('.category-card');
+                if (card) {
+                    card.addEventListener('click', function () {
+                        const categoryNameElement = card.querySelector('p.fw-semibold');
+                        if (categoryNameElement) {
+                            const categoryName = categoryNameElement.textContent.trim();
+                            window.location.href = '/Discover/Index?category=' + encodeURIComponent(categoryName);
+                        }
+                    });
+                }
+            });
+
+            const loadBtn = document.getElementById('loadMoreCategories');
+            const lessBtn = document.getElementById('showLessCategories');
+            const allCategoryItemsForLoadMore = document.querySelectorAll('.category-item');
+            if (loadBtn && lessBtn && allCategoryItemsForLoadMore.length > 0) {
+                loadBtn.addEventListener('click', function() {
+                  allCategoryItemsForLoadMore.forEach(el => el.classList.remove('d-none'));
+                  loadBtn.classList.add('d-none');
+                  lessBtn.classList.remove('d-none');
+                });
+                lessBtn.addEventListener('click', function() {
+                  allCategoryItemsForLoadMore.forEach((el, idx) => {
+                    if (idx >= 4) el.classList.add('d-none');
+                  });
+                  lessBtn.classList.add('d-none');
+                  loadBtn.classList.remove('d-none');
+                });
+            }
+
+            const searchDistrictBtn = document.getElementById('searchDistrictBtn');
+            if (searchDistrictBtn) {
+                searchDistrictBtn.addEventListener('click', function() {
+                    const districtSelect = document.getElementById('districtSelect');
+                    if (districtSelect) {
+                        const selectedValue = districtSelect.value;
+                        // Check if the selected value is not the placeholder value (which is not a valid district name)
+                        if (selectedValue && districtSelect.selectedIndex > 0) { 
+                            window.location.href = '/Discover/Index?district=' + encodeURIComponent(selectedValue);
+                        } else {
+                            // Optionally, alert the user or handle the case where no district is selected
+                            // For now, if it's a text input or placeholder is selected, do nothing or redirect to general Discover page
+                             window.location.href = '/Discover/Index'; // Or alert('Please select a district.');
+                        }
+                    }
+                });
+            }
+
+            console.log('Non-map scripts in DOMContentLoaded loaded.');
         });
     </script>
 }
