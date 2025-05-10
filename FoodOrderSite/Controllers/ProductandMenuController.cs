@@ -214,22 +214,13 @@ namespace FoodOrderSite.Controllers
 
             return RedirectToAction("Index");
         }
-        public IActionResult Index()
+        //public IActionResult Index()
         public async Task<IActionResult> Index()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             List<FoodItemViewModel> productViewModels = new List<FoodItemViewModel>();
             RestaurantTable userRestaurant = null;
 
-            var categoryViewModels = categories
-                .Select(c => new CategoryViewModel
-                {
-                    CategoryId = c.CategoryId,
-                    Name = c.Name
-                }).ToList();
-
-            // Ürünleri çek
-            var products = _context.FoodItemTables.ToList();
             if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int userId))
             {
                 // Find the restaurant associated with the current user
@@ -240,22 +231,10 @@ namespace FoodOrderSite.Controllers
                 {
                     // Fetch products only for the user's restaurant
                     var products = await _context.FoodItemTables
-                                               .Where(p => p.RestaurantId == userRestaurant.RestaurantId && !p.IsDeleted)
-                                               .OrderBy(p => p.Name) // Optional: order products
-                                               .ToListAsync();
+                        .Where(p => p.RestaurantId == userRestaurant.RestaurantId)
+                        .OrderBy(p => p.Name)
+                        .ToListAsync();
 
-            var productViewModels = products
-                .Select(p => new FoodItemViewModel
-                {
-                    FoodItemId = p.FoodItemId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Image = p.Image,
-                    IsAvailable = p.IsAvailable,
-                    IsDeleted = p.IsDeleted
-                    //    CategoryId = _context.FoodItemCategoriesTables
-                    //.FirstOrDefault(fic => fic.FoodItemId == p.FoodItemId)?.CategoryId
                     productViewModels = products
                         .Select(p => new FoodItemViewModel
                         {
@@ -263,18 +242,14 @@ namespace FoodOrderSite.Controllers
                             Name = p.Name,
                             Description = p.Description,
                             Price = p.Price,
-                            Image = p.Image,         // Assuming Image is just the filename/path part
-                            IsAvailable = p.IsAvailable
-                            // TODO: Consider adding CategoryId/Name if needed for display in the list
+                            Image = p.Image,
+                            IsAvailable = p.IsAvailable,
+                            IsDeleted = p.IsDeleted
                         }).ToList();
                 }
-                // If userRestaurant is null, productViewModels remains empty, 
-                // the view should ideally handle this (e.g., "No restaurant registered" or "Add your first product")
             }
-            // If userIdString is null or invalid, user is not properly logged in or ID is not an int,
-            // productViewModels remains empty.
 
-            // Categories are still needed for the "Create Product" part of the view, if it's on the same page.
+            // Get categories for the view
             var categories = await _context.CategoriesTables.ToListAsync();
             var categoryViewModels = categories
                 .Select(c => new CategoryViewModel
@@ -287,8 +262,6 @@ namespace FoodOrderSite.Controllers
             {
                 AllCategories = categoryViewModels,
                 ExistingProducts = productViewModels
-                // You might want to add UserRestaurant's details to the ViewModel if needed by the View
-                // e.g., RestaurantName = userRestaurant?.RestaurantName
             };
 
             return View(viewModel);
