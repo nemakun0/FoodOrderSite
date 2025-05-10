@@ -5,7 +5,10 @@ namespace FoodOrderSite.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string CuisineType { get; set; }
+        public string RestaurantType { get; set; }
+        public string City { get; set; }
+        public string District { get; set; }
+        public string ShortDescription { get; set; }
         public decimal DeliveryFee { get; set; }
         public decimal MinOrderAmount { get; set; }
         public double Rating { get; set; }

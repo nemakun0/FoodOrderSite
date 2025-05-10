@@ -185,6 +185,20 @@ body {
     color: #333;
 }
 
+/* Yeni Kategori Kartı Stilleri ve Hover Efekti */
+.category-card {
+    border: 1px solid transparent; /* Normal durumda transparan border */
+    border-radius: 10px; /* Kartın tamamına border-radius */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer; /* Tıklanabilir olduğunu belirtir */
+}
+
+.category-card:hover {
+    transform: translateY(-5px); /* Hafif yukarı kalkma */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    border-color: #e74c3c; /* Vurgu renginde border */
+}
+
 /* ------------------ Expectations Bölümü ------------------ */
 .expectations-section {
     position: relative;

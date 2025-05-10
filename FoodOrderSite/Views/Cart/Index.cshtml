@@ -1,29 +1,194 @@
-﻿@model List<FoodOrderSite.ViewModels.CartItemViewModel>
+﻿@using FoodOrderSite.Models.ViewModels
+@model CartPageViewModel
+
 @{
-    ViewData["Title"] = "Sepetim";
-    decimal total = 0;
+    ViewData["Title"] = "Your Shopping Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Sepetim</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Yemek</th>
-            <th>Adet</th>
-            <th>Birim Fiyat</th>
-            <th>Toplam</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price.ToString("C2")</td>
-                <td>@item.Subtotal.ToString("C2")</td>
-            </tr>
-            total += item.Subtotal;
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <!-- Added Container for Title and Button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                 <h2 class="mb-0">@ViewData["Title"]</h2>
+                 <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
+                     <i class="fas fa-store me-2"></i>Continue Shopping
+                 </a>
+            </div>
+
+            @if (Model.IsEmpty)
+            {
+                <div class="alert alert-info text-center" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-shopping-cart me-2"></i>Your Cart is Empty</h4>
+                    <p>Looks like you haven't added any items to your cart yet.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Discover Restaurants</a>
+                    </p>
+                </div>
+            }
+            else
+            {
+                <!-- Main form for Checkout -->
+                <form asp-controller="Cart" asp-action="Checkout" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    @foreach (var group in Model.RestaurantGroups)
+                    {
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Items from: @group.RestaurantName</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var item in group.Items)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap px-3 py-3">
+                                            <!-- Left Side: Item Image, Name, Unit Price -->
+                                            <div class="d-flex align-items-center me-3 mb-2 mb-md-0" style="flex: 1 1 250px;">
+                                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                {
+                                                    <img src="@item.ImageUrl" alt="@item.FoodItemName" style="width: 50px; height: 50px; object-fit: cover; margin-right: 15px; border-radius: 4px;" />
+                                                }
+                                                <div>
+                                                    <h6 class="my-0">@item.FoodItemName</h6>
+                                                    <small class="text-muted">@item.UnitPrice.ToString("C") each</small>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right Side: Quantity Controls, Item Total, Remove Button -->
+                                            <div class="d-flex align-items-center justify-content-end" style="flex: 1 1 300px;">
+
+                                                <!-- Quantity Controls -->
+                                                <div class="d-flex align-items-center me-3">
+                                                    <form asp-controller="Cart" asp-action="DecrementItem" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Decrease quantity for @item.FoodItemName">-</button>
+                                                    </form>
+                                                    
+                                                    <span class="mx-2 fw-bold" style="min-width: 25px; text-align: center;">@item.Quantity</span> 
+                                                    
+                                                    <form asp-controller="Cart" asp-action="IncrementItem" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Increase quantity for @item.FoodItemName">+</button>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Item Total Price -->
+                                                <span class="fw-bold text-nowrap me-3" style="min-width: 80px; text-align: right;">@item.TotalPrice.ToString("C")</span>
+
+                                                <!-- Remove Button -->
+                                                <form asp-controller="Cart" asp-action="RemoveItem" method="post" class="d-inline">
+                                                     @Html.AntiForgeryToken()
+                                                     <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                                     <button type="submit" class="btn btn-sm btn-outline-danger flex-shrink-0" title="Remove Item">
+                                                         <i class="fas fa-trash-alt"></i>
+                                                     </button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    }
+                                    <li class="list-group-item d-flex justify-content-between bg-light-subtle">
+                                        <span class="fw-bold">Restaurant Subtotal:</span>
+                                        <span class="fw-bold">@group.RestaurantSubtotal.ToString("C")</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Totals and Payment sections are part of the MAIN checkout form -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Grand Total:</h4>
+                            <h4 class="mb-0 text-primary fw-bold">@Model.GrandTotal.ToString("C")</h4>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Payment Method</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCash" value="Cash" asp-for="PaymentMethod" onchange="toggleCreditCardPanel(false)">
+                                    <label class="form-check-label" for="paymentCash">Cash on Delivery</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod" onchange="toggleCreditCardPanel(true)">
+                                    <label class="form-check-label" for="paymentCreditCard">Credit Card</label>
+                                </div>
+                            </div>
+
+                            <div id="creditCardPanel" style="display:none;">
+                                <h6 class="mb-3">Credit Card Details</h6>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label asp-for="CreditCard.CardHolderName" class="form-label">Cardholder Name</label>
+                                        <input asp-for="CreditCard.CardHolderName" type="text" class="form-control">
+                                    </div>
+                                    <div class="col-12">
+                                        <label asp-for="CreditCard.CardNumber" class="form-label">Card Number</label>
+                                        <input asp-for="CreditCard.CardNumber" type="text" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="CreditCard.ExpiryMonth" class="form-label">Expiry Month</label>
+                                        <input asp-for="CreditCard.ExpiryMonth" type="text" class="form-control" placeholder="MM">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="CreditCard.ExpiryYear" class="form-label">Expiry Year</label>
+                                        <input asp-for="CreditCard.ExpiryYear" type="text" class="form-control" placeholder="YYYY">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="CreditCard.Cvv" class="form-label">CVV</label>
+                                        <input asp-for="CreditCard.Cvv" type="text" class="form-control" placeholder="XXX">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <button class="w-100 btn btn-primary btn-lg" type="submit">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                </form> <!-- End of Main Checkout form -->
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleCreditCardPanel(show) {
+            var panel = document.getElementById('creditCardPanel');
+            if (show) {
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
         }
-    </tbody>
-</table>
-<p><strong>Genel Toplam: @total.ToString("C2")</strong></p>
+        document.addEventListener('DOMContentLoaded', function() {
+            var creditCardRadio = document.getElementById('paymentCreditCard');
+            var cashRadio = document.getElementById('paymentCash');
+            // Initialize payment method display based on model or default
+            if (creditCardRadio && creditCardRadio.checked) {
+                toggleCreditCardPanel(true);
+            } else if (cashRadio && cashRadio.checked) {
+                 toggleCreditCardPanel(false);
+            } else {
+                // If model.PaymentMethod is set from backend (e.g. validation fail), use that
+                var paymentMethodModel = "@Model.PaymentMethod"; // Get value from model
+                if (paymentMethodModel === "CreditCard") {
+                     if(creditCardRadio) creditCardRadio.checked = true;
+                     toggleCreditCardPanel(true);
+                } else {
+                     if(cashRadio) cashRadio.checked = true; // Default to cash if nothing else
+                     toggleCreditCardPanel(false);
+                }
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

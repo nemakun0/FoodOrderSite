@@ -1,0 +1,104 @@
+@model FoodOrderSite.Models.ViewModels.MenuPageViewModel
+@using FoodOrderSite.Models.ViewModels
+
+@{
+    ViewData["Title"] = Model.Restaurant.RestaurantName + " - Menu";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your standard layout is used
+}
+
+<!-- Cart Icon specific to Menu Page -->
+<div style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
+    <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
+        <i class="fas fa-shopping-cart fa-2x"></i> 
+        @if (Model.CartItemCount > 0)
+        {
+            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size: 0.7em; padding: 0.35em 0.6em;">
+                @Model.CartItemCount
+                <span class="visually-hidden">items in cart</span>
+            </span>
+        }
+    </a>
+</div>
+
+<div class="container mt-4 mb-5">
+    <!-- Restaurant Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4">@Model.Restaurant.RestaurantName</h1>
+            <p class="lead text-muted">
+                <i class="fas fa-map-marker-alt me-1"></i>@Model.Restaurant.Address, @Model.Restaurant.City, @Model.Restaurant.District
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Restaurant.Description))
+            {
+                <p class="text-muted">@Model.Restaurant.Description</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.Restaurant.RestaurantType))
+            {
+                <span class="badge bg-info text-dark mb-3">Type: @Model.Restaurant.RestaurantType</span>
+            }
+        </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @if (Model.MenuItems.Any())
+        {
+            foreach (var item in Model.MenuItems)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm menu-item-card">
+                        <img src="@(string.IsNullOrEmpty(item.Image) ? "/images/default-food-item.png" : item.Image)" 
+                             class="card-img-top menu-item-image" 
+                             alt="@item.Name" 
+                             onerror="this.onerror=null; this.src='/images/default-food-item.png';">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@item.Name</h5>
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <p class="card-text small text-muted flex-grow-1">@item.Description</p>
+                            }
+                            <div class="mt-auto">
+                                <p class="card-text fs-5 fw-bold text-primary mb-2">@item.Price.ToString("C")</p>
+                                <form asp-controller="Cart" asp-action="AddItem" method="post">
+                                    <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                    <input type="hidden" name="quantity" value="1" /> 
+                                    <button type="submit" class="btn btn-warning w-100 add-to-cart-btn">
+                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i>No Menu Items Yet!</h4>
+                    <p>This restaurant currently has no items on its menu. Please check back later.</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .menu-item-image {
+            height: 200px; /* Adjust as needed */
+            object-fit: cover;
+        }
+        .menu-item-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .menu-item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+        .add-to-cart-btn {
+            /* Style for add to cart button if needed */
+        }
+    </style>
+} 
