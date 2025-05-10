@@ -1,48 +1,74 @@
 ﻿@model FoodOrderSite.Models.ViewModels.RestaurantSettingsViewModel
-
 @{
     Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
+}
+@{
     ViewBag.Title = "Restoran Ayarları";
 }
-
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<form asp-action="UpdateSettings" asp-controller="RestaurantSettings" method="post">
-    <input type="hidden" asp-for="RestaurantId" />
-    <input type="hidden" asp-for="UserId" />
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
+<form asp-action="Index" asp-controller="RestaurantSettings" method="post">
+    <input type="hidden" asp-for="RestaurantId" />
     <div class="row mb-4">
+        <!-- Restoran Adı -->
         <div class="col-md-6 mb-3">
-            <label asp-for="RestaurantName"></label>
-            <input asp-for="RestaurantName" class="form-control" />
+            <label asp-for="RestaurantName">Restoran Adı</label>
+            <input type="text" class="form-control" asp-for="RestaurantName" />
+            <span asp-validation-for="RestaurantName" class="text-danger"></span>
         </div>
+        <!-- Restoran Türü -->
         <div class="col-md-6 mb-3">
-            <label asp-for="Phone"></label>
-            <input asp-for="Phone" class="form-control" />
+            <label asp-for="RestaurantType">Restoran Türü</label>
+            <input type="text" class="form-control" asp-for="RestaurantType" />
+            <span asp-validation-for="RestaurantType" class="text-danger"></span>
         </div>
+        <!-- Telefon -->
         <div class="col-md-6 mb-3">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control" />
+            <label asp-for="Phone">Telefon</label>
+            <input type="text" class="form-control" asp-for="Phone" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
         </div>
+        <!-- E-posta -->
         <div class="col-md-6 mb-3">
-            <label asp-for="City"></label>
-            <input asp-for="City" class="form-control" />
+            <label asp-for="Email">E-posta</label>
+            <input type="email" class="form-control" asp-for="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
+        <!-- Şehir -->
         <div class="col-md-6 mb-3">
-            <label asp-for="District"></label>
-            <input asp-for="District" class="form-control" />
+            <label asp-for="City">Şehir</label>
+            <input type="text" class="form-control" asp-for="City" />
+            <span asp-validation-for="City" class="text-danger"></span>
         </div>
+        <!-- İlçe -->
+        <div class="col-md-6 mb-3">
+            <label asp-for="District">İlçe</label>
+            <input type="text" class="form-control" asp-for="District" />
+            <span asp-validation-for="District" class="text-danger"></span>
+        </div>
+        <!-- Adres -->
         <div class="col-12 mb-3">
-            <label asp-for="Address"></label>
-            <input asp-for="Address" class="form-control" />
+            <label asp-for="Address">Adres</label>
+            <input type="text" class="form-control" asp-for="Address" />
+            <span asp-validation-for="Address" class="text-danger"></span>
         </div>
+        <!-- Açıklama -->
         <div class="col-12 mb-3">
-            <label asp-for="Description"></label>
-            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <label asp-for="Description">Açıklama</label>
+            <textarea class="form-control" rows="3" asp-for="Description"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
 
-    <!-- Haftalık Çalışma Saatleri -->
+    <!-- Haftanın günleri ve saatleri -->
     <h4 class="mb-3 text-primary">Haftalık Çalışma Saatleri</h4>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
@@ -54,19 +80,22 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Schedules.Count; i++)
+                @for (int i = 0; i < Model.ScheduleItems.Count; i++)
                 {
                     <tr>
-                        <td>@Model.Schedules[i].DayOfWeek</td>
                         <td>
-                            <input type="time" name="Schedules[@i].OpeningTime" class="form-control" value="@Model.Schedules[i].OpeningTime.ToString(@"hh\:mm")" />
+                            @Model.ScheduleItems[i].DayOfWeek
+                            <input type="hidden" asp-for="ScheduleItems[i].DayOfWeek" />
+                            <input type="hidden" asp-for="ScheduleItems[i].ScheduleId" />
                         </td>
                         <td>
-                            <input type="time" name="Schedules[@i].ClosingTime" class="form-control" value="@Model.Schedules[i].ClosingTime.ToString(@"hh\:mm")" />
+                            <input type="time" class="form-control" asp-for="ScheduleItems[i].OpeningTime" />
+                        </td>
+                        <td>
+                            <input type="time" class="form-control" asp-for="ScheduleItems[i].ClosingTime" />
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
     </div>
@@ -75,3 +104,7 @@
         <button type="submit" class="btn btn-success">Güncelle</button>
     </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
