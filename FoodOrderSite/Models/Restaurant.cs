@@ -14,6 +14,5 @@ namespace FoodOrderSite.Models
         public double Rating { get; set; }
         public string ImageUrl { get; set; }
         public int DeliveryTime { get; set; }
-        public bool IsPromoted { get; set; }
     }
 }

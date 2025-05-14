@@ -4,7 +4,7 @@ using FoodOrderSite.Models;
 
 namespace FoodOrderSite.Controllers
 {
-    public class RestaurantsController : Controller
+    public class RestaurantsController : BaseAdminController
     {
         private readonly ApplicationDbContext _context;
 

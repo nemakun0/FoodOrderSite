@@ -5,7 +5,7 @@ using System;
 
 namespace FoodOrderSite.Controllers
 {
-    public class CategoriesController : Controller
+    public class CategoriesController : BaseAdminController
     {
         private readonly ApplicationDbContext _context;
 

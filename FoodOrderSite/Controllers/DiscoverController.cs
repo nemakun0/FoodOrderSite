@@ -123,9 +123,7 @@ namespace FoodOrderSite.Controllers
                 "deliveryTime" => restaurants.OrderBy(r => r.DeliveryTime).ThenBy(r=>r.Name).ToList(),
                 "deliveryFee" => restaurants.OrderBy(r => r.DeliveryFee).ThenBy(r=>r.Name).ToList(),
                 "minOrder" => restaurants.OrderBy(r => r.MinOrderAmount).ThenBy(r=>r.Name).ToList(),
-                _ => restaurants.OrderByDescending(r => r.IsPromoted)
-                               .ThenBy(r => r.Name)
-                               .ToList()
+                _ => restaurants.OrderBy(r => r.Name).ToList()
             };
         }
 
@@ -145,8 +143,7 @@ namespace FoodOrderSite.Controllers
                 MinOrderAmount = 20.00m, 
                 Rating = CalculateRating(rt.RestaurantId), 
                 ImageUrl = "",
-                DeliveryTime = 30,      
-                IsPromoted = (rt.RestaurantId % 4 == 0)
+                DeliveryTime = 30
             };
         }
         

@@ -24,11 +24,12 @@ builder.Services
     {
         options.LoginPath = "/SignIn/Index";
         options.AccessDeniedPath = "/SignIn/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-        options.SlidingExpiration = true;
         options.Cookie.Name = "FoodOrderAuth";
-        // RememberMe seçili değilse cookie tarayıcı kapandığında silinecek
         options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        // Normal oturum için varsayılan ayarlar
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Varsayılan oturum süresi
+        options.SlidingExpiration = true; // Kullanıcı aktif oldukça süreyi yenile
     });
 
 // Yetkilendirme servislerini ekleyin (MVC zaten bunu çağırır ama açıkça koymak da iyi)

@@ -28,7 +28,7 @@ namespace FoodOrderSite.Controllers
                 else if (User.IsInRole("seller"))
                     return RedirectToAction("Index", "ManageRestaurant");
                 else if (User.IsInRole("customer"))
-                    return RedirectToAction("Index", "CustomerHome");
+                    return RedirectToAction("Index", "Discover");
             }
             return View(new SignInViewModel());
         }
@@ -61,13 +61,17 @@ namespace FoodOrderSite.Controllers
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = model.RememberMe, // Beni hatırla seçeneğine göre kalıcı cookie ayarı
-                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(7) : null, // Sadece RememberMe seçiliyse 7 gün sakla
+                IsPersistent = model.RememberMe,
                 AllowRefresh = true
             };
+
+            if (model.RememberMe)
+            {
+                authProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7);
+            }
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
@@ -83,7 +87,7 @@ namespace FoodOrderSite.Controllers
                 case "seller":
                     return RedirectToAction("Index", "ManageRestaurant");
                 case "customer":
-                    return RedirectToAction("Index", "CustomerHome");
+                    return RedirectToAction("Index", "Discover");
                 default:
                     ModelState.AddModelError("", "Rol tanımsız. Lütfen yöneticinizle iletişime geçin.");
                     return View(model);

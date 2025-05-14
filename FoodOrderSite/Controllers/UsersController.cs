@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderSite.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : BaseAdminController
     {
         private readonly ApplicationDbContext _context;
 
