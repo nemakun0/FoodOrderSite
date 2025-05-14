@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FoodOrderSite.Models;
-using FoodOrderSite.ViewModels;
+using FoodOrderSite.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderSite.Controllers

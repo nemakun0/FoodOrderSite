@@ -10,9 +10,9 @@ builder.Services.AddDistributedMemoryCache();
 // 2) Session servisini ekleyin
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);    // Örnek timeout
+    options.IdleTimeout = TimeSpan.FromMinutes(30);    // Ã¶rnek timeout
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;                 // GDPR uyumluluðu
+    options.Cookie.IsEssential = true;                 // GDPR uyumluluÄŸu
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -22,16 +22,19 @@ builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/SignIn/Index";      // Giriþ sayfanýzýn route’u
-        options.AccessDeniedPath = "/SignIn/AccessDenied"; // Ýsterseniz ayrý bir eriþim reddedildi sayfasý
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);  // Opsiyonel: cookie ömrü
-        options.SlidingExpiration = true;                 // Opsiyonel
+        options.LoginPath = "/SignIn/Index";
+        options.AccessDeniedPath = "/SignIn/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+        options.Cookie.Name = "FoodOrderAuth";
+        // RememberMe seÃ§ili deÄŸilse cookie tarayÄ±cÄ± kapandÄ±ÄŸÄ±nda silinecek
+        options.Cookie.HttpOnly = true;
     });
 
-// Yetkilendirme servislerini ekleyin (MVC zaten bunu çaðýrýr ama açýkça koymak da iyi)
+// Yetkilendirme servislerini ekleyin (MVC zaten bunu Ã§aÄŸÄ±rÄ±r ama aÃ§Ä±kÃ§a koymak da iyi)
 builder.Services.AddAuthorization();
 
-// 3) DbContext ve MVC desteði
+// 3) DbContext ve MVC desteÄŸi
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon"))
 );
@@ -65,12 +68,12 @@ app.UseAuthorization();
 
 app.UseSession();
 
-// MapControllerRoute çaðý ve noktalý virgül unutulmuþtu:
+// MapControllerRoute Ã§aÄŸ ve noktalÄ± virgÃ¼l unutulmuÅŸtu:
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Uygulamayý baþlatmayý unutmayýn:
+// UygulamayÄ± baÅŸlatmayÄ± unutmayÄ±n:
 app.Run();
 
 //using FoodOrderSite.Models;
@@ -88,7 +91,7 @@ app.Run();
 //    })
 //    .AddDataAnnotationsLocalization();
 
-////Remember me butonu için cookie ayarlamasý
+////Remember me butonu iÃ§in cookie ayarlamasÄ±
 //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 //    .AddCookie(options =>
 //    {

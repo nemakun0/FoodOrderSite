@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Linq;
 
 namespace FoodOrderSite.Controllers
 {
@@ -18,38 +17,20 @@ namespace FoodOrderSite.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var model = new SignInViewModel();
-
-            // Kullanıcı oturum açmış mı? 
-            var authResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Eğer kullanıcı oturum açmışsa, email bilgilerini cookie'den alabiliriz
-            if (authResult.Succeeded)
+            // Eğer kullanıcı zaten giriş yapmışsa, rolüne göre yönlendir
+            if (User.Identity.IsAuthenticated)
             {
-                var emailClaim = authResult.Principal?.FindFirst(ClaimTypes.Name)?.Value;
-
-                if (!string.IsNullOrEmpty(emailClaim))
-                {
-                    model.Email = emailClaim; // Cookie'den email bilgisini alıyoruz
-                    model.Password = ""; // Şifreyi güvenlik için boş bırakıyoruz
-                }
+                if (User.IsInRole("admin"))
+                    return RedirectToAction("Index", "Admin");
+                else if (User.IsInRole("seller"))
+                    return RedirectToAction("Index", "ManageRestaurant");
+                else if (User.IsInRole("customer"))
+                    return RedirectToAction("Index", "CustomerHome");
             }
-
-            // Eğer session'da daha önce saklanmış bir şifre varsa, onu getirebiliriz
-            if (HttpContext.Session.GetString("UserPassword") != null)
-            {
-                model.Password = HttpContext.Session.GetString("UserPassword"); // Şifreyi session'dan alıyoruz
-            }
-
-            return View(model);
+            return View(new SignInViewModel());
         }
 
         [HttpPost]
@@ -75,17 +56,17 @@ namespace FoodOrderSite.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // UserId ekleniyor
-                new Claim("UserId", user.UserId.ToString()), // Alternatif olarak custom claim
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToLower())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
+            
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = model.RememberMe, // RememberMe checkbox'ına göre ayarla
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // 7 gün boyunca hatırlansın
+                IsPersistent = model.RememberMe, // Beni hatırla seçeneğine göre kalıcı cookie ayarı
+                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(7) : null, // Sadece RememberMe seçiliyse 7 gün sakla
+                AllowRefresh = true
             };
 
             await HttpContext.SignInAsync(
@@ -94,35 +75,41 @@ namespace FoodOrderSite.Controllers
                 authProperties
             );
 
-            // Eğer "Beni Hatırla" kutusu işaretlenmişse, şifreyi session'a kaydedebiliriz
-            if (model.RememberMe)
+            // Kullanıcıyı rolüne göre yönlendir
+            switch (user.Role?.ToLower())
             {
-                HttpContext.Session.SetString("UserPassword", model.Password); // Şifreyi session'a kaydediyoruz
-            }
-
-            // Kullanıcı bilgilerini session'a kaydet
-            HttpContext.Session.SetString("UserId", user.UserId.ToString());
-            HttpContext.Session.SetString("UserName", user.Name);
-            HttpContext.Session.SetString("UserRole", user.Role);
-
-            switch (user.Role?.ToLower()) // küçük harfe çevirip kontrol edelim
-            {
+                case "admin":
+                    return RedirectToAction("Index", "Admin");
                 case "seller":
                     return RedirectToAction("Index", "ManageRestaurant");
                 case "customer":
-                    return RedirectToAction("Index", "CustomerHome"); // örnek müşteri sayfası
-                case "admin":
-                    return RedirectToAction("Index", "AdminDashboard"); // örnek admin paneli
+                    return RedirectToAction("Index", "CustomerHome");
                 default:
                     ModelState.AddModelError("", "Rol tanımsız. Lütfen yöneticinizle iletişime geçin.");
                     return View(model);
             }
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            // Authentication cookie'sini temizle
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Session'ı temizle
             HttpContext.Session.Clear();
-            return RedirectToAction("Index");
+            
+            // Tüm cookie'leri temizle
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+            
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

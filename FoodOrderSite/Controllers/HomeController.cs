@@ -15,9 +15,10 @@ namespace FoodOrderSite.Controllers
 
         public IActionResult Index()
         {
-            var products = _db.Products.ToList();
+            //var products = _db.Products.ToList();
             ViewBag.Districts = _db.RestaurantTables.Select(r => r.District).Distinct().ToList();
-            return View(products);
+            //return View(products);
+            return View();
         }
 
         public IActionResult Privacy()
