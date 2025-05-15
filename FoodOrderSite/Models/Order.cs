@@ -20,4 +20,4 @@ namespace FoodOrderSite.Models
         [StringLength(50)]
         public string OrderStatus { get; set; } = "Pending";
     }
-} 
+}

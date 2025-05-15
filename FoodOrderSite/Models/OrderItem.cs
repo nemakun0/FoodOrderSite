@@ -12,10 +12,13 @@ namespace FoodOrderSite.Models
 
         public int FoodItemId { get; set; }
 
+        // Sipariþ edilen ürünün (FoodItem) ID'si
         [Required]
         [StringLength(100)]
         public string ProductName { get; set; } = string.Empty;
 
+        // Seçilen adet
+        [Required]
         public int Quantity { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
@@ -23,4 +26,4 @@ namespace FoodOrderSite.Models
 
         public Guid OrderId { get; set; }
     }
-} 
+}
