@@ -2,50 +2,50 @@
 @model CartPageViewModel
 
 @{
-    ViewData["Title"] = "Your Shopping Cart";
+    ViewData["Title"] = "Sepetiniz";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-8">
-            <!-- Added Container for Title and Button -->
+            <!-- Başlık ve Alışverişe Devam Et düğmesi -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                  <h2 class="mb-0">@ViewData["Title"]</h2>
                  <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
-                     <i class="fas fa-store me-2"></i>Continue Shopping
+                     <i class="fas fa-store me-2"></i>Alışverişe Devam Et
                  </a>
             </div>
 
             @if (Model.IsEmpty)
             {
                 <div class="alert alert-info text-center" role="alert">
-                    <h4 class="alert-heading"><i class="fas fa-shopping-cart me-2"></i>Your Cart is Empty</h4>
-                    <p>Looks like you haven't added any items to your cart yet.</p>
+                    <h4 class="alert-heading"><i class="fas fa-shopping-cart me-2"></i>Sepetiniz Boş</h4>
+                    <p>Henüz sepetinize ürün eklemediniz.</p>
                     <hr>
                     <p class="mb-0">
-                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Discover Restaurants</a>
+                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Restoranları Keşfet</a>
                     </p>
                 </div>
             }
             else
             {
-                <!-- Main form for Checkout -->
-                <form asp-controller="Cart" asp-action="Checkout" method="post">
+                <!-- Ana Checkout formu -->
+                <form asp-controller="Cart" asp-action="Checkout" method="post" id="checkoutForm">
                     @Html.AntiForgeryToken()
                     
                     @foreach (var group in Model.RestaurantGroups)
                     {
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-light">
-                                <h5 class="mb-0">Items from: @group.RestaurantName</h5>
+                                <h5 class="mb-0">Restoran: @group.RestaurantName</h5>
                             </div>
                             <div class="card-body p-0">
                                 <ul class="list-group list-group-flush">
                                     @foreach (var item in group.Items)
                                     {
                                         <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap px-3 py-3">
-                                            <!-- Left Side: Item Image, Name, Unit Price -->
+                                            <!-- Sol Taraf: Ürün Resmi, Adı, Birim Fiyatı -->
                                             <div class="d-flex align-items-center me-3 mb-2 mb-md-0" style="flex: 1 1 250px;">
                                                 @if (!string.IsNullOrEmpty(item.ImageUrl))
                                                 {
@@ -53,38 +53,31 @@
                                                 }
                                                 <div>
                                                     <h6 class="my-0">@item.FoodItemName</h6>
-                                                    <small class="text-muted">@item.UnitPrice.ToString("C") each</small>
+                                                    <small class="text-muted">@item.UnitPrice.ToString("C")</small>
                                                 </div>
                                             </div>
 
-                                            <!-- Right Side: Quantity Controls, Item Total, Remove Button -->
+                                            <!-- Sağ Taraf: Miktar Kontrolleri, Toplam Fiyat, Kaldır Düğmesi -->
                                             <div class="d-flex align-items-center justify-content-end" style="flex: 1 1 300px;">
 
-                                                <!-- Quantity Controls -->
+                                                <!-- Miktar Kontrolleri -->
                                                 <div class="d-flex align-items-center me-3">
-                                                    <form asp-controller="Cart" asp-action="DecrementItem" method="post" class="d-inline">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Decrease quantity for @item.FoodItemName">-</button>
-                                                    </form>
+                                                    <!-- Azaltma butonu için normal link kullan, JavaScript problemi yaşamamak için -->
+                                                    <a href="@Url.Action("DecrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Azalt">-</a>
                                                     
                                                     <span class="mx-2 fw-bold" style="min-width: 25px; text-align: center;">@item.Quantity</span> 
                                                     
-                                                    <form asp-controller="Cart" asp-action="IncrementItem" method="post" class="d-inline">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Increase quantity for @item.FoodItemName">+</button>
-                                                    </form>
+                                                    <a href="@Url.Action("IncrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Artır">+</a>
                                                 </div>
 
-                                                <!-- Item Total Price -->
+                                                <!-- Toplam Fiyat -->
                                                 <span class="fw-bold text-nowrap me-3" style="min-width: 80px; text-align: right;">@item.TotalPrice.ToString("C")</span>
 
-                                                <!-- Remove Button -->
+                                                <!-- Kaldır Düğmesi -->
                                                 <form asp-controller="Cart" asp-action="RemoveItem" method="post" class="d-inline">
                                                      @Html.AntiForgeryToken()
                                                      <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                                     <button type="submit" class="btn btn-sm btn-outline-danger flex-shrink-0" title="Remove Item">
+                                                     <button type="submit" class="btn btn-sm btn-outline-danger flex-shrink-0" title="Ürünü Kaldır">
                                                          <i class="fas fa-trash-alt"></i>
                                                      </button>
                                                 </form>
@@ -92,7 +85,7 @@
                                         </li>
                                     }
                                     <li class="list-group-item d-flex justify-content-between bg-light-subtle">
-                                        <span class="fw-bold">Restaurant Subtotal:</span>
+                                        <span class="fw-bold">Restoran Ara Toplamı:</span>
                                         <span class="fw-bold">@group.RestaurantSubtotal.ToString("C")</span>
                                     </li>
                                 </ul>
@@ -100,60 +93,39 @@
                         </div>
                     }
 
-                    <!-- Totals and Payment sections are part of the MAIN checkout form -->
+                    <!-- Toplam ve Ödeme bölümleri -->
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0">Grand Total:</h4>
+                            <h4 class="mb-0">Genel Toplam:</h4>
                             <h4 class="mb-0 text-primary fw-bold">@Model.GrandTotal.ToString("C")</h4>
                         </div>
                     </div>
 
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="mb-0">Payment Method</h5>
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Ödeme Yöntemi</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCash" value="Cash" asp-for="PaymentMethod" onchange="toggleCreditCardPanel(false)">
-                                    <label class="form-check-label" for="paymentCash">Cash on Delivery</label>
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCash" value="Cash" asp-for="PaymentMethod" checked>
+                                    <label class="form-check-label" for="paymentCash">Kapıda Ödeme</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod" onchange="toggleCreditCardPanel(true)">
-                                    <label class="form-check-label" for="paymentCreditCard">Credit Card</label>
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod" disabled>
+                                    <label class="form-check-label" for="paymentCreditCard">Kredi Kartı (Şu anda kullanılamıyor)</label>
                                 </div>
                             </div>
-
-                            <div id="creditCardPanel" style="display:none;">
-                                <h6 class="mb-3">Credit Card Details</h6>
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label asp-for="CreditCard.CardHolderName" class="form-label">Cardholder Name</label>
-                                        <input asp-for="CreditCard.CardHolderName" type="text" class="form-control">
-                                    </div>
-                                    <div class="col-12">
-                                        <label asp-for="CreditCard.CardNumber" class="form-label">Card Number</label>
-                                        <input asp-for="CreditCard.CardNumber" type="text" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label asp-for="CreditCard.ExpiryMonth" class="form-label">Expiry Month</label>
-                                        <input asp-for="CreditCard.ExpiryMonth" type="text" class="form-control" placeholder="MM">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label asp-for="CreditCard.ExpiryYear" class="form-label">Expiry Year</label>
-                                        <input asp-for="CreditCard.ExpiryYear" type="text" class="form-control" placeholder="YYYY">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label asp-for="CreditCard.Cvv" class="form-label">CVV</label>
-                                        <input asp-for="CreditCard.Cvv" type="text" class="form-control" placeholder="XXX">
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-4">
-                            <button class="w-100 btn btn-primary btn-lg" type="submit">Proceed to Checkout</button>
                         </div>
                     </div>
-                </form> <!-- End of Main Checkout form -->
+
+                    <!-- Sipariş Tamamlama Butonu -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-danger btn-lg py-3 mt-4" type="submit" id="submitOrderButton">
+                            <i class="fas fa-shopping-cart me-2"></i>SİPARİŞİ TAMAMLA
+                        </button>
+                    </div>
+                </form> <!-- Ana Checkout formu sonu -->
             }
         </div>
     </div>
@@ -161,33 +133,56 @@
 
 @section Scripts {
     <script>
-        function toggleCreditCardPanel(show) {
-            var panel = document.getElementById('creditCardPanel');
-            if (show) {
-                panel.style.display = 'block';
-            } else {
-                panel.style.display = 'none';
-            }
-        }
         document.addEventListener('DOMContentLoaded', function() {
-            var creditCardRadio = document.getElementById('paymentCreditCard');
-            var cashRadio = document.getElementById('paymentCash');
-            // Initialize payment method display based on model or default
-            if (creditCardRadio && creditCardRadio.checked) {
-                toggleCreditCardPanel(true);
-            } else if (cashRadio && cashRadio.checked) {
-                 toggleCreditCardPanel(false);
-            } else {
-                // If model.PaymentMethod is set from backend (e.g. validation fail), use that
-                var paymentMethodModel = "@Model.PaymentMethod"; // Get value from model
-                if (paymentMethodModel === "CreditCard") {
-                     if(creditCardRadio) creditCardRadio.checked = true;
-                     toggleCreditCardPanel(true);
-                } else {
-                     if(cashRadio) cashRadio.checked = true; // Default to cash if nothing else
-                     toggleCreditCardPanel(false);
-                }
+            // Form gönderimi
+            var form = document.getElementById('checkoutForm');
+            var submitBtn = document.getElementById('submitOrderButton');
+            
+            if (form && submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Kapıda ödeme mi kontrolü
+                    var cashPayment = document.getElementById('paymentCash');
+                    if (!cashPayment || !cashPayment.checked) {
+                        alert('Lütfen kapıda ödeme seçeneğini seçin.');
+                        return false;
+                    }
+                    
+                    // Formu gönder
+                    form.submit();
+                });
             }
+            
+            // Sepette azaltma formlarını güvenli hale getir
+            var decrementForms = document.querySelectorAll('form[asp-action="DecrementItem"]');
+            decrementForms.forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Form verilerini alıp POST isteği gönder
+                    var formData = new FormData(form);
+                    
+                    fetch('/Cart/DecrementItem', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            // Başarılı olduğunda sayfayı yenile
+                            window.location.reload();
+                        } else {
+                            console.error('Miktar azaltılamadı', response);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('İstek hatası:', error);
+                    });
+                });
+            });
         });
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

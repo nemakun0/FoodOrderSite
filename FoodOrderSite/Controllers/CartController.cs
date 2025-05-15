@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FoodOrderSite.Models.ViewModels;
+using System;
+using System.Diagnostics;
 
 namespace FoodOrderSite.Controllers
 {
@@ -118,10 +120,11 @@ namespace FoodOrderSite.Controllers
         }
 
         // Action to Increment Item Quantity
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Good practice for POST actions changing data
+        [HttpGet] // GET istek
         public IActionResult IncrementItem(int foodItemId)
         {
+            Debug.WriteLine($"IncrementItem çağrıldı: FoodItemId={foodItemId}");
+            
             if (foodItemId == 0) return BadRequest();
 
             var cart = GetCartItemsFromSession();
@@ -131,20 +134,22 @@ namespace FoodOrderSite.Controllers
             {
                 cartItem.Quantity++; // Increment quantity
                 SaveCartItemsToSession(cart);
-                // Optional: Add TempData message
+                Debug.WriteLine($"Ürün miktarı artırıldı: FoodItemId={foodItemId}, Yeni miktar={cartItem.Quantity}");
             }
             else
             {
-                TempData["ErrorMessage"] = "Item not found in cart.";
+                TempData["ErrorMessage"] = "Ürün sepette bulunamadı.";
+                Debug.WriteLine($"Sepette bulunamadı: FoodItemId={foodItemId}");
             }
             return RedirectToAction("Index");
         }
 
         // Action to Decrement Item Quantity (and remove if zero)
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Good practice for POST actions changing data
+        [HttpGet] // GET istek
         public IActionResult DecrementItem(int foodItemId)
         {
+            Debug.WriteLine($"DecrementItem çağrıldı: FoodItemId={foodItemId}");
+            
             if (foodItemId == 0) return BadRequest();
 
             var cart = GetCartItemsFromSession();
@@ -158,16 +163,18 @@ namespace FoodOrderSite.Controllers
                 {
                     // Remove item if quantity is zero or less
                     cart.Remove(cartItem);
-                    TempData["SuccessMessage"] = "Item removed from cart.";
+                    TempData["SuccessMessage"] = "Ürün sepetten kaldırıldı.";
                 }
                 
                 SaveCartItemsToSession(cart);
-                // Optional: Add TempData message if quantity > 0
+                Debug.WriteLine($"Ürün miktarı azaltıldı: FoodItemId={foodItemId}, Yeni miktar={(cartItem.Quantity < 0 ? 0 : cartItem.Quantity)}");
             }
             else
             {
-                TempData["ErrorMessage"] = "Item not found in cart.";
+                TempData["ErrorMessage"] = "Ürün sepette bulunamadı.";
+                Debug.WriteLine($"Sepette bulunamadı: FoodItemId={foodItemId}");
             }
+            
             return RedirectToAction("Index");
         }
 
@@ -175,56 +182,270 @@ namespace FoodOrderSite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Checkout(CartPageViewModel model)
         {
-            var cartItems = GetCartItemsFromSession();
-            if (!cartItems.Any())
+            try
             {
-                TempData["ErrorMessage"] = "Your cart is empty.";
+                Debug.WriteLine("Checkout işlemi başladı");
+                var cartItems = GetCartItemsFromSession();
+                
+                // Sepet boş mu kontrolü
+                if (!cartItems.Any())
+                {
+                    TempData["ErrorMessage"] = "Sepetiniz boş.";
+                    return RedirectToAction("Index");
+                }
+
+                // Test amaçlı olarak Order veritabanı tablosunun yapısını incele
+                Debug.WriteLine("Orders tablosu yapısını inceliyorum...");
+                try
+                {
+                    var existingOrders = await _db.Orders.Take(1).ToListAsync();
+                    if (existingOrders.Any())
+                    {
+                        Debug.WriteLine($"Mevcut sipariş örneği Id tipi: {existingOrders.First().Id.GetType().FullName}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Orders tablosunda kayıt yok, tip bilgisi alınamadı.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Orders tablosu incelenirken hata: {ex.Message}");
+                }
+
+                // Basit bir sipariş oluştur
+                var order = new Order
+                {
+                    OrderDate = DateTime.UtcNow,
+                    OrderStatus = "Pending",
+                    TotalAmount = cartItems.Sum(item => item.TotalPrice),
+                    UserId = User.Identity?.Name ?? "Guest"
+                };
+
+                Debug.WriteLine($"OrderDate: {order.OrderDate}, TotalAmount: {order.TotalAmount}, UserId: {order.UserId}");
+
+                // Siparişi kaydet - önce orders tablosuna ekle
+                _db.Orders.Add(order);
+                var orderSaveResult = await _db.SaveChangesAsync();
+                
+                Debug.WriteLine($"Sipariş kaydedildi. OrderId: {order.Id}, Etkilenen satır: {orderSaveResult}");
+
+                int successItemCount = 0;
+                int failedItemCount = 0;
+
+                // Sipariş öğelerini ekle
+                foreach (var item in cartItems)
+                {
+                    try
+                    {
+                        // Veritabanından ürün bilgilerini al
+                        var foodItem = await _db.FoodItemTables.FirstOrDefaultAsync(f => f.FoodItemId == item.FoodItemId);
+                        
+                        if (foodItem != null)
+                        {
+                            // OrderItem nesnesi oluştur
+                            var orderItem = new OrderItem
+                            {
+                                FoodItemId = foodItem.FoodItemId,
+                                ProductName = foodItem.Name,
+                                Quantity = item.Quantity,
+                                Price = foodItem.Price,
+                                OrderId = order.Id
+                            };
+
+                            Debug.WriteLine($"Eklenen sipariş öğesi: " +
+                                           $"FoodItemId: {orderItem.FoodItemId} ({orderItem.FoodItemId.GetType().Name}), " +
+                                           $"ProductName: {orderItem.ProductName}, " +
+                                           $"Quantity: {orderItem.Quantity} ({orderItem.Quantity.GetType().Name}), " +
+                                           $"Price: {orderItem.Price} ({orderItem.Price.GetType().Name}), " +
+                                           $"OrderId: {orderItem.OrderId} ({orderItem.OrderId.GetType().Name})");
+                            
+                            _db.OrderItems.Add(orderItem);
+                            
+                            // Her öğeyi ayrı ayrı kaydet
+                            var itemSaveResult = await _db.SaveChangesAsync();
+                            
+                            if (itemSaveResult > 0)
+                            {
+                                Debug.WriteLine($"OrderItem başarıyla kaydedildi. ID: {orderItem.Id}");
+                                successItemCount++;
+                            }
+                            else
+                            {
+                                Debug.WriteLine("OrderItem kaydedilirken bir sorun oluştu. Etkilenen satır: 0");
+                                failedItemCount++;
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"UYARI: FoodItemId {item.FoodItemId} veritabanında bulunamadı!");
+                            failedItemCount++;
+                        }
+                    }
+                    catch (Exception itemEx)
+                    {
+                        Debug.WriteLine($"Sipariş öğesi eklenirken hata: {itemEx.Message}");
+                        if (itemEx.InnerException != null)
+                        {
+                            Debug.WriteLine($"İç hata: {itemEx.InnerException.Message}");
+                        }
+                        failedItemCount++;
+                        // Öğe eklenemedi, ancak diğer öğeleri eklemeye devam et
+                        continue;
+                    }
+                }
+
+                Debug.WriteLine($"Sipariş işlemi tamamlandı. Başarılı öğeler: {successItemCount}, Başarısız öğeler: {failedItemCount}");
+
+                // Sepeti temizle
+                SaveCartItemsToSession(new List<CartItemViewModel>()); 
+                
+                if (successItemCount > 0)
+                {
+                    TempData["SuccessMessage"] = "Siparişiniz başarıyla oluşturuldu!";
+                    // Home/Index yerine OrderDetails sayfasına yönlendir
+                    return RedirectToAction("OrderDetails", new { orderId = order.Id });
+                }
+                else
+                {
+                    TempData["WarningMessage"] = "Sipariş oluşturuldu ancak bazı ürünler eklenemedi.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hata bilgilerini yazdır
+                Debug.WriteLine($"HATA: {ex.Message}");
+                Debug.WriteLine($"HATA STACK: {ex.StackTrace}");
+                
+                if (ex.InnerException != null)
+                {
+                    Debug.WriteLine($"INNER HATA: {ex.InnerException.Message}");
+                }
+                
+                // Kullanıcıya bilgi ver
+                TempData["ErrorMessage"] = $"Sipariş oluşturulurken hata: {ex.Message}";
+                
                 return RedirectToAction("Index");
             }
+        }
 
-            if (model.PaymentMethod == "CreditCard")
+        // Veritabanı bağlantısını test etmek için yeni bir metot
+        public IActionResult TestDatabase()
+        {
+            try
             {
-                if (string.IsNullOrWhiteSpace(model.CreditCard.CardNumber) || 
-                    string.IsNullOrWhiteSpace(model.CreditCard.ExpiryMonth) || 
-                    string.IsNullOrWhiteSpace(model.CreditCard.ExpiryYear) || 
-                    string.IsNullOrWhiteSpace(model.CreditCard.Cvv) ||
-                    string.IsNullOrWhiteSpace(model.CreditCard.CardHolderName))
+                Debug.WriteLine("Veritabanı test işlemi başladı");
+                
+                // Veritabanı bağlantısını kontrol et
+                bool canConnect = _db.Database.CanConnect();
+                Debug.WriteLine($"Veritabanına bağlanılabilir mi: {canConnect}");
+                
+                // Migration durumunu kontrol et
+                var migrations = _db.Database.GetAppliedMigrations().ToList();
+                Debug.WriteLine($"Uygulanan migration sayısı: {migrations.Count}");
+                
+                foreach (var migration in migrations)
                 {
-                    TempData["ErrorMessage"] = "Please fill in all credit card details.";
-                    model.RestaurantGroups = cartItems
-                        .GroupBy(item => new { item.RestaurantId, item.RestaurantName })
-                        .Select(group => new RestaurantCartGroupViewModel
-                        {
-                            RestaurantId = group.Key.RestaurantId,
-                            RestaurantName = group.Key.RestaurantName,
-                            Items = group.ToList()
-                        }).ToList();
-                    return View("Index", model);
+                    Debug.WriteLine($"Uygulanan migration: {migration}");
                 }
-                System.Diagnostics.Debug.WriteLine($"Processing credit card: {model.CreditCard.CardNumber}");
+                
+                // Tabloları kontrol et
+                var orders = _db.Orders.ToList();
+                Debug.WriteLine($"Mevcut sipariş sayısı: {orders.Count}");
+                
+                var items = _db.OrderItems.ToList();
+                Debug.WriteLine($"Mevcut sipariş öğesi sayısı: {items.Count}");
+                
+                var foodItems = _db.FoodItemTables.Take(5).ToList();
+                Debug.WriteLine($"İncelenen yemek sayısı: {foodItems.Count}");
+                
+                foreach (var item in foodItems)
+                {
+                    Debug.WriteLine($"FoodItem: Id={item.FoodItemId}, Name={item.Name}, Price={item.Price}");
+                }
+                
+                // Manuel bir test siparişi oluştur
+                var testOrder = new Order
+                {
+                    OrderDate = DateTime.UtcNow,
+                    OrderStatus = "Test",
+                    TotalAmount = 100,
+                    UserId = "TestUser"
+                };
+                
+                _db.Orders.Add(testOrder);
+                int result = _db.SaveChanges();
+                
+                Debug.WriteLine($"Test siparişi kaydedildi. Etkilenen satır: {result}, Yeni OrderId: {testOrder.Id}");
+                
+                // Test siparişi için bir sipariş öğesi ekle
+                if (testOrder.Id != Guid.Empty && foodItems.Any())
+                {
+                    var testOrderItem = new OrderItem
+                    {
+                        FoodItemId = foodItems.First().FoodItemId,
+                        ProductName = "Test Product",
+                        Quantity = 1,
+                        Price = 100,
+                        OrderId = testOrder.Id
+                    };
+                    
+                    _db.OrderItems.Add(testOrderItem);
+                    int itemResult = _db.SaveChanges();
+                    
+                    Debug.WriteLine($"Test sipariş öğesi kaydedildi. Etkilenen satır: {itemResult}, Yeni Id: {testOrderItem.Id}");
+                }
+                
+                return Content("Veritabanı test edildi. Debug loglarını kontrol edin.");
             }
-            else if (model.PaymentMethod == "Cash")
+            catch (Exception ex)
             {
-                 System.Diagnostics.Debug.WriteLine("Cash payment selected.");
+                Debug.WriteLine($"TEST HATASI: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Debug.WriteLine($"İÇ HATA: {ex.InnerException.Message}");
+                }
+                
+                return Content($"Veritabanı test hatası: {ex.Message}");
             }
-            else
-            {
-                TempData["ErrorMessage"] = "Please select a payment method.";
-                 model.RestaurantGroups = cartItems
-                        .GroupBy(item => new { item.RestaurantId, item.RestaurantName })
-                        .Select(group => new RestaurantCartGroupViewModel
-                        {
-                            RestaurantId = group.Key.RestaurantId,
-                            RestaurantName = group.Key.RestaurantName,
-                            Items = group.ToList()
-                        }).ToList();
-                return View("Index", model); 
-            }
+        }
 
-            // TODO: Implement actual order creation logic here
-            SaveCartItemsToSession(new List<CartItemViewModel>()); 
-            TempData["SuccessMessage"] = "Order placed successfully! (Simulation)";
-            return RedirectToAction("Index", "Home"); 
+        // OrderDetails - Sipariş detaylarını gösterme
+        public async Task<IActionResult> OrderDetails(Guid orderId)
+        {
+            try 
+            {
+                // Siparişi veritabanından getir
+                var order = await _db.Orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+                    
+                if (order == null)
+                {
+                    TempData["ErrorMessage"] = "Sipariş bulunamadı.";
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                // Sipariş öğelerini getir
+                var orderItems = await _db.OrderItems
+                    .Where(oi => oi.OrderId == orderId)
+                    .ToListAsync();
+                    
+                // Sipariş model görünümü oluştur
+                var model = new OrderDetailsViewModel
+                {
+                    Order = order,
+                    OrderItems = orderItems
+                };
+                
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"OrderDetails hatası: {ex.Message}");
+                TempData["ErrorMessage"] = "Sipariş detayları görüntülenirken bir hata oluştu.";
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

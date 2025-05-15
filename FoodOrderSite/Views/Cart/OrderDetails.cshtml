@@ -1,0 +1,80 @@
+@using FoodOrderSite.Models.ViewModels
+@model OrderDetailsViewModel
+
+@{
+    ViewData["Title"] = "Sipariş Detayları";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <!-- Başlık ve Anasayfaya Dön düğmesi -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">@ViewData["Title"]</h2>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-home me-2"></i>Anasayfaya Dön
+                </a>
+            </div>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Sipariş Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Sipariş Numarası:</strong> #@Model.Order.Id.ToString().Substring(0, 8).ToUpper()</p>
+                            <p><strong>Tarih:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Durum:</strong> <span class="badge bg-primary">@Model.OrderStatus</span></p>
+                            <p><strong>Toplam Tutar:</strong> @Model.TotalAmount.ToString("C")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Sipariş Öğeleri</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th class="text-center">Miktar</th>
+                                    <th class="text-end">Birim Fiyat</th>
+                                    <th class="text-end">Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end">@item.Price.ToString("C")</td>
+                                        <td class="text-end">@((item.Price * item.Quantity).ToString("C"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Genel Toplam:</th>
+                                    <th class="text-end">@Model.TotalAmount.ToString("C")</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Alışverişe Devam Et</a>
+            </div>
+        </div>
+    </div>
+</div> 
