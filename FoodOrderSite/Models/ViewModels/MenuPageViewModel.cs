@@ -9,5 +9,9 @@ namespace FoodOrderSite.Models.ViewModels
         public List<FoodItemTable> MenuItems { get; set; }
         public int CartItemCount { get; set; } // Added for cart icon
         // Could add other properties if needed, e.g., categories for menu items if they are grouped.
+        public string RestaurantImageUrl => 
+        string.IsNullOrEmpty(Restaurant.Image) 
+            ? "/images/default-restaurant.jpg" 
+            : Restaurant.Image;
     }
 } 

@@ -10,7 +10,7 @@ namespace FoodOrderSite.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string UserId { get; set; } = string.Empty;
+        public int UserId { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal TotalAmount { get; set; }

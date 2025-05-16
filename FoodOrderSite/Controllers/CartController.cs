@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using FoodOrderSite.Models.ViewModels;
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace FoodOrderSite.Controllers
 {
@@ -221,7 +222,8 @@ namespace FoodOrderSite.Controllers
                     OrderDate = DateTime.UtcNow,
                     OrderStatus = "Pending",
                     TotalAmount = cartItems.Sum(item => item.TotalPrice),
-                    UserId = User.Identity?.Name ?? "Guest",
+                    //UserId = User.Identity?.Name ?? "Guest",
+                    UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                     RestaurantId = cartItems.First().RestaurantId // RestaurantId'yi sepetteki ilk ürünün restoran ID'sinden al
                 };
 
@@ -374,7 +376,7 @@ namespace FoodOrderSite.Controllers
                     OrderDate = DateTime.UtcNow,
                     OrderStatus = "Test",
                     TotalAmount = 100,
-                    UserId = "TestUser",
+                    UserId = 1,
                     RestaurantId = 1 // Test için varsayılan RestaurantId
                 };
 

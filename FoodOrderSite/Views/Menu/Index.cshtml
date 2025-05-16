@@ -22,19 +22,26 @@
 
 <div class="container mt-4 mb-5">
     <!-- Restaurant Header -->
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h1 class="display-4">@Model.Restaurant.RestaurantName</h1>
-            <p class="lead text-muted">
+    <div class="restaurant-header position-relative text-white mb-4">
+        <!-- Arka plan resmi -->
+        <div class="bg-image" style="background-image: url('@Model.Restaurant.Image');"></div>
+
+        <!-- Karartma + blur efekti -->
+        <div class="blur-overlay"></div>
+
+        <!-- Ýçerik -->
+        <div class="restaurant-content position-relative text-center py-5">
+            <h1 class="display-4 fw-bold">@Model.Restaurant.RestaurantName</h1>
+            <p class="lead">
                 <i class="fas fa-map-marker-alt me-1"></i>@Model.Restaurant.Address, @Model.Restaurant.City, @Model.Restaurant.District
             </p>
             @if (!string.IsNullOrEmpty(Model.Restaurant.Description))
             {
-                <p class="text-muted">@Model.Restaurant.Description</p>
+                <p>@Model.Restaurant.Description</p>
             }
             @if (!string.IsNullOrEmpty(Model.Restaurant.RestaurantType))
             {
-                <span class="badge bg-info text-dark mb-3">Type: @Model.Restaurant.RestaurantType</span>
+                <span class="badge bg-info text-dark">Type: @Model.Restaurant.RestaurantType</span>
             }
         </div>
     </div>
@@ -99,6 +106,59 @@
         }
         .add-to-cart-btn {
             /* Style for add to cart button if needed */
+        }
+
+        .restaurant-header {
+            background-image: url('@Model.RestaurantImageUrl');
+            background-size: cover;
+            background-position: center;
+            height: 300px; /* Ýstediðin yükseklik */
+            border-radius: 8px; /* Ýsteðe baðlý kenar yumuþatma */
+            overflow: hidden;
+            position: relative;
+            height: 300px;
+        }
+
+            .restaurant-header .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.4); /* %40 koyuluk */
+            }
+
+            .restaurant-header .container {
+                position: relative; /* overlay’in üstünde kalmasý için */
+                z-index: 1;
+            }
+
+            .restaurant-header h1,
+            .restaurant-header p,
+            .restaurant-header .badge {
+                color: #fff; /* metin rengi beyaz */
+            }
+
+        .bg-image {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) brightness(0.6);
+            z-index: 0;
+        }
+
+        .blur-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4); /* ekstra karartma */
+            z-index: 1;
+        }
+
+        .restaurant-content {
+            position: relative;
+            z-index: 2;
+            color: white;
         }
     </style>
 } 
