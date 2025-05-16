@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FoodOrderSite.Models.ViewModels
 {
@@ -24,10 +25,11 @@ namespace FoodOrderSite.Models.ViewModels
         [Required]
         [MinLength(6)]
         public string Password { get; set; }
+
         public string RestaurantName { get; set; }
 
         [StringLength(50)]
-        public string? RestaurantType { get; set; } // Örn: Kebapçı, Tatlıcı
+        public string? RestaurantType { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -43,5 +45,8 @@ namespace FoodOrderSite.Models.ViewModels
         [Required]
         [StringLength(50)]
         public string District { get; set; }
+
+        //Dropdown'daki içerikler için
+        public List<SelectListItem>? RestaurantTypeOptions { get; set; }
     }
 }

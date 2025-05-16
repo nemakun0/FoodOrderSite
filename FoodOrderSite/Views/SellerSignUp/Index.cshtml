@@ -215,14 +215,7 @@
 
             <div class="form-group">
                 <label asp-for="RestaurantType">Mağaza Türü</label>
-                <select asp-for="RestaurantType" class="form-control" required>
-                    <option value="" disabled selected>Seçiniz</option>
-                    <option value="restaurant">Restoran</option>
-                    <option value="bakery">Fırın/Pastane</option>
-                    <option value="grocery">Market/Bakkal</option>
-                    <option value="butcher">Kasap</option>
-                    <option value="other">Diğer</option>
-                </select>
+                <restaurant-type-dropdown asp-for="RestaurantType" />
                 <span asp-validation-for="RestaurantType" class="text-danger"></span>
             </div>
 

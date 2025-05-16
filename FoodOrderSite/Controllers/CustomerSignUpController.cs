@@ -69,18 +69,12 @@ namespace FoodOrderSite.Controllers
                 await _context.SaveChangesAsync();
 
                 // Kayıt başarılıysa başka bir sayfaya yönlendirme yapabiliriz
-                return RedirectToAction("Success"); // Kayıt başarılı ise bir başarı sayfasına yönlendirme
+                return RedirectToAction("Index", "SignIn"); // Kayıt başarılı ise bir başarı sayfasına yönlendirme
             }
 
             // Model geçerli değilse, tekrar formu göster
             return View(model);
         }
-
-        //giriş başarılı olduğunda yönlendirilecek sayfayı buraya koyacağız
-        //public IActionResult Success()
-        //{
-        //    return View();
-        //}
 
         // Telefon numarası validasyonu için remote action
         [AcceptVerbs("GET", "POST")]
