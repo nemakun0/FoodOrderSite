@@ -26,6 +26,10 @@
                         <div class="col-md-6">
                             <p><strong>Sipariş Numarası:</strong> #@Model.Order.Id.ToString().Substring(0, 8).ToUpper()</p>
                             <p><strong>Tarih:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                            @if (Model.Order.Restaurant != null)
+                            {
+                                <p><strong>Restoran:</strong> @Model.Order.Restaurant.RestaurantName</p>
+                            }
                         </div>
                         <div class="col-md-6">
                             <p><strong>Durum:</strong> <span class="badge bg-primary">@Model.OrderStatus</span></p>

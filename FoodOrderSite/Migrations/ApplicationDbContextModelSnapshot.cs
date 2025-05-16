@@ -135,24 +135,20 @@ namespace FoodOrderSite.Migrations
 
             modelBuilder.Entity("FoodOrderSite.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10, 2)");
@@ -162,6 +158,8 @@ namespace FoodOrderSite.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Orders");
                 });
@@ -177,8 +175,8 @@ namespace FoodOrderSite.Migrations
                     b.Property<int>("FoodItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)");
@@ -192,10 +190,6 @@ namespace FoodOrderSite.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FoodItemId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
                 });
@@ -414,23 +408,15 @@ namespace FoodOrderSite.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("FoodOrderSite.Models.OrderItem", b =>
+            modelBuilder.Entity("FoodOrderSite.Models.Order", b =>
                 {
-                    b.HasOne("FoodOrderSite.Models.FoodItemTable", "FoodItem")
+                    b.HasOne("FoodOrderSite.Models.RestaurantTable", "Restaurant")
                         .WithMany()
-                        .HasForeignKey("FoodItemId")
+                        .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FoodOrderSite.Models.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FoodItem");
-
-                    b.Navigation("Order");
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantTable", b =>
@@ -453,11 +439,6 @@ namespace FoodOrderSite.Migrations
                         .IsRequired();
 
                     b.Navigation("Restaurant");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.Order", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

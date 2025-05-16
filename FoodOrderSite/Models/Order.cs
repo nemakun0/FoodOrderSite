@@ -16,6 +16,10 @@ namespace FoodOrderSite.Models
         public decimal TotalAmount { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public int RestaurantId { get; set; }
+
+        [ForeignKey("RestaurantId")]
+        public RestaurantTable? Restaurant { get; set; }
 
         [StringLength(50)]
         public string OrderStatus { get; set; } = "Pending";

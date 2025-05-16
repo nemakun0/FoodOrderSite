@@ -31,4 +31,4 @@ namespace FoodOrderSite.Models.ViewModels
         public string Cvv { get; set; }
         public string CardHolderName { get; set; }
     }
-} 
+}

@@ -104,6 +104,8 @@ namespace FoodOrderSite.Controllers
             return RedirectToAction("Index", "Menu", new { restaurantId = foodItem.RestaurantId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RemoveItem(int foodItemId)
         {
             if (foodItemId == 0) return BadRequest();
@@ -124,7 +126,7 @@ namespace FoodOrderSite.Controllers
         public IActionResult IncrementItem(int foodItemId)
         {
             Debug.WriteLine($"IncrementItem çağrıldı: FoodItemId={foodItemId}");
-            
+
             if (foodItemId == 0) return BadRequest();
 
             var cart = GetCartItemsFromSession();
@@ -149,7 +151,7 @@ namespace FoodOrderSite.Controllers
         public IActionResult DecrementItem(int foodItemId)
         {
             Debug.WriteLine($"DecrementItem çağrıldı: FoodItemId={foodItemId}");
-            
+
             if (foodItemId == 0) return BadRequest();
 
             var cart = GetCartItemsFromSession();
@@ -165,7 +167,7 @@ namespace FoodOrderSite.Controllers
                     cart.Remove(cartItem);
                     TempData["SuccessMessage"] = "Ürün sepetten kaldırıldı.";
                 }
-                
+
                 SaveCartItemsToSession(cart);
                 Debug.WriteLine($"Ürün miktarı azaltıldı: FoodItemId={foodItemId}, Yeni miktar={(cartItem.Quantity < 0 ? 0 : cartItem.Quantity)}");
             }
@@ -174,7 +176,7 @@ namespace FoodOrderSite.Controllers
                 TempData["ErrorMessage"] = "Ürün sepette bulunamadı.";
                 Debug.WriteLine($"Sepette bulunamadı: FoodItemId={foodItemId}");
             }
-            
+
             return RedirectToAction("Index");
         }
 
@@ -186,7 +188,7 @@ namespace FoodOrderSite.Controllers
             {
                 Debug.WriteLine("Checkout işlemi başladı");
                 var cartItems = GetCartItemsFromSession();
-                
+
                 // Sepet boş mu kontrolü
                 if (!cartItems.Any())
                 {
@@ -219,15 +221,16 @@ namespace FoodOrderSite.Controllers
                     OrderDate = DateTime.UtcNow,
                     OrderStatus = "Pending",
                     TotalAmount = cartItems.Sum(item => item.TotalPrice),
-                    UserId = User.Identity?.Name ?? "Guest"
+                    UserId = User.Identity?.Name ?? "Guest",
+                    RestaurantId = cartItems.First().RestaurantId // RestaurantId'yi sepetteki ilk ürünün restoran ID'sinden al
                 };
 
-                Debug.WriteLine($"OrderDate: {order.OrderDate}, TotalAmount: {order.TotalAmount}, UserId: {order.UserId}");
+                Debug.WriteLine($"OrderDate: {order.OrderDate}, TotalAmount: {order.TotalAmount}, UserId: {order.UserId}, RestaurantId: {order.RestaurantId}");
 
                 // Siparişi kaydet - önce orders tablosuna ekle
                 _db.Orders.Add(order);
                 var orderSaveResult = await _db.SaveChangesAsync();
-                
+
                 Debug.WriteLine($"Sipariş kaydedildi. OrderId: {order.Id}, Etkilenen satır: {orderSaveResult}");
 
                 int successItemCount = 0;
@@ -240,7 +243,7 @@ namespace FoodOrderSite.Controllers
                     {
                         // Veritabanından ürün bilgilerini al
                         var foodItem = await _db.FoodItemTables.FirstOrDefaultAsync(f => f.FoodItemId == item.FoodItemId);
-                        
+
                         if (foodItem != null)
                         {
                             // OrderItem nesnesi oluştur
@@ -259,12 +262,12 @@ namespace FoodOrderSite.Controllers
                                            $"Quantity: {orderItem.Quantity} ({orderItem.Quantity.GetType().Name}), " +
                                            $"Price: {orderItem.Price} ({orderItem.Price.GetType().Name}), " +
                                            $"OrderId: {orderItem.OrderId} ({orderItem.OrderId.GetType().Name})");
-                            
+
                             _db.OrderItems.Add(orderItem);
-                            
+
                             // Her öğeyi ayrı ayrı kaydet
                             var itemSaveResult = await _db.SaveChangesAsync();
-                            
+
                             if (itemSaveResult > 0)
                             {
                                 Debug.WriteLine($"OrderItem başarıyla kaydedildi. ID: {orderItem.Id}");
@@ -298,8 +301,8 @@ namespace FoodOrderSite.Controllers
                 Debug.WriteLine($"Sipariş işlemi tamamlandı. Başarılı öğeler: {successItemCount}, Başarısız öğeler: {failedItemCount}");
 
                 // Sepeti temizle
-                SaveCartItemsToSession(new List<CartItemViewModel>()); 
-                
+                SaveCartItemsToSession(new List<CartItemViewModel>());
+
                 if (successItemCount > 0)
                 {
                     TempData["SuccessMessage"] = "Siparişiniz başarıyla oluşturuldu!";
@@ -317,15 +320,15 @@ namespace FoodOrderSite.Controllers
                 // Hata bilgilerini yazdır
                 Debug.WriteLine($"HATA: {ex.Message}");
                 Debug.WriteLine($"HATA STACK: {ex.StackTrace}");
-                
+
                 if (ex.InnerException != null)
                 {
                     Debug.WriteLine($"INNER HATA: {ex.InnerException.Message}");
                 }
-                
+
                 // Kullanıcıya bilgi ver
                 TempData["ErrorMessage"] = $"Sipariş oluşturulurken hata: {ex.Message}";
-                
+
                 return RedirectToAction("Index");
             }
         }
@@ -336,49 +339,50 @@ namespace FoodOrderSite.Controllers
             try
             {
                 Debug.WriteLine("Veritabanı test işlemi başladı");
-                
+
                 // Veritabanı bağlantısını kontrol et
                 bool canConnect = _db.Database.CanConnect();
                 Debug.WriteLine($"Veritabanına bağlanılabilir mi: {canConnect}");
-                
+
                 // Migration durumunu kontrol et
                 var migrations = _db.Database.GetAppliedMigrations().ToList();
                 Debug.WriteLine($"Uygulanan migration sayısı: {migrations.Count}");
-                
+
                 foreach (var migration in migrations)
                 {
                     Debug.WriteLine($"Uygulanan migration: {migration}");
                 }
-                
+
                 // Tabloları kontrol et
                 var orders = _db.Orders.ToList();
                 Debug.WriteLine($"Mevcut sipariş sayısı: {orders.Count}");
-                
+
                 var items = _db.OrderItems.ToList();
                 Debug.WriteLine($"Mevcut sipariş öğesi sayısı: {items.Count}");
-                
+
                 var foodItems = _db.FoodItemTables.Take(5).ToList();
                 Debug.WriteLine($"İncelenen yemek sayısı: {foodItems.Count}");
-                
+
                 foreach (var item in foodItems)
                 {
                     Debug.WriteLine($"FoodItem: Id={item.FoodItemId}, Name={item.Name}, Price={item.Price}");
                 }
-                
+
                 // Manuel bir test siparişi oluştur
                 var testOrder = new Order
                 {
                     OrderDate = DateTime.UtcNow,
                     OrderStatus = "Test",
                     TotalAmount = 100,
-                    UserId = "TestUser"
+                    UserId = "TestUser",
+                    RestaurantId = 1 // Test için varsayılan RestaurantId
                 };
-                
+
                 _db.Orders.Add(testOrder);
                 int result = _db.SaveChanges();
-                
+
                 Debug.WriteLine($"Test siparişi kaydedildi. Etkilenen satır: {result}, Yeni OrderId: {testOrder.Id}");
-                
+
                 // Test siparişi için bir sipariş öğesi ekle
                 if (testOrder.Id != Guid.Empty && foodItems.Any())
                 {
@@ -390,13 +394,13 @@ namespace FoodOrderSite.Controllers
                         Price = 100,
                         OrderId = testOrder.Id
                     };
-                    
+
                     _db.OrderItems.Add(testOrderItem);
                     int itemResult = _db.SaveChanges();
-                    
+
                     Debug.WriteLine($"Test sipariş öğesi kaydedildi. Etkilenen satır: {itemResult}, Yeni Id: {testOrderItem.Id}");
                 }
-                
+
                 return Content("Veritabanı test edildi. Debug loglarını kontrol edin.");
             }
             catch (Exception ex)
@@ -406,7 +410,7 @@ namespace FoodOrderSite.Controllers
                 {
                     Debug.WriteLine($"İÇ HATA: {ex.InnerException.Message}");
                 }
-                
+
                 return Content($"Veritabanı test hatası: {ex.Message}");
             }
         }
@@ -414,30 +418,31 @@ namespace FoodOrderSite.Controllers
         // OrderDetails - Sipariş detaylarını gösterme
         public async Task<IActionResult> OrderDetails(Guid orderId)
         {
-            try 
+            try
             {
-                // Siparişi veritabanından getir
+                // Siparişi veritabanından getir (restoran bilgisi dahil)
                 var order = await _db.Orders
+                    .Include(o => o.Restaurant)
                     .FirstOrDefaultAsync(o => o.Id == orderId);
-                    
+
                 if (order == null)
                 {
                     TempData["ErrorMessage"] = "Sipariş bulunamadı.";
                     return RedirectToAction("Index", "Home");
                 }
-                
+
                 // Sipariş öğelerini getir
                 var orderItems = await _db.OrderItems
                     .Where(oi => oi.OrderId == orderId)
                     .ToListAsync();
-                    
+
                 // Sipariş model görünümü oluştur
                 var model = new OrderDetailsViewModel
                 {
                     Order = order,
                     OrderItems = orderItems
                 };
-                
+
                 return View(model);
             }
             catch (Exception ex)

@@ -73,14 +73,11 @@
                                                 <!-- Toplam Fiyat -->
                                                 <span class="fw-bold text-nowrap me-3" style="min-width: 80px; text-align: right;">@item.TotalPrice.ToString("C")</span>
 
-                                                <!-- Kaldır Düğmesi -->
-                                                <form asp-controller="Cart" asp-action="RemoveItem" method="post" class="d-inline">
-                                                     @Html.AntiForgeryToken()
-                                                     <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                                     <button type="submit" class="btn btn-sm btn-outline-danger flex-shrink-0" title="Ürünü Kaldır">
-                                                         <i class="fas fa-trash-alt"></i>
-                                                     </button>
-                                                </form>
+                                                <!-- Kaldır Düğmesi - JavaScript ile çalışacak şekilde düzeltildi -->
+                                                <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0 remove-item-btn" 
+                                                        data-food-id="@item.FoodItemId" title="Ürünü Kaldır">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </div>
                                         </li>
                                     }
@@ -142,15 +139,30 @@
                 submitBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Kapıda ödeme mi kontrolü
-                    var cashPayment = document.getElementById('paymentCash');
-                    if (!cashPayment || !cashPayment.checked) {
-                        alert('Lütfen kapıda ödeme seçeneğini seçin.');
+                    // Kullanıcı girişi kontrolü - server-side kontrolden önce client-side uyarı
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <text>
+                        // Kullanıcı giriş yapmamış, uyarı ver
+                        alert('Siparişi tamamlamak için önce giriş yapmanız gerekmektedir.');
+                        window.location.href = '@Url.Action("Index", "SignIn")';
                         return false;
+                        </text>
                     }
-                    
-                    // Formu gönder
-                    form.submit();
+                    else
+                    {
+                        <text>
+                        // Kapıda ödeme mi kontrolü
+                        var cashPayment = document.getElementById('paymentCash');
+                        if (!cashPayment || !cashPayment.checked) {
+                            alert('Lütfen kapıda ödeme seçeneğini seçin.');
+                            return false;
+                        }
+                        
+                        // Formu gönder
+                        form.submit();
+                        </text>
+                    }
                 });
             }
             
@@ -176,6 +188,42 @@
                             window.location.reload();
                         } else {
                             console.error('Miktar azaltılamadı', response);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('İstek hatası:', error);
+                    });
+                });
+            });
+            
+            // Ürün silme butonları için olay dinleyicisi ekle
+            document.querySelectorAll('.remove-item-btn').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    var foodItemId = this.getAttribute('data-food-id');
+                    
+                    // Anti-forgery token al
+                    var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    
+                    // FormData oluştur
+                    var formData = new FormData();
+                    formData.append('foodItemId', foodItemId);
+                    
+                    // AJAX isteği gönder
+                    fetch('/Cart/RemoveItem', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': token
+                        }
+                    })
+                    .then(function(response) {
+                        if (response.ok) {
+                            // Başarılı olduğunda sayfayı yenile
+                            window.location.reload();
+                        } else {
+                            console.error('Ürün silinemedi', response);
                         }
                     })
                     .catch(function(error) {
