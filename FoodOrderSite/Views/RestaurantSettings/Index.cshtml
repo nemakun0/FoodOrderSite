@@ -15,7 +15,7 @@
     </div>
 }
 
-<form asp-action="Index" asp-controller="RestaurantSettings" method="post">
+<form asp-action="Index" asp-controller="RestaurantSettings" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="RestaurantId" />
     <div class="row mb-4">
         <!-- Restoran Adı -->
@@ -66,6 +66,18 @@
             <textarea class="form-control" rows="3" asp-for="Description"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
+        <!-- Image -->
+        <div class="form-group">
+            <label asp-for="ImageFile">Restoran Görseli</label>
+            <input asp-for="ImageFile" class="form-control" type="file" />
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <div class="mt-2">
+                <p>Mevcut Görsel:</p>
+                <img src="@Model.Image" alt="Restoran Görseli" style="max-width: 200px; border-radius: 8px;" />
+            </div>
+        }
     </div>
 
     <!-- Haftanın günleri ve saatleri -->

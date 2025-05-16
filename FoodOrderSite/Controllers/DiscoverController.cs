@@ -142,7 +142,7 @@ namespace FoodOrderSite.Controllers
                 DeliveryFee = 5.99m,    
                 MinOrderAmount = 20.00m, 
                 Rating = CalculateRating(rt.RestaurantId), 
-                ImageUrl = "",
+                ImageUrl = rt.Image,
                 DeliveryTime = 30
             };
         }

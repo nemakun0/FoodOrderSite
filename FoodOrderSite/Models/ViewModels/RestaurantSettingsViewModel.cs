@@ -36,7 +36,9 @@ namespace FoodOrderSite.Models.ViewModels
         [Required(ErrorMessage = "Email boş olamaz")]
         [EmailAddress(ErrorMessage = "Geçersiz email adresi")]
         public string Email { get; set; }
-        
+        public IFormFile? ImageFile { get; set; }
+        public string? Image { get; set; }
+
         public List<ScheduleViewModel> ScheduleItems { get; set; } = new List<ScheduleViewModel>();
     }
     

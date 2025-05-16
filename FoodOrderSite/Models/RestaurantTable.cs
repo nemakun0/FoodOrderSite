@@ -13,6 +13,7 @@ namespace FoodOrderSite.Models
         [Required(ErrorMessage = "Restoran adı gereklidir")]
         [StringLength(100)]
         public string RestaurantName { get; set; }
+        public string? Image { get; set; }
 
         [StringLength(50)]
         public string? RestaurantType { get; set; } // Örn: Kebapçı, Tatlıcı
@@ -33,6 +34,7 @@ namespace FoodOrderSite.Models
         public string District { get; set; }
 
         public bool IsActive { get; set; } = true;
+        
 
         // Navigation property
         public UserTable? User { get; set; }

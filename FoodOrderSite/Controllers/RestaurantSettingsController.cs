@@ -1,26 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FoodOrderSite.Models;
 using FoodOrderSite.Models.ViewModels;
+using FoodOrderSite.Helpers; // ✅ Helper importu eklendi
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting; // ✅ IWebHostEnvironment için gerekli
 
 namespace FoodOrderSite.Controllers
 {
     public class RestaurantSettingsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env; // ✅ Environment değişkeni eklendi
 
-        public RestaurantSettingsController(ApplicationDbContext context)
+        public RestaurantSettingsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Kullanıcı ID'sini session'dan al
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // Kullanıcıya ait restoran bilgilerini al
             var restaurant = await _context.RestaurantTables
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.UserId == userId);
@@ -30,15 +32,12 @@ namespace FoodOrderSite.Controllers
                 return RedirectToAction("Index", "ManageRestaurant");
             }
 
-            // Kullanıcı bilgilerini al
             var user = await _context.UserTables.FindAsync(userId);
 
-            // Restoran çalışma saatlerini al
             var schedules = await _context.Schedules
                 .Where(s => s.RestaurantId == restaurant.RestaurantId)
                 .ToListAsync();
 
-            // ViewModel oluştur
             var viewModel = new RestaurantSettingsViewModel
             {
                 RestaurantId = restaurant.RestaurantId,
@@ -50,14 +49,14 @@ namespace FoodOrderSite.Controllers
                 District = restaurant.District,
                 Phone = user.Phone,
                 Email = user.Email,
+                Image = restaurant.Image // ✅ Var olan görseli göstermek için
             };
 
-            // Haftalık çalışma saatlerini oluştur
             string[] weekDays = { "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" };
             foreach (var day in weekDays)
             {
                 var schedule = schedules.FirstOrDefault(s => s.DayOfWeek == day);
-                
+
                 if (schedule != null)
                 {
                     viewModel.ScheduleItems.Add(new ScheduleViewModel
@@ -70,7 +69,6 @@ namespace FoodOrderSite.Controllers
                 }
                 else
                 {
-                    // Varsayılan saatler
                     viewModel.ScheduleItems.Add(new ScheduleViewModel
                     {
                         DayOfWeek = day,
@@ -92,10 +90,8 @@ namespace FoodOrderSite.Controllers
                 return View(model);
             }
 
-            // Kullanıcı ID'sini session'dan al
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // Restoran bilgilerini güncelle
             var restaurant = await _context.RestaurantTables
                 .FirstOrDefaultAsync(r => r.RestaurantId == model.RestaurantId && r.UserId == userId);
 
@@ -111,7 +107,13 @@ namespace FoodOrderSite.Controllers
             restaurant.City = model.City;
             restaurant.District = model.District;
 
-            // Kullanıcı bilgilerini güncelle (email, telefon)
+            // ✅ Görseli yükle ve kaydet
+            string? uploadedPath = await FileUploadHelper.UploadImageAsync(model.ImageFile, "uploads/restaurant", _env);
+            if (uploadedPath != null)
+            {
+                restaurant.Image = uploadedPath;
+            }
+
             var user = await _context.UserTables.FindAsync(userId);
             if (user != null)
             {
@@ -119,22 +121,18 @@ namespace FoodOrderSite.Controllers
                 user.Phone = model.Phone;
             }
 
-            // Çalışma saatlerini güncelle
             foreach (var scheduleItem in model.ScheduleItems)
             {
-                // Mevcut çalışma saati var mı kontrol et
                 var existingSchedule = await _context.Schedules
                     .FirstOrDefaultAsync(s => s.RestaurantId == model.RestaurantId && s.DayOfWeek == scheduleItem.DayOfWeek);
 
                 if (existingSchedule != null)
                 {
-                    // Güncelle
                     existingSchedule.OpeningTime = scheduleItem.OpeningTime;
                     existingSchedule.ClosingTime = scheduleItem.ClosingTime;
                 }
                 else
                 {
-                    // Yeni ekle
                     _context.Schedules.Add(new ScheduleTable
                     {
                         RestaurantId = model.RestaurantId,
@@ -147,7 +145,7 @@ namespace FoodOrderSite.Controllers
 
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Restoran bilgileri başarıyla güncellendi.";
-            
+
             return RedirectToAction(nameof(Index));
         }
     }
