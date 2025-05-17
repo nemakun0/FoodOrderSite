@@ -33,12 +33,19 @@ namespace FoodOrderSite.Models.ViewModels
 
             // Address alanları
             [Required]
+            [Display(Name = "Adres Başlığı")]
+            public string AddressTitle { get; set; }
+
+            [Required]
+            [Display(Name = "Adres")]
             public string AddressLine { get; set; }
 
             [Required]
+            [Display(Name = "Şehir")]
             public string City { get; set; }
 
             [Required]
+            [Display(Name = "İlçe")]
             public string District { get; set; }
         }
 

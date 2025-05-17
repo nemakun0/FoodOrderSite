@@ -211,6 +211,12 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="AddressTitle"></label>
+                <input asp-for="AddressTitle" class="form-control" placeholder="Örn: Ev, İş, Yazlık" />
+                <span asp-validation-for="AddressTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="AddressLine"></label>
                 <input asp-for="AddressLine" class="form-control" placeholder="Tam adres bilgisi" />
                 <span asp-validation-for="AddressLine" class="text-danger"></span>

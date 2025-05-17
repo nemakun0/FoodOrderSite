@@ -59,6 +59,7 @@ namespace FoodOrderSite.Controllers
                 var address = new CustomerDeliveryAdderss
                 {
                     UserId = user.UserId, // az önce oluşturduğumuz kullanıcının ID'si
+                    Title = model.AddressTitle,
                     AddressLine = model.AddressLine,
                     City = model.City,
                     District = model.District

@@ -30,5 +30,17 @@ namespace FoodOrderSite.Models.ViewModels
         public string CustomerName => $"{Customer?.Name} {Customer?.Surname}";
         public string CustomerPhone => Customer?.Phone;
         public string CustomerEmail => Customer?.Email;
+        
+        // Adres bilgileri için yardımcı özellikler
+        public string PaymentMethod => Order.PaymentMethod;
+        public int? DeliveryAddressId => Order.DeliveryAddressId;
+        public string AddressTitle => Order.AddressTitle;
+        public string DeliveryAddress => Order.DeliveryAddress;
+        public string DeliveryCity => Order.DeliveryCity;
+        public string DeliveryDistrict => Order.DeliveryDistrict;
+        
+        // Adres bilgisini birleşik olarak görüntüle
+        public string FullAddress => $"{DeliveryAddress}, {DeliveryDistrict} / {DeliveryCity}";
+        public bool HasAddressInfo => !string.IsNullOrEmpty(DeliveryAddress);
     }
 } 

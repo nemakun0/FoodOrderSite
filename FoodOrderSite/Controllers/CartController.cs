@@ -51,7 +51,7 @@ namespace FoodOrderSite.Controllers
         }
 
         // Action to display the cart page using CartPageViewModel
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var cartItems = GetCartItemsFromSession();
             var viewModel = new CartPageViewModel(); // Using the detailed CartPageViewModel
@@ -67,6 +67,47 @@ namespace FoodOrderSite.Controllers
                         Items = group.ToList()
                     }).ToList();
             }
+            
+            // Kullanıcı giriş yapmış mı kontrol et ve kayıtlı adresleri yükle
+            if (User.Identity.IsAuthenticated)
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                
+                // Kayıtlı adresleri yükle
+                var savedAddresses = await _db.CustomerDeliveryAdderss
+                    .Where(a => a.UserId == userId)
+                    .Select(a => new CustomerDeliveryAddressViewModel
+                    {
+                        AddressId = a.AddressId,
+                        Title = a.Title,
+                        AddressLine = a.AddressLine,
+                        City = a.City,
+                        District = a.District
+                    })
+                    .ToListAsync();
+                
+                viewModel.SavedAddresses = savedAddresses;
+                
+                // Kullanıcının en son siparişini bul
+                var lastOrder = await _db.Orders
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.OrderDate)
+                    .FirstOrDefaultAsync();
+                
+                // Eğer en son bir sipariş varsa ve bir adresle ilişkiliyse
+                if (lastOrder != null && lastOrder.DeliveryAddressId.HasValue)
+                {
+                    // Son siparişte kullanılan adresi seçili hale getir
+                    viewModel.DeliveryAddressId = lastOrder.DeliveryAddressId;
+                    
+                    // Adres değerlerini önceden doldur (form gönderildiğinde kullanılması için)
+                    viewModel.AddressTitle = lastOrder.AddressTitle;
+                    viewModel.DeliveryAddress = lastOrder.DeliveryAddress;
+                    viewModel.DeliveryCity = lastOrder.DeliveryCity;
+                    viewModel.DeliveryDistrict = lastOrder.DeliveryDistrict;
+                }
+            }
+            
             return View(viewModel); // This should point to Views/Cart/Index.cshtml that expects CartPageViewModel
         }
 
@@ -187,7 +228,14 @@ namespace FoodOrderSite.Controllers
         {
             try
             {
-                Debug.WriteLine("Checkout işlemi başladı");
+                Debug.WriteLine("========================================================");
+                Debug.WriteLine("Checkout metodu çağrıldı");
+                Debug.WriteLine($"PaymentMethod: {model.PaymentMethod}");
+                Debug.WriteLine($"DeliveryAddressId: {model.DeliveryAddressId}");
+                Debug.WriteLine($"AddressTitle: {model.AddressTitle}");
+                Debug.WriteLine($"DeliveryAddress: {model.DeliveryAddress}");
+                Debug.WriteLine("========================================================");
+                
                 var cartItems = GetCartItemsFromSession();
 
                 // Sepet boş mu kontrolü
@@ -216,7 +264,7 @@ namespace FoodOrderSite.Controllers
                     Debug.WriteLine($"Orders tablosu incelenirken hata: {ex.Message}");
                 }
 
-                // Basit bir sipariş oluştur
+                // Sipariş oluştur (adres bilgileri de dahil)
                 var order = new Order
                 {
                     OrderDate = DateTime.UtcNow,
@@ -225,7 +273,14 @@ namespace FoodOrderSite.Controllers
                     //UserId = User.Identity?.Name ?? "Guest",
                     UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                     RestaurantId = cartItems.First().RestaurantId, // RestaurantId'yi sepetteki ilk ürünün restoran ID'sinden al
-                    PaymentMethod = model.PaymentMethod ?? "Cash" // Ödeme yöntemini kaydet
+                    PaymentMethod = model.PaymentMethod ?? "Cash", // Ödeme yöntemini kaydet
+                    
+                    // Adres bilgilerini de ekle
+                    DeliveryAddressId = model.DeliveryAddressId,
+                    AddressTitle = model.AddressTitle,
+                    DeliveryAddress = model.DeliveryAddress,
+                    DeliveryCity = model.DeliveryCity,
+                    DeliveryDistrict = model.DeliveryDistrict
                 };
 
                 Debug.WriteLine($"OrderDate: {order.OrderDate}, TotalAmount: {order.TotalAmount}, UserId: {order.UserId}, RestaurantId: {order.RestaurantId}");
