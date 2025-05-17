@@ -224,7 +224,8 @@ namespace FoodOrderSite.Controllers
                     TotalAmount = cartItems.Sum(item => item.TotalPrice),
                     //UserId = User.Identity?.Name ?? "Guest",
                     UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
-                    RestaurantId = cartItems.First().RestaurantId // RestaurantId'yi sepetteki ilk ürünün restoran ID'sinden al
+                    RestaurantId = cartItems.First().RestaurantId, // RestaurantId'yi sepetteki ilk ürünün restoran ID'sinden al
+                    PaymentMethod = model.PaymentMethod ?? "Cash" // Ödeme yöntemini kaydet
                 };
 
                 Debug.WriteLine($"OrderDate: {order.OrderDate}, TotalAmount: {order.TotalAmount}, UserId: {order.UserId}, RestaurantId: {order.RestaurantId}");

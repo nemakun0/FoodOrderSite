@@ -109,8 +109,48 @@
                                     <label class="form-check-label" for="paymentCash">Kapıda Ödeme</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod" disabled>
-                                    <label class="form-check-label" for="paymentCreditCard">Kredi Kartı (Şu anda kullanılamıyor)</label>
+                                    <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod">
+                                    <label class="form-check-label" for="paymentCreditCard">Kredi Kartı</label>
+                                </div>
+                            </div>
+
+                            <!-- Kredi Kartı Form Bölümü -->
+                            <div id="creditCardForm" class="mt-3" style="display: none;">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="CardHolderName" class="form-label">Kart Üzerindeki İsim</label>
+                                        <input type="text" class="form-control" asp-for="CreditCard.CardHolderName" id="CardHolderName" placeholder="Kart üzerindeki isim" autocomplete="cc-name">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="CardNumber" class="form-label">Kart Numarası</label>
+                                        <input type="text" class="form-control" asp-for="CreditCard.CardNumber" id="CardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+                                        <small class="text-muted">Örnek: 1234 5678 9012 3456</small>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="ExpiryMonth" class="form-label">Ay</label>
+                                        <select class="form-select" asp-for="CreditCard.ExpiryMonth" id="ExpiryMonth" autocomplete="cc-exp-month">
+                                            <option value="">Ay</option>
+                                            @for (int i = 1; i <= 12; i++)
+                                            {
+                                                <option value="@i.ToString("D2")">@i.ToString("D2")</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="ExpiryYear" class="form-label">Yıl</label>
+                                        <select class="form-select" asp-for="CreditCard.ExpiryYear" id="ExpiryYear" autocomplete="cc-exp-year">
+                                            <option value="">Yıl</option>
+                                            @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="Cvv" class="form-label">CVV</label>
+                                        <input type="text" class="form-control" asp-for="CreditCard.Cvv" id="Cvv" placeholder="123" maxlength="3" autocomplete="cc-csc">
+                                        <small class="text-muted">Kartın arkasındaki 3 haneli kod</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,32 +171,83 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Form gönderimi
+            // Değişkenler
+            var cashPayment = document.getElementById('paymentCash');
+            var creditCardPayment = document.getElementById('paymentCreditCard');
+            var creditCardForm = document.getElementById('creditCardForm');
             var form = document.getElementById('checkoutForm');
             var submitBtn = document.getElementById('submitOrderButton');
-            
+
+            // Kredi kartı form görünürlüğü
+            function toggleCreditCardForm() {
+                creditCardForm.style.display = creditCardPayment.checked ? 'block' : 'none';
+            }
+
+            // Başlangıçta ve radio butonlar değiştiğinde kontrol et
+            toggleCreditCardForm();
+            cashPayment.addEventListener('change', toggleCreditCardForm);
+            creditCardPayment.addEventListener('change', toggleCreditCardForm);
+
+            // Form gönderimi
             if (form && submitBtn) {
                 submitBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    // Kullanıcı girişi kontrolü - server-side kontrolden önce client-side uyarı
                     @if (!User.Identity.IsAuthenticated)
                     {
                         <text>
                         // Kullanıcı giriş yapmamış, uyarı ver
                         alert('Siparişi tamamlamak için önce giriş yapmanız gerekmektedir.');
                         window.location.href = '@Url.Action("Index", "SignIn")';
-                        return false;
+                        return;
                         </text>
                     }
                     else
                     {
                         <text>
-                        // Kapıda ödeme mi kontrolü
-                        var cashPayment = document.getElementById('paymentCash');
-                        if (!cashPayment || !cashPayment.checked) {
-                            alert('Lütfen kapıda ödeme seçeneğini seçin.');
-                            return false;
+                        // Kredi kartı seçildiyse form alanlarını kontrol et
+                        if (creditCardPayment && creditCardPayment.checked) {
+                            var cardHolder = document.getElementById('CardHolderName');
+                            var cardNumber = document.getElementById('CardNumber');
+                            var expiryMonth = document.getElementById('ExpiryMonth');
+                            var expiryYear = document.getElementById('ExpiryYear');
+                            var cvv = document.getElementById('Cvv');
+                            
+                            // Kart sahibi adı
+                            if (!cardHolder.value.trim()) {
+                                alert('Lütfen kart üzerindeki ismi girin.');
+                                cardHolder.focus();
+                                return;
+                            }
+                            
+                            // Kart numarası
+                            var cleanedCardNum = cardNumber.value.replace(/\D/g, '');
+                            if (!cleanedCardNum || cleanedCardNum.length !== 16) {
+                                alert('Lütfen geçerli bir 16 haneli kart numarası girin.');
+                                cardNumber.focus();
+                                return;
+                            }
+                            
+                            // Ay
+                            if (!expiryMonth.value) {
+                                alert('Lütfen son kullanma ayını seçin.');
+                                expiryMonth.focus();
+                                return;
+                            }
+                            
+                            // Yıl
+                            if (!expiryYear.value) {
+                                alert('Lütfen son kullanma yılını seçin.');
+                                expiryYear.focus();
+                                return;
+                            }
+                            
+                            // CVV
+                            if (!cvv.value.trim() || cvv.value.length !== 3) {
+                                alert('Lütfen geçerli bir 3 haneli CVV kodu girin.');
+                                cvv.focus();
+                                return;
+                            }
                         }
                         
                         // Formu gönder
@@ -166,44 +257,36 @@
                 });
             }
             
-            // Sepette azaltma formlarını güvenli hale getir
-            var decrementForms = document.querySelectorAll('form[asp-action="DecrementItem"]');
-            decrementForms.forEach(function(form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Form verilerini alıp POST isteği gönder
-                    var formData = new FormData(form);
-                    
-                    fetch('/Cart/DecrementItem', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    })
-                    .then(function(response) {
-                        if (response.ok) {
-                            // Başarılı olduğunda sayfayı yenile
-                            window.location.reload();
-                        } else {
-                            console.error('Miktar azaltılamadı', response);
-                        }
-                    })
-                    .catch(function(error) {
-                        console.error('İstek hatası:', error);
-                    });
+            // Kart numarası formatlama
+            var cardNumberInput = document.getElementById('CardNumber');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    // Sadece sayıları tut
+                    var value = this.value.replace(/\D/g, '');
+                    // 4'lü gruplara böl
+                    var parts = [];
+                    for (var i = 0; i < value.length; i += 4) {
+                        parts.push(value.substring(i, i + 4));
+                    }
+                    // Grupları birleştir ve maksimum 16 karakter (19 karakter boşluklarla)
+                    this.value = parts.join(' ').substring(0, 19);
                 });
-            });
+            }
+
+            // CVV sadece rakam kabul etsin
+            var cvvInput = document.getElementById('Cvv');
+            if (cvvInput) {
+                cvvInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/\D/g, '').substring(0, 3);
+                });
+            }
             
-            // Ürün silme butonları için olay dinleyicisi ekle
+            // Ürün silme butonları
             document.querySelectorAll('.remove-item-btn').forEach(function(button) {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     
                     var foodItemId = this.getAttribute('data-food-id');
-                    
-                    // Anti-forgery token al
                     var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
                     
                     // FormData oluştur
@@ -220,7 +303,6 @@
                     })
                     .then(function(response) {
                         if (response.ok) {
-                            // Başarılı olduğunda sayfayı yenile
                             window.location.reload();
                         } else {
                             console.error('Ürün silinemedi', response);
