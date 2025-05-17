@@ -1,7 +1,5 @@
 ﻿@using FoodOrderSite.Models.ViewModels
-@* @{
-    Layout = /* null */;
-} *@
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,13 +18,25 @@
     <!-- Özel stil dosyaları -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FoodOrderSite.styles.css" asp-append-version="true" />
+    <style>
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #f0f0f0;
+            color: #000;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-menu .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
     @{
         var session = HttpContextAccessor.HttpContext?.Session;
         // Ensure "Cart" matches CartSessionKey in CartController
-        var cartData = session?.GetString("Cart"); 
+        var cartData = session?.GetString("Cart");
         var count = 0;
         if (!string.IsNullOrEmpty(cartData))
         {
@@ -35,14 +45,91 @@
                 var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.Models.ViewModels.CartItemViewModel>>(cartData);
                 count = items?.Sum(i => i.Quantity) ?? 0;
             }
-            catch 
+            catch
             {
                 // Handle potential deserialization error, maybe clear cart or log
                 session.Remove("Cart"); // Clear corrupted cart data
                 count = 0;
             }
         }
+        // Kullanıcı bilgisi
+        var username = session?.GetString("UserName");
+        var isAuthenticated = !string.IsNullOrEmpty(username);
     }
+
+    <!-- ✅ HEADER BURADA BAŞLIYOR -->
+    <header class="bg-white shadow-sm">
+        <div class="container-fluid d-flex justify-content-between align-items-center p-3">
+            <!-- Logo -->
+            <div class="d-flex align-items-center gap-3">
+                <a href="/" class="text-decoration-none fs-4 fw-bold text-dark">
+                    <i class="fas fa-utensils me-2 text-primary"></i>ForkBase
+                </a>
+            </div>
+
+            <!-- Sağ Taraf: Sepet ve Profil -->
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- 👤 Kullanıcı Profili -->
+                <div class="dropdown">
+                    <button class="btn border-0 bg-transparent p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-2x text-dark"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 border-0" aria-labelledby="userDropdown">
+                        @if (isAuthenticated)
+                        {
+                            <li class="dropdown-header fw-bold text-dark">Merhaba, @username!</li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("SavedAddresses", "Account")">
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                    <span>Kayıtlı Adresler</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("OrderHistory", "Orders")">
+                                    <i class="fas fa-history text-primary"></i>
+                                    <span>Geçmiş Siparişler</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider my-2" /></li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" href="@Url.Action("Logout", "SignIn")">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Çıkış Yap</span>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SignIn")">
+                                    <i class="fas fa-sign-in-alt text-primary"></i>
+                                    <span>Giriş Yap</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SignUp")">
+                                    <i class="fas fa-user-plus text-primary"></i>
+                                    <span>Kayıt Ol</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- 🍎 Sepet Butonu -->
+                <a asp-controller="Cart" asp-action="Index" class="btn position-relative">
+                    <i class="fas fa-shopping-cart fa-lg text-dark"></i>
+                    @if (count > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @count
+                        </span>
+                    }
+                </a>
+            </div>
+        </div>
+    </header>
 
 
     <div class="container py-4">

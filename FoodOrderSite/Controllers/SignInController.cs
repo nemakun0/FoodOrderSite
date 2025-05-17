@@ -73,6 +73,8 @@ namespace FoodOrderSite.Controllers
                 authProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7);
             }
 
+            HttpContext.Session.SetString("UserName", user.Name);
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),

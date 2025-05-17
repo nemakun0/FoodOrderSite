@@ -3,10 +3,10 @@
 
 @{
     ViewData["Title"] = Model.Restaurant.RestaurantName + " - Menu";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your standard layout is used
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml"; // Ensure your standard layout is used
 }
 
-<!-- Cart Icon specific to Menu Page -->
+@* <!-- Cart Icon specific to Menu Page -->
 <div style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
     <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
         <i class="fas fa-shopping-cart fa-2x"></i> 
@@ -18,7 +18,7 @@
             </span>
         }
     </a>
-</div>
+</div> *@
 
 <div class="container mt-4 mb-5">
     <!-- Restaurant Header -->
