@@ -32,29 +32,30 @@
     </style>
 </head>
 <body>
+    @using System.Security.Claims
     @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
     @{
-        var session = HttpContextAccessor.HttpContext?.Session;
-        // Ensure "Cart" matches CartSessionKey in CartController
+        var httpContext = HttpContextAccessor.HttpContext;
+        var user = httpContext?.User;
+        var isAuthenticated = user?.Identity?.IsAuthenticated ?? false;
+        var username = user?.FindFirst(ClaimTypes.Name)?.Value;
+
+        var session = httpContext?.Session;
         var cartData = session?.GetString("Cart");
         var count = 0;
         if (!string.IsNullOrEmpty(cartData))
         {
             try
             {
-                var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FoodOrderSite.Models.ViewModels.CartItemViewModel>>(cartData);
+                var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CartItemViewModel>>(cartData);
                 count = items?.Sum(i => i.Quantity) ?? 0;
             }
             catch
             {
-                // Handle potential deserialization error, maybe clear cart or log
-                session.Remove("Cart"); // Clear corrupted cart data
-                count = 0;
+                session?.Remove("Cart");
             }
         }
-        // Kullanıcı bilgisi
-        var username = session?.GetString("UserName");
-        var isAuthenticated = !string.IsNullOrEmpty(username);
     }
 
     <!-- ✅ HEADER BURADA BAŞLIYOR -->
@@ -80,7 +81,7 @@
                         {
                             <li class="dropdown-header fw-bold text-dark">Merhaba, @username!</li>
                             <li>
-                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("SavedAddresses", "Account")">
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SavedAddress")">
                                     <i class="fas fa-map-marker-alt text-primary"></i>
                                     <span>Kayıtlı Adresler</span>
                                 </a>
@@ -138,7 +139,7 @@
         </main>
     </div>
 
-    <!-- Footer Section -->
+@*     <!-- Footer Section -->
     <footer class="footer-section mt-auto">
         <div class="container-fluid px-5">
             <div class="row g-4">
@@ -227,7 +228,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> *@
 
     <!-- JS Script Dosyaları -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

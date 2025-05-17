@@ -13,6 +13,10 @@ namespace FoodOrderSite.Models
         public int UserId { get; set; }
 
         [Required]
+        [StringLength(100)]
+        public string Title { get; set; }
+
+        [Required]
         [StringLength(250)]
         public string AddressLine { get; set; }
 
