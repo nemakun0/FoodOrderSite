@@ -3,9 +3,10 @@
     ViewData["Title"] = "Discover Restaurants";
     var prevDisabled = Model.CurrentPage == 1 ? "disabled" : "";
     var nextDisabled = Model.CurrentPage == Model.TotalPages || Model.TotalPages == 0 ? "disabled" : "";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
 }
 
-<!-- Cart Icon specific to Discover Page -->
+@* <!-- Cart Icon specific to Discover Page -->
 <div style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
     <a asp-controller="Cart" asp-action="Index" class="text-dark position-relative">
         <i class="fas fa-shopping-cart fa-2x"></i> 
@@ -17,7 +18,7 @@
             </span>
         }
     </a>
-</div>
+</div> *@
 
 <div class="container mt-4">
     <div class="row mb-4">
