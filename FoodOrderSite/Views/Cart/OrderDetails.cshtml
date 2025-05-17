@@ -35,6 +35,20 @@
                         <div class="col-md-6">
                             <p><strong>Durum:</strong> <span class="badge bg-primary">@Model.OrderStatus</span></p>
                             <p><strong>Toplam Tutar:</strong> @Model.TotalAmount.ToString("C")</p>
+                            <p><strong>Ödeme Yöntemi:</strong> 
+                                @if (Model.Order.PaymentMethod == "Cash")
+                                {
+                                    <span>Kapıda Ödeme</span>
+                                }
+                                else if (Model.Order.PaymentMethod == "CreditCard")
+                                {
+                                    <span>Kredi Kartı</span>
+                                }
+                                else
+                                {
+                                    <span>@Model.Order.PaymentMethod</span>
+                                }
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -78,7 +92,7 @@
             </div>
 
             <div class="mt-4 text-center">
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Alışverişe Devam Et</a>
+                <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Alışverişe Devam Et</a>
             </div>
         </div>
     </div>
