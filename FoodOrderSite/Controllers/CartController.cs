@@ -88,6 +88,15 @@ namespace FoodOrderSite.Controllers
             }
 
             var cart = GetCartItemsFromSession();
+            
+            // Check if cart already has items from a different restaurant
+            if (cart.Any() && cart.First().RestaurantId != foodItem.RestaurantId)
+            {
+                string existingRestaurantName = cart.First().RestaurantName;
+                TempData["ErrorMessage"] = $"Sepetinizde {existingRestaurantName} restoranından ürünler bulunmaktadır. Aynı anda yalnızca bir restorandan sipariş verebilirsiniz.";
+                return RedirectToAction("Index", "Menu", new { restaurantId = foodItem.RestaurantId });
+            }
+
             var cartItem = cart.FirstOrDefault(item => item.FoodItemId == foodItemId);
 
             if (cartItem != null)
@@ -178,6 +187,24 @@ namespace FoodOrderSite.Controllers
                 Debug.WriteLine($"Sepette bulunamadı: FoodItemId={foodItemId}");
             }
 
+            return RedirectToAction("Index");
+        }
+
+        // Action to clear the entire cart
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ClearCart(int? restaurantId = null)
+        {
+            HttpContext.Session.Remove(CartSessionKey);
+            TempData["SuccessMessage"] = "Sepetiniz temizlenmiştir.";
+            
+            // If restaurantId is provided, redirect back to that restaurant's menu
+            if (restaurantId.HasValue && restaurantId.Value > 0)
+            {
+                return RedirectToAction("Index", "Menu", new { restaurantId = restaurantId.Value });
+            }
+            
+            // Otherwise, redirect to the cart page
             return RedirectToAction("Index");
         }
 

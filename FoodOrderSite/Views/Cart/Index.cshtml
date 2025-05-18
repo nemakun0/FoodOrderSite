@@ -12,9 +12,20 @@
             <!-- Başlık ve Alışverişe Devam Et düğmesi -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                  <h2 class="mb-0">@ViewData["Title"]</h2>
-                 <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
-                     <i class="fas fa-store me-2"></i>Alışverişe Devam Et
-                 </a>
+                 <div>
+                     @if (!Model.IsEmpty)
+                     {
+                         <form asp-controller="Cart" asp-action="ClearCart" method="post" class="d-inline me-2">
+                             @Html.AntiForgeryToken()
+                             <button type="submit" class="btn btn-outline-danger">
+                                 <i class="fas fa-trash me-2"></i>Sepeti Temizle
+                             </button>
+                         </form>
+                     }
+                     <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
+                         <i class="fas fa-store me-2"></i>Alışverişe Devam Et
+                     </a>
+                 </div>
             </div>
 
             @if (Model.IsEmpty)
@@ -30,6 +41,11 @@
             }
             else
             {
+                <!-- Sipariş Bilgisi -->
+                <div class="alert alert-info mb-4" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>Aynı anda yalnızca bir restorandan sipariş verebilirsiniz.
+                </div>
+                
                 <!-- Ana Checkout formu -->
                 <form asp-controller="Cart" asp-action="Checkout" method="post" id="checkoutForm">
                     @Html.AntiForgeryToken()

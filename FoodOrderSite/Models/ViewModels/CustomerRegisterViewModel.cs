@@ -40,6 +40,11 @@ namespace FoodOrderSite.Models.ViewModels
 
             [Required]
             public string District { get; set; }
+
+            [Required(ErrorMessage = "Adres başlığı zorunludur.")]
+            [StringLength(100)]
+            public string Title { get; set; }
+
         }
 
     }
