@@ -50,9 +50,6 @@ namespace FoodOrderSite.Models
                 .HasIndex(r => r.OrderId)
                 .IsUnique(); // Her siparişe 1 yorum
 
-            modelBuilder.Entity<CustomerDeliveryAdderss>()
-                .Ignore(a => a.Title);
-
             modelBuilder.Entity<ReviewTable>()
             .HasOne(r => r.Restaurant)
             .WithMany()
