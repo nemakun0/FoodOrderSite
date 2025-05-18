@@ -21,6 +21,9 @@ namespace FoodOrderSite.Models
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<ReviewTable> ReviewTable { get; set; }
+
+
         // Diğer tablolar da buraya eklenecek
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +45,34 @@ namespace FoodOrderSite.Models
                 .WithMany()
                 .HasForeignKey(f => f.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade); // veya Restrict
+
+            modelBuilder.Entity<ReviewTable>()
+                .HasIndex(r => r.OrderId)
+                .IsUnique(); // Her siparişe 1 yorum
+
+            modelBuilder.Entity<CustomerDeliveryAdderss>()
+                .Ignore(a => a.Title);
+
+            modelBuilder.Entity<ReviewTable>()
+            .HasOne(r => r.Restaurant)
+            .WithMany()
+            .HasForeignKey(r => r.RestaurantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReviewTable>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReviewTable>()
+            .HasOne(r => r.Order)
+            .WithMany()
+            .HasForeignKey(r => r.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+
 
             // Diğer entity konfigürasyonları...
         }
