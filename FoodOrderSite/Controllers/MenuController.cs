@@ -37,6 +37,25 @@ namespace FoodOrderSite.Controllers
             }
         }
 
+        // Helper to get cart items from session
+        private List<CartItemViewModel> GetCartItemsFromSession()
+        {
+            var cartJson = HttpContext.Session.GetString(CartSessionKey);
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                return new List<CartItemViewModel>();
+            }
+            try
+            {
+                return JsonConvert.DeserializeObject<List<FoodOrderSite.Models.ViewModels.CartItemViewModel>>(cartJson) ?? new List<CartItemViewModel>();
+            }
+            catch
+            {
+                HttpContext.Session.Remove(CartSessionKey);
+                return new List<CartItemViewModel>();
+            }
+        }
+
         public async Task<IActionResult> Index(int restaurantId)
         {
             if (restaurantId == 0)
@@ -51,6 +70,14 @@ namespace FoodOrderSite.Controllers
             {
                 // Potentially redirect to a more user-friendly error page or the Discover page
                 return NotFound($"Active restaurant with ID {restaurantId} not found. Please try another restaurant.");
+            }
+
+            // Check if the cart has items from a different restaurant
+            var cartItems = GetCartItemsFromSession();
+            if (cartItems.Any() && cartItems.First().RestaurantId != restaurantId)
+            {
+                string existingRestaurantName = cartItems.First().RestaurantName;
+                ViewBag.DifferentRestaurantWarning = $"Sepetinizde {existingRestaurantName} restoranından ürünler bulunmaktadır. Aynı anda yalnızca bir restorandan sipariş verebilirsiniz.";
             }
 
             var menuItems = await _db.FoodItemTables
