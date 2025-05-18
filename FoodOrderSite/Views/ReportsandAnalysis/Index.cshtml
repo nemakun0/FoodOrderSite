@@ -1,6 +1,8 @@
-﻿@{
+﻿@model FoodOrderSite.Models.ViewModels.RestaurantReviewsViewModel
+@{
     Layout = "~/Views/Shared/_RestaurantLayout.cshtml"; // kendi layout'unuz
     ViewBag.Title = "Performans ve Raporlar";
+    var salesData = ViewBag.SalesViewModel as FoodOrderSite.Models.ViewModels.SalesAndProductsViewModel;
 }
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
@@ -25,29 +27,43 @@
     <div class="col-md-6 mb-3">
         <h5 class="text-center">En Çok Satan Ürünler</h5>
         <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Pizza Margherita
-                <span class="badge bg-primary rounded-pill">150 Satış</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Kola 330ml
-                <span class="badge bg-primary rounded-pill">120 Satış</span>
-            </li>
-            <!-- Diğer ürünler -->
+            @if(salesData.TopProducts.Count == 0)
+            {
+                <li class="list-group-item text-center">
+                    <i class="text-muted">Henüz ürün satışı bulunmuyor</i>
+                </li>
+            }
+            else
+            {
+                @foreach (var product in salesData.TopProducts)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @product.ProductName
+                        <span class="badge bg-primary rounded-pill">@product.SalesCount Satış</span>
+                    </li>
+                }
+            }
         </ul>
     </div>
     <div class="col-md-6 mb-3">
         <h5 class="text-center">En Çok Satan Kategoriler</h5>
         <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Pizzalar
-                <span class="badge bg-success rounded-pill">350 Satış</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                İçecekler
-                <span class="badge bg-success rounded-pill">200 Satış</span>
-            </li>
-            <!-- Diğer kategoriler -->
+            @if(salesData.TopCategories.Count == 0)
+            {
+                <li class="list-group-item text-center">
+                    <i class="text-muted">Henüz kategori satışı bulunmuyor</i>
+                </li>
+            }
+            else
+            {
+                @foreach (var category in salesData.TopCategories)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @category.CategoryName
+                        <span class="badge bg-success rounded-pill">@category.SalesCount Satış</span>
+                    </li>
+                }
+            }
         </ul>
     </div>
 </div>
@@ -58,7 +74,7 @@
         <div class="card text-white bg-info mb-3">
             <div class="card-body text-center">
                 <h5 class="card-title">Toplam Gelir</h5>
-                <p class="card-text" style="font-size:2rem;">₺45,000</p>
+                <p class="card-text" style="font-size:2rem;">₺@salesData.TotalIncome.ToString("N2")</p>
             </div>
         </div>
     </div>
@@ -66,56 +82,191 @@
         <div class="card text-white bg-success mb-3">
             <div class="card-body text-center">
                 <h5 class="card-title">Kar Oranı</h5>
-                <p class="card-text" style="font-size:2rem;">%25</p>
+                <p class="card-text" style="font-size:2rem;">%@salesData.ProfitMargin.ToString("N0")</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="card p-4" style="width: 100%; max-width: 700px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
-        <h5 class="text-center mb-4">Müşteri Yorumları</h5>
-        <!-- Yorumlar Listesi -->
-        <div class="mb-4">
-            <!-- Yorum 1 -->
-            <div class="d-flex align-items-center mb-3">
-                <img src="/images/category-pizza.jpg" alt="Pizza" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:15px;">
-                <div>
-                    <div class="d-flex align-items-center mb-1">
-                        <!-- Yıldızlar -->
-                        <span class="text-warning me-2">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </span>
-                        <small class="text-muted">5 Yıldız</small>
-                    </div>
-                    <p class="mb-0">"Yemekler çok lezzetli ve hızlı geldi."</p>
-                    <small class="text-muted">- Mehmet A.</small>
-                </div>
+<!-- Müşteri Değerlendirmeleri Özeti -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Müşteri Değerlendirmeleri</h5>
             </div>
-            <!-- Yorum 2 -->
-            <div class="d-flex align-items-center mb-3">
-                <img src="/images/category-dessert.jpg" alt="Kebab" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:15px;">
-                <div>
-                    <div class="d-flex align-items-center mb-1">
-                        <!-- Yıldızlar -->
-                        <span class="text-warning me-2">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </span>
-                        <small class="text-muted">4 Yıldız</small>
+            <div class="card-body">
+                @if(Model.TotalReviews == 0)
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Henüz değerlendirme bulunmuyor.
                     </div>
-                    <p class="mb-0">"Servis çok iyi, fiyatlar uygun."</p>
-                    <small class="text-muted">- Ayşe K.</small>
-                </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <!-- Solda ortalama puanlar -->
+                        <div class="col-md-4 text-center mb-3">
+                            <h2 class="display-4 fw-bold text-primary">@Model.AverageOverallRating.ToString("0.0")</h2>
+                            <p class="text-muted mb-2">Genel Değerlendirme</p>
+                            <div class="mb-3">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Math.Round(Model.AverageOverallRating))
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else if (i - 0.5 <= Model.AverageOverallRating)
+                                    {
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star text-warning"></i>
+                                    }
+                                }
+                            </div>
+                            <p class="text-muted">@Model.TotalReviews değerlendirme</p>
+                        </div>
+                        
+                        <!-- Sağda detaylı puanlar -->
+                        <div class="col-md-8">
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <div style="width: 120px;">Lezzet</div>
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: @(Model.AverageTasteRating / 5 * 100)%"></div>
+                                        </div>
+                                        <div class="ms-2 small">@Model.AverageTasteRating.ToString("0.0")</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <div style="width: 120px;">Servis</div>
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: @(Model.AverageServiceRating / 5 * 100)%"></div>
+                                        </div>
+                                        <div class="ms-2 small">@Model.AverageServiceRating.ToString("0.0")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <div style="width: 120px;">Teslimat</div>
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.AverageDeliveryRating / 5 * 100)%"></div>
+                                        </div>
+                                        <div class="ms-2 small">@Model.AverageDeliveryRating.ToString("0.0")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Yıldız istatistikleri -->
+                            <div class="mt-4">
+                                @foreach (var item in new[] { 
+                                    new { Stars = 5, Count = Model.FiveStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.FiveStarCount / Model.TotalReviews * 100 : 0 },
+                                    new { Stars = 4, Count = Model.FourStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.FourStarCount / Model.TotalReviews * 100 : 0 },
+                                    new { Stars = 3, Count = Model.ThreeStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.ThreeStarCount / Model.TotalReviews * 100 : 0 },
+                                    new { Stars = 2, Count = Model.TwoStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.TwoStarCount / Model.TotalReviews * 100 : 0 },
+                                    new { Stars = 1, Count = Model.OneStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.OneStarCount / Model.TotalReviews * 100 : 0 }
+                                })
+                                {
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div style="width: 80px;" class="small">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= item.Stars)
+                                                {
+                                                    <i class="fas fa-star text-warning small"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-warning small"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="progress flex-grow-1 mx-2" style="height: 6px;">
+                                            <div class="progress-bar" role="progressbar" style="width: @item.Percent%"></div>
+                                        </div>
+                                        <div class="small text-muted" style="width: 60px;">@item.Count (@item.Percent.ToString("0.0")%)</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-            <!-- Diğer yorumlar -->
+        </div>
+    </div>
+</div>
+
+<!-- Müşteri Yorumları Listesi -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Gelen Yorumlar (@Model.TotalReviews)</h5>
+            </div>
+            <div class="card-body">
+                @if(Model.Reviews.Count == 0)
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Henüz yorum bulunmuyor.
+                    </div>
+                }
+                else
+                {
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <div class="mb-4 pb-4 border-bottom">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-user-circle fa-2x text-secondary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">@review.UserName</div>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-calendar-alt me-1"></i>@review.FormattedDate
+                                            <span class="ms-2"><i class="fas fa-shopping-bag me-1"></i>Sipariş: #@review.OrderShortId</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.OverallRating)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 small">
+                                <span class="badge bg-light text-dark me-2">Lezzet: @review.TasteRating/5</span>
+                                <span class="badge bg-light text-dark me-2">Servis: @review.ServiceRating/5</span>
+                                <span class="badge bg-light text-dark">Teslimat: @review.DeliveryRating/5</span>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(review.Comment))
+                            {
+                                <p class="mb-0">@review.Comment</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted font-italic mb-0"><i>Yorum eklenmemiş.</i></p>
+                            }
+                        </div>
+                    }
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -126,15 +277,25 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-        // Günlük Satışlar Grafiği
+    // Grafikler için verileri hazırla
+    const dailyLabels = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => s.TimeSlot).ToArray()));
+    const dailyData = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => (double)s.Amount).ToArray()));
+    
+    const weeklyLabels = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => s.DayName).ToArray()));
+    const weeklyData = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => (double)s.Amount).ToArray()));
+    
+    const monthlyLabels = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => s.MonthName).ToArray()));
+    const monthlyData = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => (double)s.Amount).ToArray()));
+
+    // Günlük Satışlar Grafiği
     const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
     const dailyChart = new Chart(ctxDaily, {
         type: 'line',
         data: {
-            labels: ['09:00', '12:00', '15:00', '18:00', '21:00'],
+            labels: dailyLabels,
             datasets: [{
                 label: 'Satış (TL)',
-                data: [500, 1500, 1000, 2000, 1800],
+                data: dailyData,
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
@@ -149,10 +310,10 @@
     const weeklyChart = new Chart(ctxWeekly, {
         type: 'bar',
         data: {
-            labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+            labels: weeklyLabels,
             datasets: [{
                 label: 'Satış (TL)',
-                data: [3000, 4000, 3500, 5000, 4500, 6000, 5500],
+                data: weeklyData,
                 backgroundColor: 'rgba(255, 206, 86, 0.7)',
                 borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1
@@ -165,10 +326,10 @@
     const monthlyChart = new Chart(ctxMonthly, {
         type: 'line',
         data: {
-            labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+            labels: monthlyLabels,
             datasets: [{
                 label: 'Satış (TL)',
-                data: [25000, 30000, 28000, 35000, 33000, 40000, 42000, 39000, 37000, 41000, 43000, 45000],
+                data: monthlyData,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 fill: true,
