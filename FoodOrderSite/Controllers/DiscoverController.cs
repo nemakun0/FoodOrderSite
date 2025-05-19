@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FoodOrderSite.Controllers
@@ -40,6 +41,19 @@ namespace FoodOrderSite.Controllers
         public async Task<IActionResult> Index(string? district = null, string? restaurantType = null, string? sortBy = null,
                                 string? searchTerm = null, int page = 1)
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userRole == "admin")
+                {
+                    return RedirectToAction("Index", "Admin"); // Assuming Admin controller has an Index action
+                }
+                else if (userRole == "seller")
+                {
+                    return RedirectToAction("Index", "ManageRestaurant"); // Assuming ManageRestaurant controller has an Index action
+                }
+            }
+
             var allRestaurantsQuery = _db.RestaurantTables.Where(r => r.IsActive).AsQueryable();
             var totalRestaurantCount = await allRestaurantsQuery.CountAsync();
 
