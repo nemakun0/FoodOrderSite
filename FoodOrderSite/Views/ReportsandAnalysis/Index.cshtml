@@ -6,87 +6,165 @@
 }
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<!-- Satış Grafikleri -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-3">
-        <h5 class="text-center">Günlük Satışlar</h5>
-        <canvas id="dailySalesChart"></canvas>
+@if (salesData != null && salesData.HasAnySalesData)
+{
+    <!-- Satış Grafikleri -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <h5 class="text-center">Günlük Satışlar</h5>
+            <canvas id="dailySalesChart"></canvas>
+        </div>
+        <div class="col-md-4 mb-3">
+            <h5 class="text-center">Haftalık Satışlar</h5>
+            <canvas id="weeklySalesChart"></canvas>
+        </div>
+        <div class="col-md-4 mb-3">
+            <h5 class="text-center">Aylık Satışlar</h5>
+            <canvas id="monthlySalesChart"></canvas>
+        </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <h5 class="text-center">Haftalık Satışlar</h5>
-        <canvas id="weeklySalesChart"></canvas>
-    </div>
-    <div class="col-md-4 mb-3">
-        <h5 class="text-center">Aylık Satışlar</h5>
-        <canvas id="monthlySalesChart"></canvas>
-    </div>
-</div>
 
-<!-- En Çok Satan Ürünler ve Kategoriler -->
-<div class="row mb-4">
-    <div class="col-md-6 mb-3">
-        <h5 class="text-center">En Çok Satan Ürünler</h5>
-        <ul class="list-group">
-            @if(salesData.TopProducts.Count == 0)
-            {
-                <li class="list-group-item text-center">
-                    <i class="text-muted">Henüz ürün satışı bulunmuyor</i>
-                </li>
-            }
-            else
-            {
-                @foreach (var product in salesData.TopProducts)
+    <!-- En Çok Satan Ürünler ve Kategoriler -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <h5 class="text-center">En Çok Satan Ürünler</h5>
+            <ul class="list-group">
+                @if(salesData.TopProducts.Count == 0)
                 {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @product.ProductName
-                        <span class="badge bg-primary rounded-pill">@product.SalesCount Satış</span>
+                    <li class="list-group-item text-center">
+                        <i class="text-muted">Henüz ürün satışı bulunmuyor</i>
                     </li>
                 }
-            }
-        </ul>
-    </div>
-    <div class="col-md-6 mb-3">
-        <h5 class="text-center">En Çok Satan Kategoriler</h5>
-        <ul class="list-group">
-            @if(salesData.TopCategories.Count == 0)
-            {
-                <li class="list-group-item text-center">
-                    <i class="text-muted">Henüz kategori satışı bulunmuyor</i>
-                </li>
-            }
-            else
-            {
-                @foreach (var category in salesData.TopCategories)
+                else
                 {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @category.CategoryName
-                        <span class="badge bg-success rounded-pill">@category.SalesCount Satış</span>
+                    @foreach (var product in salesData.TopProducts)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @product.ProductName
+                            <span class="badge bg-primary rounded-pill">@product.SalesCount Satış</span>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="col-md-6 mb-3">
+            <h5 class="text-center">En Çok Satan Kategoriler</h5>
+            <ul class="list-group">
+                @if(salesData.TopCategories.Count == 0)
+                {
+                    <li class="list-group-item text-center">
+                        <i class="text-muted">Henüz kategori satışı bulunmuyor</i>
                     </li>
                 }
-            }
-        </ul>
+                else
+                {
+                    @foreach (var category in salesData.TopCategories)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @category.CategoryName
+                            <span class="badge bg-success rounded-pill">@category.SalesCount Satış</span>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div>
-</div>
 
-<!-- Toplam Gelir ve Kar -->
-<div class="row mb-4">
-    <div class="col-md-6 mb-3">
-        <div class="card text-white bg-info mb-3">
-            <div class="card-body text-center">
-                <h5 class="card-title">Toplam Gelir</h5>
-                <p class="card-text" style="font-size:2rem;">₺@salesData.TotalIncome.ToString("N2")</p>
+    <!-- Toplam Gelir ve Kar -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Toplam Gelir</h5>
+                    <p class="card-text" style="font-size:2rem;">₺@salesData.TotalIncome.ToString("N2")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Kar Oranı</h5>
+                    <p class="card-text" style="font-size:2rem;">%@salesData.ProfitMargin.ToString("N0")</p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-3">
-        <div class="card text-white bg-success mb-3">
-            <div class="card-body text-center">
-                <h5 class="card-title">Kar Oranı</h5>
-                <p class="card-text" style="font-size:2rem;">%@salesData.ProfitMargin.ToString("N0")</p>
-            </div>
-        </div>
+
+    <!-- Font Awesome ve Bootstrap Icons (Gerekirse kullanılabilir, ancak Chart.js scripti ile birlikte taşınmalı) -->
+    <!-- <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
+    <!-- Chart.js Kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Grafikler için verileri hazırla
+        const dailyLabels = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => s.TimeSlot).ToArray()));
+        const dailyData = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => (double)s.Amount).ToArray()));
+        
+        const weeklyLabels = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => s.DayName).ToArray()));
+        const weeklyData = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => (double)s.Amount).ToArray()));
+        
+        const monthlyLabels = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => s.MonthName).ToArray()));
+        const monthlyData = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => (double)s.Amount).ToArray()));
+
+        // Günlük Satışlar Grafiği
+        const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
+        const dailyChart = new Chart(ctxDaily, {
+            type: 'line',
+            data: {
+                labels: dailyLabels,
+                datasets: [{
+                    label: 'Satış (TL)',
+                    data: dailyData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            }
+        });
+
+        // Haftalık Satışlar Grafiği
+        const ctxWeekly = document.getElementById('weeklySalesChart').getContext('2d');
+        const weeklyChart = new Chart(ctxWeekly, {
+            type: 'bar',
+            data: {
+                labels: weeklyLabels,
+                datasets: [{
+                    label: 'Satış (TL)',
+                    data: weeklyData,
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Aylık Satışlar Grafiği
+        const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
+        const monthlyChart = new Chart(ctxMonthly, {
+            type: 'line',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Satış (TL)',
+                    data: monthlyData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            }
+        });
+    </script>
+}
+else
+{
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fas fa-info-circle fa-2x me-2"></i>
+        <span style="font-size: 1.2rem;">Henüz hiç satış yapmadınız :(</span>
     </div>
-</div>
+}
 
 <!-- Müşteri Değerlendirmeleri Özeti -->
 <div class="row mb-4">
@@ -270,71 +348,3 @@
         </div>
     </div>
 </div>
-
-<!-- Font Awesome ve Bootstrap Icons -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<!-- Chart.js Kütüphanesi -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    // Grafikler için verileri hazırla
-    const dailyLabels = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => s.TimeSlot).ToArray()));
-    const dailyData = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => (double)s.Amount).ToArray()));
-    
-    const weeklyLabels = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => s.DayName).ToArray()));
-    const weeklyData = @Html.Raw(Json.Serialize(salesData.WeeklySales.Select(s => (double)s.Amount).ToArray()));
-    
-    const monthlyLabels = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => s.MonthName).ToArray()));
-    const monthlyData = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => (double)s.Amount).ToArray()));
-
-    // Günlük Satışlar Grafiği
-    const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
-    const dailyChart = new Chart(ctxDaily, {
-        type: 'line',
-        data: {
-            labels: dailyLabels,
-            datasets: [{
-                label: 'Satış (TL)',
-                data: dailyData,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        }
-    });
-
-    // Haftalık Satışlar Grafiği
-    const ctxWeekly = document.getElementById('weeklySalesChart').getContext('2d');
-    const weeklyChart = new Chart(ctxWeekly, {
-        type: 'bar',
-        data: {
-            labels: weeklyLabels,
-            datasets: [{
-                label: 'Satış (TL)',
-                data: weeklyData,
-                backgroundColor: 'rgba(255, 206, 86, 0.7)',
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 1
-            }]
-        }
-    });
-
-    // Aylık Satışlar Grafiği
-    const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
-    const monthlyChart = new Chart(ctxMonthly, {
-        type: 'line',
-        data: {
-            labels: monthlyLabels,
-            datasets: [{
-                label: 'Satış (TL)',
-                data: monthlyData,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: true,
-                tension: 0.4
-            }]
-        }
-    });
-</script>

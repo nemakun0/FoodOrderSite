@@ -28,6 +28,9 @@ namespace FoodOrderSite.Models.ViewModels
         // Financial metrics
         public decimal TotalIncome { get; set; }
         public double ProfitMargin { get; set; } = 25.0; // Default profit margin is 25%
+
+        // Flag to indicate if there is any sales data to display
+        public bool HasAnySalesData { get; set; }
     }
     
     public class TimeSlotSale
