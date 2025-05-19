@@ -32,7 +32,7 @@
                             <i class="far fa-star"></i>
                         }
                     }
-                    <span class="text-dark ms-1">(@Model.Rating.ToString("0.0"))</span>
+                    <span class="text-dark ms-1">(@(Model.Rating > 0 ? Model.Rating.ToString("0.0") : "No ratings"))</span>
                 </span>
             </div>
         </div>
