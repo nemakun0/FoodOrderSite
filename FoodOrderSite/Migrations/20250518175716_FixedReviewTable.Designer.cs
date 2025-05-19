@@ -4,6 +4,7 @@ using FoodOrderSite.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodOrderSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518175716_FixedReviewTable")]
+    partial class FixedReviewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("CategoriesTables", (string)null);
+                    b.ToTable("CategoriesTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
@@ -75,7 +78,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CustomerDeliveryAdderss", (string)null);
+                    b.ToTable("CustomerDeliveryAdderss");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemCategoriesTable", b =>
@@ -90,7 +93,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("FoodItemCategoriesTables", (string)null);
+                    b.ToTable("FoodItemCategoriesTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemTable", b =>
@@ -130,7 +133,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("FoodItemTables", (string)null);
+                    b.ToTable("FoodItemTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.Order", b =>
@@ -165,7 +168,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.OrderItem", b =>
@@ -195,7 +198,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.Product", b =>
@@ -224,7 +227,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantTable", b =>
@@ -276,7 +279,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RestaurantTables", (string)null);
+                    b.ToTable("RestaurantTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantType", b =>
@@ -294,7 +297,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("TypeId");
 
-                    b.ToTable("RestaurantTypes", (string)null);
+                    b.ToTable("RestaurantTypes");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.ReviewTable", b =>
@@ -342,7 +345,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.ScheduleTable", b =>
@@ -370,7 +373,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Schedules", (string)null);
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.UserTable", b =>
@@ -419,7 +422,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserTables", (string)null);
+                    b.ToTable("UserTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>

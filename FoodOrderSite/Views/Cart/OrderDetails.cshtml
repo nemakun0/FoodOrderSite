@@ -54,6 +54,23 @@
                 </div>
             </div>
 
+            <!-- Teslimat Adresi bilgileri -->
+            @if (!string.IsNullOrEmpty(Model.Order.DeliveryAddress))
+            {
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Teslimat Adresi</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <strong>Adres Başlığı:</strong> @Model.Order.AddressTitle<br />
+                            <strong>Adres:</strong> @Model.Order.DeliveryAddress<br />
+                            <strong>İlçe/İl:</strong> @Model.Order.DeliveryDistrict / @Model.Order.DeliveryCity
+                        </p>
+                    </div>
+                </div>
+            }
+
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Sipariş Öğeleri</h5>

@@ -20,6 +20,16 @@ namespace FoodOrderSite.Models.ViewModels
         // For payment section
         public string PaymentMethod { get; set; } // "Cash" or "CreditCard"
         public CreditCardViewModel CreditCard { get; set; } = new CreditCardViewModel();
+        
+        // Teslimat adresi bilgileri
+        public int? DeliveryAddressId { get; set; }
+        public string AddressTitle { get; set; }
+        public string DeliveryAddress { get; set; }
+        public string DeliveryCity { get; set; }
+        public string DeliveryDistrict { get; set; }
+        
+        // Kayıtlı adres listesi (controller tarafından doldurulacak)
+        public List<CustomerDeliveryAddressViewModel> SavedAddresses { get; set; } = new List<CustomerDeliveryAddressViewModel>();
     }
 
     public class CreditCardViewModel

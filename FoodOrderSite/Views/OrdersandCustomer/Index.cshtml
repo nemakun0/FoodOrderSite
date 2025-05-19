@@ -96,6 +96,33 @@ else
                             <strong>Email:</strong> @orderDetail.CustomerEmail
                         </p>
 
+                        @if (orderDetail.HasAddressInfo)
+                        {
+                            <h5>Teslimat Adresi</h5>
+                            <p>
+                                <strong>Adres Başlığı:</strong> @orderDetail.AddressTitle<br />
+                                <strong>Adres:</strong> @orderDetail.DeliveryAddress<br />
+                                <strong>İlçe/İl:</strong> @orderDetail.DeliveryDistrict / @orderDetail.DeliveryCity
+                            </p>
+                        }
+
+                        <h5>Ödeme Bilgileri</h5>
+                        <p>
+                            <strong>Ödeme Yöntemi:</strong> 
+                            @if (orderDetail.PaymentMethod == "Cash")
+                            {
+                                <span>Kapıda Ödeme</span>
+                            }
+                            else if (orderDetail.PaymentMethod == "CreditCard")
+                            {
+                                <span>Kredi Kartı</span>
+                            }
+                            else
+                            {
+                                <span>@orderDetail.PaymentMethod</span>
+                            }
+                        </p>
+
                         <h5>Sipariş Durumu</h5>
                         <form asp-action="UpdateOrderStatus" method="post">
                             <input type="hidden" name="orderId" value="@orderDetail.OrderId" />

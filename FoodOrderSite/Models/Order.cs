@@ -26,5 +26,20 @@ namespace FoodOrderSite.Models
 
         [StringLength(50)]
         public string PaymentMethod { get; set; } = "Cash";
+        
+        // Adres bilgileri
+        public int? DeliveryAddressId { get; set; }
+        
+        [StringLength(100)]
+        public string AddressTitle { get; set; }
+        
+        [StringLength(250)]
+        public string DeliveryAddress { get; set; }
+        
+        [StringLength(100)]
+        public string DeliveryCity { get; set; }
+        
+        [StringLength(100)]
+        public string DeliveryDistrict { get; set; }
     }
 }

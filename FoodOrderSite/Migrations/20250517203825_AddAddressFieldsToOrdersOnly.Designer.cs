@@ -4,6 +4,7 @@ using FoodOrderSite.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FoodOrderSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250517203825_AddAddressFieldsToOrdersOnly")]
+    partial class AddAddressFieldsToOrdersOnly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("CategoriesTables", (string)null);
+                    b.ToTable("CategoriesTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
@@ -68,6 +71,11 @@ namespace FoodOrderSite.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -75,7 +83,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CustomerDeliveryAdderss", (string)null);
+                    b.ToTable("CustomerDeliveryAdderss");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemCategoriesTable", b =>
@@ -90,7 +98,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("FoodItemCategoriesTables", (string)null);
+                    b.ToTable("FoodItemCategoriesTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.FoodItemTable", b =>
@@ -130,7 +138,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("FoodItemTables", (string)null);
+                    b.ToTable("FoodItemTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.Order", b =>
@@ -138,6 +146,29 @@ namespace FoodOrderSite.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AddressTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeliveryAddress")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int?>("DeliveryAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeliveryCity")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeliveryDistrict")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -165,7 +196,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.OrderItem", b =>
@@ -195,7 +226,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.Product", b =>
@@ -224,7 +255,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantTable", b =>
@@ -276,7 +307,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RestaurantTables", (string)null);
+                    b.ToTable("RestaurantTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.RestaurantType", b =>
@@ -294,55 +325,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("TypeId");
 
-                    b.ToTable("RestaurantTypes", (string)null);
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.ReviewTable", b =>
-                {
-                    b.Property<int>("ReviewId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DeliveryRating")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("OverallRating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceRating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TasteRating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReviewId");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.HasIndex("RestaurantId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("RestaurantTypes");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.ScheduleTable", b =>
@@ -370,7 +353,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Schedules", (string)null);
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.UserTable", b =>
@@ -419,7 +402,7 @@ namespace FoodOrderSite.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserTables", (string)null);
+                    b.ToTable("UserTables");
                 });
 
             modelBuilder.Entity("FoodOrderSite.Models.CustomerDeliveryAdderss", b =>
@@ -481,33 +464,6 @@ namespace FoodOrderSite.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FoodOrderSite.Models.ReviewTable", b =>
-                {
-                    b.HasOne("FoodOrderSite.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FoodOrderSite.Models.RestaurantTable", "Restaurant")
-                        .WithMany()
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FoodOrderSite.Models.UserTable", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Restaurant");
 
                     b.Navigation("User");
                 });
