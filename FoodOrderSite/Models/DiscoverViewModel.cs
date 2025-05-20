@@ -12,6 +12,11 @@ namespace FoodOrderSite.Models
         public string SelectedDistrict { get; set; }
         public List<string> AllRestaurantTypes { get; set; } // Added
         public string SelectedRestaurantType { get; set; } // Added
+        
+        // Category-related properties
+        public List<CategoriesTable> AllCategories { get; set; }
+        public string SelectedCategory { get; set; }
+        
         public string SortBy { get; set; }
         public string SearchTerm { get; set; }
         public int CurrentPage { get; set; }

@@ -112,40 +112,58 @@
         <h2 class="section-title text-center mb-4">Yemek Kategorileri</h2>
         <div class="row justify-content-center">
             @{
-                // 16 kategori resmi
-                var cats = new[] {
-            "/images/category-burger.jpg",
-            "/images/category-pizza.jpg",
-            "/images/category-salad.jpg",
-            "/images/category-dessert.jpg",
-            "/images/category-soup.jpg",
-            "/images/category-steak.jpg",
-            "/images/category-seafood.jpg",
-            "/images/category-pasta.jpg",
-            "/images/category-sandwich.jpg",
-            "/images/category-sushi.jpg",
-            "/images/category-taco.jpg",
-            "/images/category-noodles.jpg",
-            "/images/category-curry.jpg",
-            "/images/category-ramen.jpg",
-            "/images/category-smoothie.jpg",
-            "/images/category-coffee.jpg"
-            };
+                var categoryImages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                    {"Burger", "/images/category-burger.jpg"},
+                    {"Burgers", "/images/category-burger.jpg"},
+                    {"Pizza", "/images/category-pizza.jpg"},
+                    {"Pizzas", "/images/category-pizza.jpg"},
+                    {"Salad", "/images/category-salad.jpg"},
+                    {"Salads", "/images/category-salad.jpg"},
+                    {"Dessert", "/images/category-dessert.jpg"},
+                    {"Desserts", "/images/category-dessert.jpg"},
+                    {"Soup", "/images/category-soup.jpg"},
+                    {"Soups", "/images/category-soup.jpg"},
+                    {"Soap", "/images/category-soup.jpg"}, // Handle common misspelling
+                    {"Steak", "/images/category-steak.jpg"},
+                    {"Steaks", "/images/category-steak.jpg"},
+                    {"Seafood", "/images/category-seafood.jpg"},
+                    {"Pasta", "/images/category-pasta.jpg"},
+                    {"Pastas", "/images/category-pasta.jpg"},
+                    {"Sandwich", "/images/category-sandwich.jpg"},
+                    {"Sandwiches", "/images/category-sandwich.jpg"},
+                    {"Sushi", "/images/category-sushi.jpg"},
+                    {"Taco", "/images/category-taco.jpg"},
+                    {"Tacos", "/images/category-taco.jpg"},
+                    {"Noodle", "/images/category-noodles.jpg"},
+                    {"Noodles", "/images/category-noodles.jpg"},
+                    {"Curry", "/images/category-curry.jpg"},
+                    {"Currys", "/images/category-curry.jpg"},
+                    {"Ramen", "/images/category-ramen.jpg"},
+                    {"Smoothie", "/images/category-smoothie.jpg"},
+                    {"Smoothies", "/images/category-smoothie.jpg"},
+                    {"Coffee", "/images/category-coffee.jpg"}
+                };
+                
+                var defaultImage = "/images/category-default.jpg";
+                
+                // Get categories from the database via ViewBag
+                var dbCategories = ViewBag.Categories as List<FoodOrderSite.Models.CategoriesTable> ?? new List<FoodOrderSite.Models.CategoriesTable>();
             }
-            @for (int i = 0; i < cats.Length; i++)
+            
+            @for (int i = 0; i < dbCategories.Count; i++)
             {
+                var category = dbCategories[i];
                 var hiddenClass = i < 4 ? "" : "d-none";
-                // dosya adını al, prefix'i kaldır, ilk harfleri büyüt
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(cats[i]);           // e.g. "category-seafood"
-                var rawName = fileName.Replace("category-", "");                   // e.g. "seafood"
-                var displayName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(rawName); // "Seafood"
+                
+                // Try to get matching image or use default
+                var imagePath = categoryImages.ContainsKey(category.Name) ? categoryImages[category.Name] : defaultImage;
 
                 <div class="col-sm-6 col-md-3 mb-4 category-item @hiddenClass">
-                    <div class="category-card text-center">
+                    <div class="category-card text-center" data-category="@category.Name">
                         <div class="thumb-wrap">
-                            <img src="@Url.Content(cats[i])" alt="@displayName" class="img-fluid" />
+                            <img src="@Url.Content(imagePath)" alt="@category.Name" class="img-fluid" />
                         </div>
-                        <p class="mt-2 fw-semibold">@displayName</p>
+                        <p class="mt-2 fw-semibold">@category.Name</p>
                     </div>
                 </div>
             }
@@ -229,9 +247,8 @@
                 const card = item.querySelector('.category-card');
                 if (card) {
                     card.addEventListener('click', function () {
-                        const categoryNameElement = card.querySelector('p.fw-semibold');
-                        if (categoryNameElement) {
-                            const categoryName = categoryNameElement.textContent.trim();
+                        const categoryName = card.getAttribute('data-category');
+                        if (categoryName) {
                             const redirectPath = redirectBasedOnRole();
                             
                             if (redirectPath === '/Discover/Index') {
@@ -293,14 +310,14 @@
 }
 
 <!-- Sizi Neler Bekliyor Bölümü -->
-<section class="expectations-section py-5">
+<section class="expectations-section py-5" style="background-color: #f2e7dc; color: #000;">
     <div class="container-fluid px-3">
-        <h2 class="section-title text-center mb-4">ForkBase'de Sizi Neler Bekliyor?</h2>
-        <ul class="list-unstyled fs-5">
-            <li>✓ Yemek siparişinde onlarca kategori, binlerce çeşit ürün!</li>
-            <li>✓ Yemek siparişlerinizde her gün on binlerce indirim!</li>
-            <li>✓ Online ya da kapıda, dilediğiniz gibi ödeme seçeneği!</li>
-            <li>✓ Siparişinizle ilgili size her zaman destek olmaya hazır, 7/24 Canlı Yardım ekibi!</li>
+        <h2 class="section-title text-center mb-4" style="color: #e63946;">ForkBase'de Sizi Neler Bekliyor?</h2>
+        <ul class="list-unstyled fs-5" style="color: #000;">
+            <li style="margin-bottom: 12px;"><span style="color: #e63946; font-weight: bold;">✓</span> Yemek siparişinde onlarca kategori, binlerce çeşit ürün!</li>
+            <li style="margin-bottom: 12px;"><span style="color: #e63946; font-weight: bold;">✓</span> Yemek siparişlerinizde her gün on binlerce indirim!</li>
+            <li style="margin-bottom: 12px;"><span style="color: #e63946; font-weight: bold;">✓</span> Online ya da kapıda, dilediğiniz gibi ödeme seçeneği!</li>
+            <li style="margin-bottom: 12px;"><span style="color: #e63946; font-weight: bold;">✓</span> Siparişinizle ilgili size her zaman destek olmaya hazır, 7/24 Canlı Yardım ekibi!</li>
         </ul>
     </div>
 </section>

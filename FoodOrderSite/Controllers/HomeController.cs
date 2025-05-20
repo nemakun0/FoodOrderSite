@@ -2,6 +2,7 @@ using FoodOrderSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderSite.Controllers
 {
@@ -17,6 +18,10 @@ namespace FoodOrderSite.Controllers
         {
             //var products = _db.Products.ToList();
             ViewBag.Districts = _db.RestaurantTables.Select(r => r.District).Distinct().ToList();
+            
+            // Fetch all categories for the food categories section
+            ViewBag.Categories = _db.CategoriesTables.OrderBy(c => c.Name).ToList();
+            
             //return View(products);
             return View();
         }

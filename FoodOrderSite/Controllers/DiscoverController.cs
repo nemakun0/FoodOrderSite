@@ -39,7 +39,7 @@ namespace FoodOrderSite.Controllers
         }
 
         public async Task<IActionResult> Index(string? district = null, string? restaurantType = null, string? sortBy = null,
-                                string? searchTerm = null, int page = 1)
+                                string? searchTerm = null, string? category = null, int page = 1)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
@@ -71,6 +71,10 @@ namespace FoodOrderSite.Controllers
                                      .OrderBy(rt => rt)
                                      .ToListAsync();
 
+            var allCategories = await _db.CategoriesTables
+                                .OrderBy(c => c.Name)
+                                .ToListAsync();
+
             int cartItemCount = GetCartItemCountFromSession();
 
             var model = new DiscoverViewModel
@@ -79,6 +83,8 @@ namespace FoodOrderSite.Controllers
                 AllDistricts = allDistricts!,
                 SelectedRestaurantType = restaurantType,
                 AllRestaurantTypes = allRestaurantTypes!,
+                SelectedCategory = category,
+                AllCategories = allCategories,
                 SortBy = sortBy,
                 SearchTerm = searchTerm,
                 CurrentPage = page,
@@ -87,7 +93,7 @@ namespace FoodOrderSite.Controllers
                 CartItemCount = cartItemCount
             };
 
-            var filteredRestaurantTablesQuery = FilterRestaurantTables(allRestaurantsQuery, district, restaurantType, searchTerm);
+            var filteredRestaurantTablesQuery = FilterRestaurantTables(allRestaurantsQuery, district, restaurantType, searchTerm, category);
             var filteredRestaurantTablesList = await filteredRestaurantTablesQuery.ToListAsync();
             var mappedRestaurants = MapRestaurantTablesToRestaurants(filteredRestaurantTablesList);
             var sortedRestaurants = SortRestaurants(mappedRestaurants, sortBy);
@@ -103,7 +109,7 @@ namespace FoodOrderSite.Controllers
         }
 
         private IQueryable<RestaurantTable> FilterRestaurantTables(IQueryable<RestaurantTable> restaurants,
-                                                                 string? district, string? restaurantType, string? searchTerm)
+                                                                 string? district, string? restaurantType, string? searchTerm, string? category)
         {
             var filtered = restaurants;
 
@@ -124,6 +130,32 @@ namespace FoodOrderSite.Controllers
             if (!string.IsNullOrEmpty(restaurantType))
             {
                 filtered = filtered.Where(r => r.RestaurantType == restaurantType);
+            }
+
+            // Filter by selected category if provided
+            if (!string.IsNullOrEmpty(category))
+            {
+                // First get the category ID
+                var categoryId = _db.CategoriesTables
+                    .Where(c => c.Name == category)
+                    .Select(c => c.CategoryId)
+                    .FirstOrDefault();
+
+                if (categoryId > 0)
+                {
+                    // Get all food items that belong to this category
+                    var foodItemIds = _db.FoodItemCategoriesTables
+                        .Where(fc => fc.CategoryId == categoryId)
+                        .Select(fc => fc.FoodItemId);
+
+                    // Get all restaurants that have these food items
+                    var restaurantIds = _db.FoodItemTables
+                        .Where(f => foodItemIds.Contains(f.FoodItemId))
+                        .Select(f => f.RestaurantId);
+
+                    // Filter the restaurants based on these IDs
+                    filtered = filtered.Where(r => restaurantIds.Contains(r.RestaurantId));
+                }
             }
 
             return filtered;

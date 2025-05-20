@@ -25,7 +25,8 @@
         <div class="col-12">
             <h1 class="display-5 fw-bold">@ViewData["Title"]</h1>
             <p class="lead text-muted">
-                @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedDistrict) || !string.IsNullOrEmpty(Model.SelectedRestaurantType))
+                @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedDistrict) || 
+                     !string.IsNullOrEmpty(Model.SelectedRestaurantType) || !string.IsNullOrEmpty(Model.SelectedCategory))
                 {
                     <span>
                         <i class="fas fa-filter me-2"></i>Filtered by:
@@ -40,6 +41,10 @@
                         @if (!string.IsNullOrEmpty(Model.SelectedRestaurantType))
                         {
                             <span class="badge bg-success me-1">Type: @Model.SelectedRestaurantType</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.SelectedCategory))
+                        {
+                            <span class="badge bg-warning text-dark me-1">Category: @Model.SelectedCategory</span>
                         }
                         <span class="ms-2">(@Model.FilteredCount results)</span>
                     </span>
@@ -99,6 +104,20 @@
                                 }
                             </select>
                         </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Food Category</label>
+                            <select name="category" class="form-select" onchange="this.form.submit()">
+                                <option value="">All Categories</option>
+                                @if (Model.AllCategories != null)
+                                {
+                                    @foreach (var category in Model.AllCategories)
+                                    {
+                                        <option value="@category.Name" selected="@(category.Name == Model.SelectedCategory)">@category.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
@@ -122,7 +141,8 @@
                         <i class="fas fa-exclamation-circle fa-2x me-3"></i>
                         <div>
                             <h5 class="mb-1">No Results Found</h5>
-                            @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedDistrict) || !string.IsNullOrEmpty(Model.SelectedRestaurantType))
+                            @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedDistrict) || 
+                                !string.IsNullOrEmpty(Model.SelectedRestaurantType) || !string.IsNullOrEmpty(Model.SelectedCategory))
                             {
                                 <p class="mb-0">No restaurants found matching your current criteria. Try different keywords or broaden your filters.</p>
                             }
@@ -157,6 +177,7 @@
                                    asp-route-restaurantType="@Model.SelectedRestaurantType" 
                                    asp-route-sortBy="@Model.SortBy"
                                    asp-route-searchTerm="@Model.SearchTerm"
+                                   asp-route-category="@Model.SelectedCategory"
                                    asp-route-page="@(Model.CurrentPage - 1)">
                                     <i class="fas fa-chevron-left"></i>
                                 </a>
@@ -171,6 +192,7 @@
                                        asp-route-restaurantType="@Model.SelectedRestaurantType" 
                                        asp-route-sortBy="@Model.SortBy"
                                        asp-route-searchTerm="@Model.SearchTerm"
+                                       asp-route-category="@Model.SelectedCategory"
                                        asp-route-page="@i">@i</a>
                                 </li>
                             }
@@ -182,6 +204,7 @@
                                    asp-route-restaurantType="@Model.SelectedRestaurantType" 
                                    asp-route-sortBy="@Model.SortBy"
                                    asp-route-searchTerm="@Model.SearchTerm"
+                                   asp-route-category="@Model.SelectedCategory"
                                    asp-route-page="@(Model.CurrentPage + 1)">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
@@ -241,6 +264,10 @@
         .badge.bg-success {
             background-color: #198754 !important;
             color: #fff;
+        }
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529;
         }
     </style>
 }
