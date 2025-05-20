@@ -76,6 +76,14 @@
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm menu-item-card">
+                        @if (!item.IsAvailable)
+                        {
+                            <div class="unavailable-overlay">
+                                <div class="unavailable-badge">
+                                    <i class="fas fa-clock me-2"></i>Şu An Mevcut Değil
+                                </div>
+                            </div>
+                        }
                         <img src="@(string.IsNullOrEmpty(item.Image) ? "/images/default-food-item.png" : item.Image)" 
                              class="card-img-top menu-item-image" 
                              alt="@item.Name" 
@@ -88,13 +96,22 @@
                             }
                             <div class="mt-auto">
                                 <p class="card-text fs-5 fw-bold text-primary mb-2">@item.Price.ToString("C")</p>
-                                <form asp-controller="Cart" asp-action="AddItem" method="post">
-                                    <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                    <input type="hidden" name="quantity" value="1" /> 
-                                    <button type="submit" class="btn btn-warning w-100 add-to-cart-btn">
-                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                @if (item.IsAvailable)
+                                {
+                                    <form asp-controller="Cart" asp-action="AddItem" method="post">
+                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                        <input type="hidden" name="quantity" value="1" /> 
+                                        <button type="submit" class="btn btn-warning w-100 add-to-cart-btn">
+                                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary w-100" disabled>
+                                        <i class="fas fa-ban me-2"></i>Mevcut Değil
                                     </button>
-                                </form>
+                                }
                             </div>
                         </div>
                     </div>
@@ -121,6 +138,7 @@
         }
         .menu-item-card {
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            position: relative;
         }
         .menu-item-card:hover {
             transform: translateY(-5px);
@@ -128,6 +146,29 @@
         }
         .add-to-cart-btn {
             /* Style for add to cart button if needed */
+        }
+
+        .unavailable-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .unavailable-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            transform: rotate(-15deg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .restaurant-header {

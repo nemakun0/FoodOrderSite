@@ -81,7 +81,7 @@ namespace FoodOrderSite.Controllers
             }
 
             var menuItems = await _db.FoodItemTables
-                                     .Where(fi => fi.RestaurantId == restaurantId && fi.IsAvailable && !fi.IsDeleted)
+                                     .Where(fi => fi.RestaurantId == restaurantId && !fi.IsDeleted)
                                      .OrderBy(fi => fi.Name) // Example ordering
                                      .ToListAsync();
 
