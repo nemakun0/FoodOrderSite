@@ -252,7 +252,7 @@ else
                                 })
                                 {
                                     <div class="d-flex align-items-center mb-1">
-                                        <div style="width: 80px;" class="small">
+                                        <div style="width: 100px; white-space: nowrap;" class="small">
                                             @for (int i = 1; i <= 5; i++)
                                             {
                                                 if (i <= item.Stars)
@@ -312,7 +312,7 @@ else
                                         </div>
                                     </div>
                                 </div>
-                                <div>
+                                <div style="white-space: nowrap; min-width: 120px; display: inline-block;">
                                     @for (int i = 1; i <= 5; i++)
                                     {
                                         if (i <= review.OverallRating)
