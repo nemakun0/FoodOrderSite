@@ -65,6 +65,9 @@ namespace FoodOrderSite.Controllers
                     District = model.District
                 };
 
+                // Debugging: Title değerini loglamak için
+                System.Diagnostics.Debug.WriteLine($"Kaydedilen Adres Başlığı (Title): '{model.Title}'");
+
                 // Adresi veritabanına ekle
                 _context.CustomerDeliveryAdderss.Add(address);
                 await _context.SaveChangesAsync();
