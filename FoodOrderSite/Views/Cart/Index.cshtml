@@ -2,14 +2,14 @@
 @model CartPageViewModel
 
 @{
-    ViewData["Title"] = "Sepetiniz";
+    ViewData["Title"] = "Your Cart";
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
 }
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-8">
-            <!-- Başlık ve Alışverişe Devam Et düğmesi -->
+            <!-- Title and Continue Shopping button -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                  <h2 class="mb-0">@ViewData["Title"]</h2>
                  <div>
@@ -18,12 +18,12 @@
                          <form asp-controller="Cart" asp-action="ClearCart" method="post" class="d-inline me-2">
                              @Html.AntiForgeryToken()
                              <button type="submit" class="btn btn-outline-danger">
-                                 <i class="fas fa-trash me-2"></i>Sepeti Temizle
+                                 <i class="fas fa-trash me-2"></i>Clear Cart
                              </button>
                          </form>
                      }
                      <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
-                         <i class="fas fa-store me-2"></i>Alışverişe Devam Et
+                         <i class="fas fa-store me-2"></i>Continue Shopping
                      </a>
                  </div>
             </div>
@@ -31,31 +31,31 @@
             @if (Model.IsEmpty)
             {
                 <div class="alert alert-info text-center" role="alert">
-                    <h4 class="alert-heading"><i class="fas fa-shopping-cart me-2"></i>Sepetiniz Boş</h4>
-                    <p>Henüz sepetinize ürün eklemediniz.</p>
+                    <h4 class="alert-heading"><i class="fas fa-shopping-cart me-2"></i>Your Cart is Empty</h4>
+                    <p>You haven't added any products to your cart yet.</p>
                     <hr>
                     <p class="mb-0">
-                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Restoranları Keşfet</a>
+                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Discover Restaurants</a>
                     </p>
                 </div>
             }
             else
             {
-                <!-- Sipariş Bilgisi -->
+                <!-- Order Information -->
                 <div class="alert alert-info mb-4" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>Aynı anda yalnızca bir restorandan sipariş verebilirsiniz.
+                    <i class="fas fa-info-circle me-2"></i>You can only order from one restaurant at a time.
                 </div>
                 
                 @if (ViewBag.AuthWarning != null)
                 {
                     <div class="alert alert-danger mb-4" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.AuthWarning
-                        <a asp-controller="SignIn" asp-action="Index" asp-route-returnUrl="@Url.Action("Index", "Cart")" class="alert-link">Giriş yapmak</a> veya 
-                        <a asp-controller="SignUp" asp-action="Index" class="alert-link">kayıt olmak</a> için tıklayın.
+                        <a asp-controller="SignIn" asp-action="Index" asp-route-returnUrl="@Url.Action("Index", "Cart")" class="alert-link">Click here to sign in</a> or 
+                        <a asp-controller="SignUp" asp-action="Index" class="alert-link">register</a>.
                     </div>
                 }
                 
-                <!-- Ana Checkout formu -->
+                <!-- Main Checkout form -->
                 <form action="/Cart/Checkout" method="post" id="checkoutForm">
                     @Html.AntiForgeryToken()
                     
@@ -63,14 +63,14 @@
                     {
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-light">
-                                <h5 class="mb-0">Restoran: @group.RestaurantName</h5>
+                                <h5 class="mb-0">Restaurant: @group.RestaurantName</h5>
                             </div>
                             <div class="card-body p-0">
                                 <ul class="list-group list-group-flush">
                                     @foreach (var item in group.Items)
                                     {
                                         <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap px-3 py-3">
-                                            <!-- Sol Taraf: Ürün Resmi, Adı, Birim Fiyatı -->
+                                            <!-- Left Side: Product Image, Name, Unit Price -->
                                             <div class="d-flex align-items-center me-3 mb-2 mb-md-0" style="flex: 1 1 250px;">
                                                 @if (!string.IsNullOrEmpty(item.ImageUrl))
                                                 {
@@ -82,32 +82,32 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Sağ Taraf: Miktar Kontrolleri, Toplam Fiyat, Kaldır Düğmesi -->
+                                            <!-- Right Side: Quantity Controls, Total Price, Remove Button -->
                                             <div class="d-flex align-items-center justify-content-end" style="flex: 1 1 300px;">
 
-                                                <!-- Miktar Kontrolleri -->
+                                                <!-- Quantity Controls -->
                                                 <div class="d-flex align-items-center me-3">
-                                                    <!-- Azaltma butonu için normal link kullan, JavaScript problemi yaşamamak için -->
-                                                    <a href="@Url.Action("DecrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Azalt">-</a>
+                                                    <!-- Use regular link for decrease button to avoid JavaScript issues -->
+                                                    <a href="@Url.Action("DecrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Decrease">-</a>
                                                     
                                                     <span class="mx-2 fw-bold" style="min-width: 25px; text-align: center;">@item.Quantity</span> 
                                                     
-                                                    <a href="@Url.Action("IncrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Artır">+</a>
+                                                    <a href="@Url.Action("IncrementItem", "Cart", new { foodItemId = item.FoodItemId })" class="btn btn-sm btn-outline-secondary" aria-label="Increase">+</a>
                                                 </div>
 
-                                                <!-- Toplam Fiyat -->
+                                                <!-- Total Price -->
                                                 <span class="fw-bold text-nowrap me-3" style="min-width: 80px; text-align: right;">@item.TotalPrice.ToString("C")</span>
 
-                                                <!-- Kaldır Düğmesi - JavaScript ile çalışacak şekilde düzeltildi -->
+                                                <!-- Remove Button - Fixed to work with JavaScript -->
                                                 <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0 remove-item-btn" 
-                                                        data-food-id="@item.FoodItemId" title="Ürünü Kaldır">
+                                                        data-food-id="@item.FoodItemId" title="Remove Item">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
                                         </li>
                                     }
                                     <li class="list-group-item d-flex justify-content-between bg-light-subtle">
-                                        <span class="fw-bold">Restoran Ara Toplamı:</span>
+                                        <span class="fw-bold">Restaurant Subtotal:</span>
                                         <span class="fw-bold">@group.RestaurantSubtotal.ToString("C")</span>
                                     </li>
                                 </ul>
@@ -115,34 +115,34 @@
                         </div>
                     }
 
-                    <!-- Toplam ve Ödeme bölümleri -->
+                    <!-- Totals and Payment sections -->
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0">Genel Toplam:</h4>
+                            <h4 class="mb-0">Grand Total:</h4>
                             <h4 class="mb-0 text-primary fw-bold">@Model.GrandTotal.ToString("C")</h4>
                         </div>
                     </div>
 
-                    <!-- Teslimat Adresi Seçimi -->
+                    <!-- Delivery Address Selection -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-header bg-light">
-                            <h5 class="mb-0">Teslimat Adresi</h5>
+                            <h5 class="mb-0">Delivery Address</h5>
                         </div>
                         <div class="card-body">
                             @if (Model.SavedAddresses == null || !Model.SavedAddresses.Any())
                             {
                                 <div class="alert alert-warning mb-0">
                                     <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Kayıtlı adresiniz bulunmamaktadır. 
-                                    <a asp-controller="SavedAddress" asp-action="Index" class="alert-link">Buradan</a> adres ekleyebilirsiniz.
+                                    You don't have any saved addresses. 
+                                    <a asp-controller="SavedAddress" asp-action="Index" class="alert-link">Click here</a> to add an address.
                                 </div>
                             }
                             else
                             {
                                 <div class="mb-3">
-                                    <label class="form-label">Kayıtlı Adresleriniz</label>
+                                    <label class="form-label">Your Saved Addresses</label>
                                     <select class="form-select" name="DeliveryAddressId" id="deliveryAddressSelect" required>
-                                        <option value="">Lütfen bir adres seçin</option>
+                                        <option value="">Please select an address</option>
                                         @foreach (var address in Model.SavedAddresses)
                                         {
                                             <option value="@address.AddressId" 
@@ -168,7 +168,7 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Gizli alanlar -->
+                                <!-- Hidden fields -->
                                 <input type="hidden" name="AddressTitle" id="hiddenAddressTitle">
                                 <input type="hidden" name="DeliveryAddress" id="hiddenAddressLine">
                                 <input type="hidden" name="DeliveryCity" id="hiddenAddressCity">
@@ -179,36 +179,36 @@
 
                     <div class="card shadow-sm mb-4">
                         <div class="card-header bg-light">
-                            <h5 class="mb-0">Ödeme Yöntemi</h5>
+                            <h5 class="mb-0">Payment Method</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCash" value="Cash" asp-for="PaymentMethod" checked>
-                                    <label class="form-check-label" for="paymentCash">Kapıda Ödeme</label>
+                                    <label class="form-check-label" for="paymentCash">Cash on Delivery</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="PaymentMethod" id="paymentCreditCard" value="CreditCard" asp-for="PaymentMethod">
-                                    <label class="form-check-label" for="paymentCreditCard">Kredi Kartı</label>
+                                    <label class="form-check-label" for="paymentCreditCard">Credit Card</label>
                                 </div>
                             </div>
 
-                            <!-- Kredi Kartı Form Bölümü -->
+                            <!-- Credit Card Form Section -->
                             <div id="creditCardForm" class="mt-3" style="display: none;">
                                 <div class="row g-3">
                                     <div class="col-12">
-                                        <label for="CardHolderName" class="form-label">Kart Üzerindeki İsim</label>
-                                        <input type="text" class="form-control" asp-for="CreditCard.CardHolderName" id="CardHolderName" placeholder="Kart üzerindeki isim" autocomplete="cc-name" required>
+                                        <label for="CardHolderName" class="form-label">Name on Card</label>
+                                        <input type="text" class="form-control" asp-for="CreditCard.CardHolderName" id="CardHolderName" placeholder="Name on card" autocomplete="cc-name" required>
                                     </div>
                                     <div class="col-12">
-                                        <label for="CardNumber" class="form-label">Kart Numarası</label>
+                                        <label for="CardNumber" class="form-label">Card Number</label>
                                         <input type="text" class="form-control" asp-for="CreditCard.CardNumber" id="CardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" required>
-                                        <small class="text-muted">Örnek: 1234 5678 9012 3456</small>
+                                        <small class="text-muted">Example: 1234 5678 9012 3456</small>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="ExpiryMonth" class="form-label">Ay</label>
+                                        <label for="ExpiryMonth" class="form-label">Month</label>
                                         <select class="form-select" asp-for="CreditCard.ExpiryMonth" id="ExpiryMonth" autocomplete="cc-exp-month">
-                                            <option value="">Ay</option>
+                                            <option value="">Month</option>
                                             @for (int i = 1; i <= 12; i++)
                                             {
                                                 <option value="@i.ToString("D2")">@i.ToString("D2")</option>
@@ -216,9 +216,9 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="ExpiryYear" class="form-label">Yıl</label>
+                                        <label for="ExpiryYear" class="form-label">Year</label>
                                         <select class="form-select" asp-for="CreditCard.ExpiryYear" id="ExpiryYear" autocomplete="cc-exp-year">
-                                            <option value="">Yıl</option>
+                                            <option value="">Year</option>
                                             @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 10; i++)
                                             {
                                                 <option value="@i">@i</option>
@@ -228,20 +228,20 @@
                                     <div class="col-md-4">
                                         <label for="Cvv" class="form-label">CVV</label>
                                         <input type="text" class="form-control" asp-for="CreditCard.Cvv" id="Cvv" placeholder="123" maxlength="3" autocomplete="cc-csc">
-                                        <small class="text-muted">Kartın arkasındaki 3 haneli kod</small>
+                                        <small class="text-muted">3-digit code on the back of your card</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sipariş Tamamlama Butonu -->
+                    <!-- Complete Order Button -->
                     <div class="d-grid gap-2">
                         <button class="btn btn-danger btn-lg py-3 mt-4" type="submit">
-                            <i class="fas fa-shopping-cart me-2"></i>SİPARİŞİ TAMAMLA
+                            <i class="fas fa-shopping-cart me-2"></i>COMPLETE ORDER
                         </button>
                     </div>
-                </form> <!-- Ana Checkout formu sonu -->
+                </form> <!-- End of main Checkout form -->
             }
         </div>
     </div>
@@ -250,7 +250,7 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Değişkenler
+            // Variables
             var cashPayment = document.getElementById('paymentCash');
             var creditCardPayment = document.getElementById('paymentCreditCard');
             var creditCardForm = document.getElementById('creditCardForm');
@@ -258,19 +258,19 @@
             var submitBtn = document.getElementById('submitOrderButton');
             var deliveryAddressSelect = document.getElementById('deliveryAddressSelect');
 
-            // Kredi kartı form görünürlüğü
+            // Credit card form visibility
             function toggleCreditCardForm() {
                 creditCardForm.style.display = creditCardPayment.checked ? 'block' : 'none';
             }
 
-            // Başlangıçta ve radio butonlar değiştiğinde kontrol et
+            // Check initially and when radio buttons change
             toggleCreditCardForm();
             cashPayment.addEventListener('change', toggleCreditCardForm);
             creditCardPayment.addEventListener('change', toggleCreditCardForm);
 
-            // Adres seçilince detayları göster
+            // Show details when address is selected
             if (deliveryAddressSelect) {
-                // Sayfa yüklendiğinde varsayılan seçili adres varsa detayları göster
+                // Show details for the default selected address when page loads
                 if (deliveryAddressSelect.value) {
                     showAddressDetails();
                 }
@@ -279,40 +279,40 @@
                     showAddressDetails();
                 });
                 
-                // Adres detaylarını göstermek için yardımcı fonksiyon
+                // Helper function to show address details
                 function showAddressDetails() {
                     const addressDetails = document.getElementById('addressDetails');
                     
                     if (deliveryAddressSelect.value) {
-                        // Seçilen adresin data özelliklerini al
+                        // Get data attributes of the selected address
                         const selectedOption = deliveryAddressSelect.options[deliveryAddressSelect.selectedIndex];
                         const title = selectedOption.dataset.title;
                         const address = selectedOption.dataset.address;
                         const city = selectedOption.dataset.city;
                         const district = selectedOption.dataset.district;
                         
-                        // Görünür alanlara değerleri ata
+                        // Assign values to visible fields
                         document.getElementById('addressTitle').textContent = title;
                         document.getElementById('addressLine').textContent = address;
                         document.getElementById('addressCity').textContent = city;
                         document.getElementById('addressDistrict').textContent = district;
                         
-                        // Gizli alanlara değerleri ata
+                        // Assign values to hidden fields
                         document.getElementById('hiddenAddressTitle').value = title;
                         document.getElementById('hiddenAddressLine').value = address;
                         document.getElementById('hiddenAddressCity').value = city;
                         document.getElementById('hiddenAddressDistrict').value = district;
                         
-                        // Adres detayını göster
+                        // Show address details
                         addressDetails.style.display = 'block';
                     } else {
-                        // Adres seçilmemişse detayları gizle
+                        // Hide details if no address is selected
                         addressDetails.style.display = 'none';
                     }
                 }
             }
 
-            // Ürün silme butonları
+            // Product remove buttons
             document.querySelectorAll('.remove-item-btn').forEach(function(button) {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -320,11 +320,11 @@
                     var foodItemId = this.getAttribute('data-food-id');
                     var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
                     
-                    // FormData oluştur
+                    // Create FormData
                     var formData = new FormData();
                     formData.append('foodItemId', foodItemId);
                     
-                    // AJAX isteği gönder
+                    // Send AJAX request
                     fetch('/Cart/RemoveItem', {
                         method: 'POST',
                         body: formData,
@@ -336,32 +336,32 @@
                         if (response.ok) {
                             window.location.reload();
                         } else {
-                            console.error('Ürün silinemedi', response);
+                            console.error('Could not remove product', response);
                         }
                     })
                     .catch(function(error) {
-                        console.error('İstek hatası:', error);
+                        console.error('Request error:', error);
                     });
                 });
             });
 
-            // Kart numarası formatlama
+            // Card number formatting
             var cardNumberInput = document.getElementById('CardNumber');
             if (cardNumberInput) {
                 cardNumberInput.addEventListener('input', function(e) {
-                    // Sadece sayıları tut
+                    // Keep only numbers
                     var value = this.value.replace(/\D/g, '');
-                    // 4'lü gruplara böl
+                    // Split into groups of 4
                     var parts = [];
                     for (var i = 0; i < value.length; i += 4) {
                         parts.push(value.substring(i, i + 4));
                     }
-                    // Grupları birleştir ve maksimum 16 karakter (19 karakter boşluklarla)
+                    // Join groups and limit to maximum 16 characters (19 with spaces)
                     this.value = parts.join(' ').substring(0, 19);
                 });
             }
 
-            // CVV sadece rakam kabul etsin
+            // CVV should accept only numbers
             var cvvInput = document.getElementById('Cvv');
             if (cvvInput) {
                 cvvInput.addEventListener('input', function(e) {

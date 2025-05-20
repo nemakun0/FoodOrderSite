@@ -4,11 +4,11 @@
 @model FoodOrderSite.Models.ViewModels.CustomerRegisterViewModel.RegisterViewModel
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müşteri Kayıt - ForkBase</title>
+    <title>Customer Registration - ForkBase</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -155,8 +155,8 @@
         }
 
         .text-danger {
-            color: red; /* Kırmızı renk */
-            border-color: #f5c6cb; /* Hafif kırmızımsı border */
+            color: red; /* Red color */
+            border-color: #f5c6cb; /* Light reddish border */
         }
 
     </style>
@@ -164,19 +164,19 @@
 <body>
     <div class="register-container">
         <div class="logo">ForkBase</div>
-        <h1>Müşteri Hesabı Oluştur</h1>
+        <h1>Create Customer Account</h1>
 
         <form asp-action="Index" method="post" id="registerForm">
             @Html.AntiForgeryToken()
             <div class="form-row">
                 <div class="form-group">
                     <label asp-for="Name"></label>
-                    <input asp-for="Name" class="form-control" placeholder="Adınız" />
+                    <input asp-for="Name" class="form-control" placeholder="Your first name" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Surname"></label>
-                    <input asp-for="Surname" class="form-control" placeholder="Soyadınız" />
+                    <input asp-for="Surname" class="form-control" placeholder="Your last name" />
                     <span asp-validation-for="Surname" class="text-danger"></span>
                 </div>
             </div>
@@ -189,7 +189,7 @@
 
             <div class="form-group">
                 <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" class="form-control" placeholder="ornek@email.com" />
+                <input asp-for="Email" type="email" class="form-control" placeholder="example@email.com" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
@@ -212,35 +212,35 @@
 
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" placeholder="Örn: Ev, İş, Yazlık" />
+                <input asp-for="Title" class="form-control" placeholder="E.g.: Home, Work, Summer House" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="AddressLine"></label>
-                <input asp-for="AddressLine" class="form-control" placeholder="Tam adres bilgisi" />
+                <input asp-for="AddressLine" class="form-control" placeholder="Full address details" />
                 <span asp-validation-for="AddressLine" class="text-danger"></span>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label asp-for="City"></label>
-                    <input asp-for="City" class="form-control" placeholder="Şehir" />
+                    <input asp-for="City" class="form-control" placeholder="City" />
                     <span asp-validation-for="City" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="District"></label>
-                    <input asp-for="District" class="form-control" placeholder="İlçe/Semt" />
+                    <input asp-for="District" class="form-control" placeholder="District" />
                     <span asp-validation-for="District" class="text-danger"></span>
                 </div>
             </div>
 
-            <button type="submit" class="register-button">Hesap Oluştur</button>
+            <button type="submit" class="register-button">Create Account</button>
         </form>
 
         <div class="login-link">
             <div class="login-link">
-                Zaten hesabınız var mı? <a asp-controller="SignIn" asp-action="Index">Giriş Yap</a>
+                Already have an account? <a asp-controller="SignIn" asp-action="Index">Sign In</a>
             </div>
 
         </div>
@@ -261,10 +261,10 @@
             }
         }
 
-        // Telefon numarasını formatlamak için fonksiyon
+        // Function to format phone number
         function formatPhoneNumber(event) {
             let input = event.target;
-            let value = input.value.replace(/\D/g, ""); // Sadece rakamları al
+            let value = input.value.replace(/\D/g, ""); // Only keep digits
             if (value.length >= 4) {
                 value = `(${value.substring(0, 3)}) ${value.substring(3, 6)} ${value.substring(6, 8)} ${value.substring(8, 10)}`;
             }

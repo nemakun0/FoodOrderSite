@@ -1,34 +1,34 @@
 ﻿@model FoodOrderSite.Models.ViewModels.RestaurantOrdersViewModel
 @{
     Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
-    ViewBag.Title = "Siparişler ve Müşteri Bilgileri";
+    ViewBag.Title = "Orders and Customer Information";
 }
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<!-- Arama ve Tarih Seçimi -->
+<!-- Search and Date Selection -->
 <div class="mb-4 d-flex justify-content-between">
-    <!-- Tarih Seçici -->
+    <!-- Date Selector -->
     <div>
-        <label for="orderDate" class="form-label">Sipariş Tarihi</label>
+        <label for="orderDate" class="form-label">Order Date</label>
         <input type="date" id="orderDate" class="form-control" onchange="filterOrdersByDate()" />
     </div>
-    <!-- Müşteri Adı veya Sipariş No Arama -->
+    <!-- Customer Name or Order Number Search -->
     <div>
-        <label for="orderSearch" class="form-label">Arama (Müşteri Adı / Sipariş No)</label>
-        <input type="text" id="orderSearch" class="form-control" onkeyup="searchOrders()" placeholder="Müşteri Adı veya Sipariş No" />
+        <label for="orderSearch" class="form-label">Search (Customer Name / Order Number)</label>
+        <input type="text" id="orderSearch" class="form-control" onkeyup="searchOrders()" placeholder="Customer Name or Order Number" />
     </div>
 </div>
 
 @if (!Model.Orders.Any())
 {
     <div class="alert alert-info">
-        <h5 class="alert-heading">Henüz sipariş bulunmuyor!</h5>
-        <p>Restoranınıza henüz sipariş verilmemiş. Siparişler geldiğinde burada listelenecektir.</p>
+        <h5 class="alert-heading">No orders yet!</h5>
+        <p>Your restaurant hasn't received any orders yet. Orders will be listed here when they arrive.</p>
     </div>
 }
 else
 {
-    <!-- Sipariş detaylarını göstermek için -->
+    <!-- To show order details -->
     <div class="accordion" id="ordersAccordion">
         @foreach (var orderDetail in Model.Orders)
         {
@@ -52,7 +52,7 @@ else
                             data-bs-target="#collapse@(orderDetail.OrderShortId)" 
                             aria-expanded="@(shouldExpand ? "true" : "false")" 
                             aria-controls="collapse@(orderDetail.OrderShortId)">
-                        Sipariş #@orderDetail.OrderShortId - @orderDetail.OrderDate.ToString("yyyy-MM-dd HH:mm") - @orderDetail.CustomerName
+                        Order #@orderDetail.OrderShortId - @orderDetail.OrderDate.ToString("yyyy-MM-dd HH:mm") - @orderDetail.CustomerName
                     </button>
                 </h2>
                 <div id="collapse@(orderDetail.OrderShortId)" 
@@ -60,14 +60,14 @@ else
                      aria-labelledby="heading@(orderDetail.OrderShortId)" 
                      data-bs-parent="#ordersAccordion">
                     <div class="accordion-body">
-                        <h5>Ürünler</h5>
+                        <h5>Products</h5>
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Ürün Adı</th>
-                                    <th>Miktar</th>
-                                    <th>Birim Fiyat</th>
-                                    <th>Toplam</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,39 +83,39 @@ else
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="3" class="text-end">Toplam:</th>
+                                    <th colspan="3" class="text-end">Total:</th>
                                     <th>@orderDetail.TotalAmount.ToString("C")</th>
                                 </tr>
                             </tfoot>
                         </table>
 
-                        <h5>Müşteri Bilgileri</h5>
+                        <h5>Customer Information</h5>
                         <p>
-                            <strong>İsim:</strong> @orderDetail.CustomerName<br />
-                            <strong>Telefon:</strong> @orderDetail.CustomerPhone<br />
+                            <strong>Name:</strong> @orderDetail.CustomerName<br />
+                            <strong>Phone:</strong> @orderDetail.CustomerPhone<br />
                             <strong>Email:</strong> @orderDetail.CustomerEmail
                         </p>
 
                         @if (orderDetail.HasAddressInfo)
                         {
-                            <h5>Teslimat Adresi</h5>
+                            <h5>Delivery Address</h5>
                             <p>
-                                <strong>Adres Başlığı:</strong> @orderDetail.AddressTitle<br />
-                                <strong>Adres:</strong> @orderDetail.DeliveryAddress<br />
-                                <strong>İlçe/İl:</strong> @orderDetail.DeliveryDistrict / @orderDetail.DeliveryCity
+                                <strong>Address Title:</strong> @orderDetail.AddressTitle<br />
+                                <strong>Address:</strong> @orderDetail.DeliveryAddress<br />
+                                <strong>District/City:</strong> @orderDetail.DeliveryDistrict / @orderDetail.DeliveryCity
                             </p>
                         }
 
-                        <h5>Ödeme Bilgileri</h5>
+                        <h5>Payment Information</h5>
                         <p>
-                            <strong>Ödeme Yöntemi:</strong> 
+                            <strong>Payment Method:</strong> 
                             @if (orderDetail.PaymentMethod == "Cash")
                             {
-                                <span>Kapıda Ödeme</span>
+                                <span>Cash on Delivery</span>
                             }
                             else if (orderDetail.PaymentMethod == "CreditCard")
                             {
-                                <span>Kredi Kartı</span>
+                                <span>Credit Card</span>
                             }
                             else
                             {
@@ -123,53 +123,53 @@ else
                             }
                         </p>
 
-                        <h5>Sipariş Durumu</h5>
+                        <h5>Order Status</h5>
                         <form asp-action="UpdateOrderStatus" method="post">
                             <input type="hidden" name="orderId" value="@orderDetail.OrderId" />
                             <select class="form-select" name="status" onchange="this.form.submit()">
                                 @if (orderDetail.OrderStatus == "Pending")
                                 {
-                                    <option value="Pending" selected>Beklemede</option>
+                                    <option value="Pending" selected>Pending</option>
                                 }
                                 else
                                 {
-                                    <option value="Pending">Beklemede</option>
+                                    <option value="Pending">Pending</option>
                                 }
                                 
                                 @if (orderDetail.OrderStatus == "Preparing")
                                 {
-                                    <option value="Preparing" selected>Hazırlanıyor</option>
+                                    <option value="Preparing" selected>Preparing</option>
                                 }
                                 else
                                 {
-                                    <option value="Preparing">Hazırlanıyor</option>
+                                    <option value="Preparing">Preparing</option>
                                 }
                                 
                                 @if (orderDetail.OrderStatus == "Out for Delivery")
                                 {
-                                    <option value="Out for Delivery" selected>Yolda</option>
+                                    <option value="Out for Delivery" selected>Out for Delivery</option>
                                 }
                                 else
                                 {
-                                    <option value="Out for Delivery">Yolda</option>
+                                    <option value="Out for Delivery">Out for Delivery</option>
                                 }
                                 
                                 @if (orderDetail.OrderStatus == "Delivered")
                                 {
-                                    <option value="Delivered" selected>Teslim Edildi</option>
+                                    <option value="Delivered" selected>Delivered</option>
                                 }
                                 else
                                 {
-                                    <option value="Delivered">Teslim Edildi</option>
+                                    <option value="Delivered">Delivered</option>
                                 }
                                 
                                 @if (orderDetail.OrderStatus == "Cancelled")
                                 {
-                                    <option value="Cancelled" selected>İptal</option>
+                                    <option value="Cancelled" selected>Cancelled</option>
                                 }
                                 else
                                 {
-                                    <option value="Cancelled">İptal</option>
+                                    <option value="Cancelled">Cancelled</option>
                                 }
                             </select>
                         </form>
@@ -181,7 +181,7 @@ else
 }
 
 <script>
-    // Tarihe göre filtreleme fonksiyonu
+    // Date filtering function
     function filterOrdersByDate() {
         var selectedDate = document.getElementById('orderDate').value;
         var orders = document.querySelectorAll('.order-item');
@@ -189,14 +189,14 @@ else
         orders.forEach(order => {
             var orderDate = order.getAttribute('data-order-date');
             if (selectedDate && orderDate !== selectedDate) {
-                order.style.display = 'none';  // Bu siparişi gizle
+                order.style.display = 'none';  // Hide this order
             } else {
-                order.style.display = '';  // Bu siparişi göster
+                order.style.display = '';  // Show this order
             }
         });
     }
 
-    // Sipariş adı veya numarasına göre arama fonksiyonu
+    // Search by order name or number function
     function searchOrders() {
         var searchText = document.getElementById('orderSearch').value.toLowerCase();
         var orders = document.querySelectorAll('.order-item');
@@ -206,9 +206,9 @@ else
             var orderId = order.getAttribute('data-order-id').toString().toLowerCase();
 
             if (customerName.includes(searchText) || orderId.includes(searchText)) {
-                order.style.display = '';  // Siparişi göster
+                order.style.display = '';  // Show order
             } else {
-                order.style.display = 'none';  // Siparişi gizle
+                order.style.display = 'none';  // Hide order
             }
         });
     }

@@ -7,7 +7,7 @@ namespace FoodOrderSite.Models.ViewModels
     {
         public class RegisterViewModel
         {
-            // UserTable alanları
+            // UserTable fields
             [Required]
             public string Name { get; set; }
 
@@ -19,34 +19,34 @@ namespace FoodOrderSite.Models.ViewModels
 
             [Required]
             [EmailAddress]
-            [Remote(action: "VerifyEmail", controller: "CustomerSignUp", ErrorMessage = "Bu email adresi zaten kayıtlı.")]
+            [Remote(action: "VerifyEmail", controller: "CustomerSignUp", ErrorMessage = "This email address is already registered.")]
             public string Email { get; set; }
 
             [Required]
             [Phone]
-            [Remote(action: "VerifyPhone", controller: "CustomerSignUp", ErrorMessage = "Bu telefon numarası zaten kayıtlı.")]
+            [Remote(action: "VerifyPhone", controller: "CustomerSignUp", ErrorMessage = "This phone number is already registered.")]
             public string Phone { get; set; }
 
             [Required]
             [MinLength(6)]
             public string Password { get; set; }
 
-            // Address alanları
+            // Address fields
             [Required]
-            [Display(Name = "Adres Başlığı")]
+            [Display(Name = "Address Title")]
             [StringLength(100)]
             public string Title { get; set; }
 
             [Required]
-            [Display(Name = "Adres")]
+            [Display(Name = "Address")]
             public string AddressLine { get; set; }
 
             [Required]
-            [Display(Name = "Şehir")]
+            [Display(Name = "City")]
             public string City { get; set; }
 
             [Required]
-            [Display(Name = "İlçe")]
+            [Display(Name = "District")]
             public string District { get; set; }
 
         }

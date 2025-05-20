@@ -29,12 +29,12 @@
                 <div>
                     <p class="mb-1">@ViewBag.DifferentRestaurantWarning</p>
                     <div class="mt-2">
-                        <a asp-controller="Cart" asp-action="Index" class="btn btn-sm btn-primary me-2">Sepeti Görüntüle</a>
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-sm btn-primary me-2">View Cart</a>
                         <form asp-controller="Cart" asp-action="ClearCart" method="post" class="d-inline">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="restaurantId" value="@Model.Restaurant.RestaurantId" />
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Sepeti Temizle ve Bu Restorandan Devam Et
+                                Clear Cart and Continue with This Restaurant
                             </button>
                         </form>
                     </div>
@@ -80,7 +80,7 @@
                         {
                             <div class="unavailable-overlay">
                                 <div class="unavailable-badge">
-                                    <i class="fas fa-clock me-2"></i>Şu An Mevcut Değil
+                                    <i class="fas fa-clock me-2"></i>Currently Unavailable
                                 </div>
                             </div>
                         }
@@ -109,7 +109,7 @@
                                 else
                                 {
                                     <button class="btn btn-secondary w-100" disabled>
-                                        <i class="fas fa-ban me-2"></i>Mevcut Değil
+                                        <i class="fas fa-ban me-2"></i>Unavailable
                                     </button>
                                 }
                             </div>

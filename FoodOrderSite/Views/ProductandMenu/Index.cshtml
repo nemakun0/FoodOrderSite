@@ -3,85 +3,85 @@
 }
 
 @{
-    ViewBag.Title = "Ürün ve Menü Yönetimi";
+    ViewBag.Title = "Product and Menu Management";
 }
 @model FoodOrderSite.Models.ViewModels.ProductAndMenuViewModel
 <head>
-    <!-- Diğer head elemanlarının yanına ekleyin -->
+    <!-- Add alongside other head elements -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
-<!-- Yeni ürün ekle linki -->
+<!-- Add new product link -->
 <div class="container mb-4 ">
-    <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yeniUrunModal">Yeni Ürün Ekle</a>
+    <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yeniUrunModal">Add New Product</a>
 </div>
 
-<!-- Modal içeriği -->
+<!-- Modal content -->
 <div class="modal fade" id="yeniUrunModal" tabindex="-1" aria-labelledby="yeniUrunModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:15px;">
             <div class="modal-header">
-                <h5 class="modal-title" id="yeniUrunModalLabel">Yeni Ürün Ekle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                <h5 class="modal-title" id="yeniUrunModalLabel">Add New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form asp-action ="Create" method="post" enctype="multipart/form-data">
-                    <!-- Ürün Adı -->
+                    <!-- Product Name -->
                     <div class="mb-3">
-                        <label asp-for="Name">Ürün Adı</label>
-                        <input asp-for="Name" class="form-control" placeholder="Ürün adı girin" />
+                        <label asp-for="Name">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter product name" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                    <!-- Kategori Seçimi -->
+                    <!-- Category Selection -->
                     <div class="mb-3">
-                        <label asp-for="SelectedCategoryId" class="form-label">Kategori</label>
+                        <label asp-for="SelectedCategoryId" class="form-label">Category</label>
                         <select asp-for="SelectedCategoryId" class="form-select"
                                 asp-items="@(new SelectList(Model.AllCategories, "CategoryId", "Name"))">
-                            <option selected disabled>Kategori seçin</option>
+                            <option selected disabled>Select category</option>
                         </select>
                         <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
                     </div>
-                    <!-- Fiyat -->
+                    <!-- Price -->
                     <div class="mb-3">
-                        <label asp-for="Price" class="form-label">Fiyat</label>
-                        <input asp-for="Price" class="form-control" placeholder="Fiyat" />
+                        <label asp-for="Price" class="form-label">Price</label>
+                        <input asp-for="Price" class="form-control" placeholder="Price" />
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
-                    <!-- Resim -->
+                    <!-- Image -->
                     <div class="mb-3">
-                        <label asp-for="ImageFile" class="form-label">Resim</label>
+                        <label asp-for="ImageFile" class="form-label">Image</label>
                         <input asp-for="ImageFile" type="file" class="form-control" />
                         <span asp-validation-for="Image" class="text-danger"></span>
                     </div>
                     <!-- Description -->
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Ürün açıklaması"></textarea>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Product description"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <!-- Is Available (Radio Buttons) -->
                     <div class="mb-3">
                         <label>
-                            Sunulacak mı?
+                            Available for ordering?
                             <i class="bi bi-info-circle"
                                data-bs-toggle="tooltip"
                                data-bs-placement="right"
-                               title="Evet demeniz halinde kaydettiğinizde ürün müşteriler tarafından sipariş edilebilir durumda olacaktır">
+                               title="If set to Yes, the product will be available for customers to order once saved">
                             </i>
                         </label><br />
                         <div class="form-check form-check-inline">
                             <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableYes" value="true" />
-                            <label class="form-check-label" for="availableYes">Evet</label>
+                            <label class="form-check-label" for="availableYes">Yes</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableNo" value="false" />
-                            <label class="form-check-label" for="availableNo">Hayır</label>
+                            <label class="form-check-label" for="availableNo">No</label>
                         </div>
                         <span asp-validation-for="IsAvailable" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </form>
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
@@ -96,71 +96,71 @@
     </div>
 </div>
 
-<!-- Ürünleri Düzenleme Modal bölümü -->
+<!-- Edit Products Modal section -->
 <div class="modal fade" id="duzenleUrunModal" tabindex="-1" aria-labelledby="duzenleUrunModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:15px;">
             <div class="modal-header">
-                <h5 class="modal-title" id="duzenleUrunModalLabel">Ürün Düzenle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                <h5 class="modal-title" id="duzenleUrunModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form asp-action="EditProduct" asp-controller="ProductandMenu" method="post" enctype="multipart/form-data">
                     @Html.HiddenFor(m => m.FoodItemId)
-                    <!-- Ürün Adı -->
+                    <!-- Product Name -->
                     <div class="mb-3">
-                        <label asp-for="Name">Ürün Adı</label>
-                        <input asp-for="Name" class="form-control" placeholder="Ürün adı girin" id="productName" />
+                        <label asp-for="Name">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter product name" id="productName" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                    <!-- Kategori Seçimi -->
+                    <!-- Category Selection -->
                     <div class="mb-3">
-                        <label asp-for="SelectedCategoryId" class="form-label">Kategori</label>
+                        <label asp-for="SelectedCategoryId" class="form-label">Category</label>
                         <select asp-for="SelectedCategoryId" class="form-select"
                                 asp-items="@(new SelectList(Model.AllCategories, "CategoryId", "Name"))" id="productCategoryId">
-                            <option selected disabled>Kategori seçin</option>
+                            <option selected disabled>Select category</option>
                         </select>
                         <span asp-validation-for="SelectedCategoryId" class="text-danger"></span>
                     </div>
-                    <!-- Fiyat -->
+                    <!-- Price -->
                     <div class="mb-3">
-                        <label asp-for="Price" class="form-label">Fiyat</label>
-                        <input asp-for="Price" class="form-control" placeholder="Fiyat" id="productPrice" />
+                        <label asp-for="Price" class="form-label">Price</label>
+                        <input asp-for="Price" class="form-control" placeholder="Price" id="productPrice" />
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
-                    <!-- Resim -->
+                    <!-- Image -->
                     <div class="mb-3">
-                        <label asp-for="ImageFile" class="form-label">Resim</label>
+                        <label asp-for="ImageFile" class="form-label">Image</label>
                         <input asp-for="ImageFile" type="file" class="form-control" id="productImageFile" />
                         <span asp-validation-for="Image" class="text-danger"></span>
                     </div>
                     <!-- Description -->
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="3" id="productDescription" placeholder="Ürün açıklaması"></textarea>
+                        <textarea asp-for="Description" class="form-control" rows="3" id="productDescription" placeholder="Product description"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <!-- Is Available (Radio Buttons) -->
                     <div class="mb-3">
                         <label>
-                            Sunulacak mı?
+                            Available for ordering?
                             <i class="bi bi-info-circle"
                                data-bs-toggle="tooltip"
                                data-bs-placement="right"
-                               title="Evet demeniz halinde kaydettiğinizde ürün müşteriler tarafından sipariş edilebilir durumda olacaktır">
+                               title="If set to Yes, the product will be available for customers to order once saved">
                             </i>
                         </label><br />
                         <div class="form-check form-check-inline">
                             <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableYes" value="true" />
-                            <label class="form-check-label" for="availableYes">Evet</label>
+                            <label class="form-check-label" for="availableYes">Yes</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input asp-for="IsAvailable" class="form-check-input" type="radio" name="isAvailable" id="availableNo" value="false" />
-                            <label class="form-check-label" for="availableNo">Hayır</label>
+                            <label class="form-check-label" for="availableNo">No</label>
                         </div>
                         <span asp-validation-for="IsAvailable" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -176,12 +176,12 @@
 </div>
 
 
-<!-- Ürünleri listeleme bölümü -->
+<!-- Products listing section -->
 
     <div class="container mb-5">
-        <h4 class="mb-3 text-primary">Mevcut Ürünler</h4>
+        <h4 class="mb-3 text-primary">Current Products</h4>
         <div class="row g-3">
-            <!-- Örnek ürün kartları -->
+            <!-- Example product cards -->
         @foreach (var item in Model.ExistingProducts.OrderBy(p => p.IsDeleted))
         {
             var isDeletedClass = item.IsDeleted ? "opacity-50 bg-light border border-danger" : "";
@@ -198,11 +198,11 @@
                                 <button class="btn btn-sm btn-success"
                                         onclick="editProduct(@item.FoodItemId, '@item.Name', '@item.Description', @item.Price, '@item.Image', @item.CategoryId, @item.IsAvailable.ToString().ToLower())"
                                         data-bs-target="#duzenleUrunModal">
-                                    Düzenle
+                                    Edit
                                 </button>
                                 <form asp-action="DeleteFoodItem" asp-controller="ProductandMenu" method="post">
                                     <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                    <button class="btn btn-sm btn-danger" type="submit">Sil</button>
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                                 </form>
                             }
                         </div>
@@ -210,13 +210,13 @@
                 </div>
             </div>
         }
-            <!-- Daha fazla ürün kartı ekleyebilirsiniz -->
+            <!-- You can add more product cards -->
         </div>
     </div>
 <script>
     // Edit product function to populate the modal form fields
     function editProduct(id, name, description, price, image, categoryId, isAvailable) {
-        // Modal'ı açma
+        // Opening the modal
         var myModal = new bootstrap.Modal(document.getElementById('duzenleUrunModal'), {
             keyboard: false
         });
@@ -229,7 +229,7 @@
         document.getElementById("productPrice").value = price;
         document.getElementById("productDescription").value = description;
 
-        // IsAvailable radyo butonlarını set etme
+        // Setting IsAvailable radio buttons
         if (isAvailable) {
             document.getElementById("availableYes").checked = true;
         } else {
@@ -237,7 +237,7 @@
         }
     }
 
-    // Sayfa yüklendiğinde çalışacak kod
+    // Code to run when the page loads
     document.addEventListener('DOMContentLoaded', function () {
         // Check if we need to open the edit modal due to validation errors
         @if (ViewData["OpenEditModal"] != null && (bool)ViewData["OpenEditModal"] == true)
@@ -256,7 +256,7 @@
             // Display error message
             var validationError = document.querySelector('[asp-validation-for="SelectedCategoryId"]');
             if (validationError) {
-                validationError.textContent = 'Lütfen bir kategori seçin.';
+                validationError.textContent = 'Please select a category.';
                 validationError.style.display = 'block';
             }
             </text>

@@ -1,6 +1,6 @@
 @model FoodOrderSite.Models.ViewModels.CustomerOrderHistoryViewModel
 @{
-    ViewData["Title"] = "Siparişlerim";
+    ViewData["Title"] = "My Orders";
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
 }
 
@@ -11,31 +11,31 @@
                 <h2 class="mb-0">@ViewData["Title"]</h2>
                 <div>
                     <a asp-controller="Discover" asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="fas fa-store me-2"></i>Alışverişe Devam Et
+                        <i class="fas fa-store me-2"></i>Continue Shopping
                     </a>
                 </div>
             </div>
 
-            <!-- Sipariş Durumu Filtreleri -->
+            <!-- Order Status Filters -->
             <div class="mb-4">
                 <div class="btn-group w-100">
                     <a asp-action="OrderHistory" class="btn @(Model.CurrentFilter == null ? "btn-primary" : "btn-outline-primary")">
-                        Tüm Siparişler
+                        All Orders
                     </a>
                     <a asp-action="OrderHistory" asp-route-statusFilter="Pending" class="btn @(Model.CurrentFilter == "Pending" ? "btn-primary" : "btn-outline-primary")">
-                        Beklemede
+                        Pending
                     </a>
                     <a asp-action="OrderHistory" asp-route-statusFilter="Preparing" class="btn @(Model.CurrentFilter == "Preparing" ? "btn-primary" : "btn-outline-primary")">
-                        Hazırlanıyor
+                        Preparing
                     </a>
                     <a asp-action="OrderHistory" asp-route-statusFilter="Out for Delivery" class="btn @(Model.CurrentFilter == "Out for Delivery" ? "btn-primary" : "btn-outline-primary")">
-                        Yolda
+                        Out for Delivery
                     </a>
                     <a asp-action="OrderHistory" asp-route-statusFilter="Delivered" class="btn @(Model.CurrentFilter == "Delivered" ? "btn-primary" : "btn-outline-primary")">
-                        Teslim Edildi
+                        Delivered
                     </a>
                     <a asp-action="OrderHistory" asp-route-statusFilter="Cancelled" class="btn @(Model.CurrentFilter == "Cancelled" ? "btn-primary" : "btn-outline-primary")">
-                        İptal Edildi
+                        Cancelled
                     </a>
                 </div>
             </div>
@@ -43,28 +43,28 @@
             @if (!Model.Orders.Any())
             {
                 <div class="alert alert-info text-center" role="alert">
-                    <h4 class="alert-heading"><i class="fas fa-history me-2"></i>Sipariş Bulunamadı</h4>
+                    <h4 class="alert-heading"><i class="fas fa-history me-2"></i>No Orders Found</h4>
                     @if (Model.CurrentFilter == "Delivered")
                     {
-                        <p>Henüz teslim edilmiş siparişiniz bulunmuyor.</p>
+                        <p>You don't have any delivered orders yet.</p>
                     }
                     else if (!string.IsNullOrEmpty(Model.CurrentFilter))
                     {
-                        <p>Seçilen durumda siparişiniz bulunmuyor.</p>
+                        <p>You don't have any orders with the selected status.</p>
                     }
                     else
                     {
-                        <p>Henüz sipariş vermediniz.</p>
+                        <p>You haven't placed any orders yet.</p>
                     }
                     <hr>
                     <p class="mb-0">
-                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Restoranları Keşfet</a>
+                        <a asp-controller="Discover" asp-action="Index" class="btn btn-primary">Discover Restaurants</a>
                     </p>
                 </div>
             }
             else
             {
-                <!-- Siparişler listesi -->
+                <!-- Orders list -->
                 <div class="accordion" id="ordersAccordion">
                     @foreach (var order in Model.Orders)
                     {
@@ -75,7 +75,7 @@
                                     aria-controls="collapse@(order.OrderShortId)">
                                     <div class="d-flex w-100 justify-content-between align-items-center">
                                         <div>
-                                            <strong class="me-2">Sipariş #@order.OrderShortId</strong>
+                                            <strong class="me-2">Order #@order.OrderShortId</strong>
                                             @{
                                                 var badgeClass = order.OrderStatus switch
                                                 {
@@ -89,11 +89,11 @@
                                                 
                                                 var statusText = order.OrderStatus switch
                                                 {
-                                                    "Pending" => "Beklemede",
-                                                    "Preparing" => "Hazırlanıyor",
-                                                    "Out for Delivery" => "Yolda",
-                                                    "Delivered" => "Teslim Edildi",
-                                                    "Cancelled" => "İptal Edildi",
+                                                    "Pending" => "Pending",
+                                                    "Preparing" => "Preparing",
+                                                    "Out for Delivery" => "Out for Delivery",
+                                                    "Delivered" => "Delivered",
+                                                    "Cancelled" => "Cancelled",
                                                     _ => order.OrderStatus
                                                 };
                                             }
@@ -109,7 +109,7 @@
                                 aria-labelledby="heading@(order.OrderShortId)" data-bs-parent="#ordersAccordion">
                                 <div class="accordion-body">
                                     <div class="mb-3">
-                                        <h5>Restoran Bilgileri</h5>
+                                        <h5>Restaurant Information</h5>
                                         <p class="mb-1">
                                             <a asp-controller="Menu" asp-action="Index" asp-route-restaurantId="@order.RestaurantId"
                                                 class="text-decoration-none">
@@ -119,15 +119,15 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <h5>Sipariş Detayları</h5>
+                                        <h5>Order Details</h5>
                                         <div class="table-responsive">
                                             <table class="table table-hover">
                                                 <thead class="table-light">
                                                     <tr>
-                                                        <th>Ürün</th>
-                                                        <th class="text-end">Fiyat</th>
-                                                        <th class="text-center">Adet</th>
-                                                        <th class="text-end">Toplam</th>
+                                                        <th>Product</th>
+                                                        <th class="text-end">Price</th>
+                                                        <th class="text-center">Quantity</th>
+                                                        <th class="text-end">Total</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -143,7 +143,7 @@
                                                 </tbody>
                                                 <tfoot class="table-light">
                                                     <tr>
-                                                        <th colspan="3" class="text-end">Toplam:</th>
+                                                        <th colspan="3" class="text-end">Total:</th>
                                                         <th class="text-end">@order.TotalAmount.ToString("C")</th>
                                                     </tr>
                                                 </tfoot>
@@ -152,16 +152,16 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <h5>Ödeme Bilgileri</h5>
+                                        <h5>Payment Information</h5>
                                         <p class="mb-0">
-                                            <strong>Ödeme Yöntemi:</strong>
+                                            <strong>Payment Method:</strong>
                                             @if (order.PaymentMethod == "Cash")
                                             {
-                                                <span>Kapıda Ödeme</span>
+                                                <span>Cash on Delivery</span>
                                             }
                                             else if (order.PaymentMethod == "CreditCard")
                                             {
-                                                <span>Kredi Kartı</span>
+                                                <span>Credit Card</span>
                                             }
                                             else
                                             {
@@ -173,20 +173,20 @@
                                     <div class="text-end mt-4">
                                         <a asp-controller="Menu" asp-action="Index" asp-route-restaurantId="@order.RestaurantId"
                                             class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-utensils me-1"></i>Bu Restorandan Tekrar Sipariş Ver
+                                            <i class="fas fa-utensils me-1"></i>Order Again from this Restaurant
                                         </a>
                                         
                                         @if (order.OrderStatus == "Delivered" && !order.HasReview)
                                         {
                                             <a asp-controller="Orders" asp-action="WriteReview" asp-route-orderId="@order.OrderId"
                                                 class="btn btn-warning btn-sm ms-2">
-                                                <i class="fas fa-star me-1"></i>Değerlendirme Yap
+                                                <i class="fas fa-star me-1"></i>Write a Review
                                             </a>
                                         }
                                         else if (order.OrderStatus == "Delivered" && order.HasReview)
                                         {
                                             <span class="badge bg-success ms-2">
-                                                <i class="fas fa-check me-1"></i>Değerlendirme Yapıldı
+                                                <i class="fas fa-check me-1"></i>Review Submitted
                                             </span>
                                         }
                                     </div>
@@ -202,9 +202,9 @@
 
 @section Scripts {
     <script>
-        // Accordion expanded state yönetimi
+        // Accordion expanded state management
         document.addEventListener('DOMContentLoaded', function() {
-            // İlk siparişi otomatik olarak aç (varsa)
+            // Automatically open the first order (if any)
             var firstOrder = document.querySelector('.accordion-button');
             if (firstOrder) {
                 firstOrder.click();

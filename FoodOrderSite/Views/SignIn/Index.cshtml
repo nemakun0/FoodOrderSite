@@ -3,11 +3,11 @@
 }
 @model FoodOrderSite.Models.ViewModels.SignInViewModel
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap</title>
+    <title>Sign In</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -198,7 +198,7 @@
 <body>
     <div class="login-container">
         <div class="logo">ForkBase</div>
-        <h1>Hesabınıza Giriş Yapın</h1>
+        <h1>Sign In to Your Account</h1>
 
         @if (TempData["Error"] != null)
         {
@@ -219,12 +219,12 @@
 
         <form asp-action="Index" method="POST">
             <div class="input-group">
-                <label for="email">E-posta</label>
-                <input type="email" id="email" asp-for="Email" placeholder="ornek@email.com" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" asp-for="Email" placeholder="example@email.com" required>
             </div>
 
             <div class="input-group">
-                <label for="password">Şifre</label>
+                <label for="password">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" asp-for="Password" class="password-input" placeholder="••••••••" required>
                     <span class="toggle-password" onclick="togglePassword()">
@@ -235,18 +235,18 @@
 
             <div class="remember-forgot">
                 <label class="remember-me">
-                    <input type="checkbox" asp-for="RememberMe" class="form-check-input"> Beni Hatırla
+                    <input type="checkbox" asp-for="RememberMe" class="form-check-input"> Remember Me
                 </label>
                 <div class="forgot-password">
-                    <a href="#">Şifremi Unuttum?</a>
+                    <a href="#">Forgot Password?</a>
                 </div>
             </div>
 
-            <button type="submit" class="login-button">Giriş Yap</button>
+            <button type="submit" class="login-button">Sign In</button>
         </form>
 
         <div class="signup-link">
-            Hesabınız yok mu? <a asp-controller="SignUp" asp-action="Index">Kayıt Ol</a>
+            Don't have an account? <a asp-controller="SignUp" asp-action="Index">Register</a>
         </div>
 
     </div>

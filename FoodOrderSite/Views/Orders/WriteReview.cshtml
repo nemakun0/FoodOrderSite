@@ -1,6 +1,6 @@
 @model FoodOrderSite.Models.ViewModels.CreateReviewViewModel
 @{
-    ViewData["Title"] = "Değerlendirme Yap";
+    ViewData["Title"] = "Write a Review";
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
 }
 
@@ -10,14 +10,14 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0">@ViewData["Title"]</h2>
                 <a asp-controller="Orders" asp-action="OrderHistory" asp-route-statusFilter="Delivered" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Siparişlere Dön
+                    <i class="fas fa-arrow-left me-2"></i>Back to Orders
                 </a>
             </div>
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">@Model.RestaurantName - Sipariş Değerlendirmesi</h5>
-                    <small class="text-muted">Sipariş Tarihi: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</small>
+                    <h5 class="mb-0">@Model.RestaurantName - Order Review</h5>
+                    <small class="text-muted">Order Date: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</small>
                 </div>
                 <div class="card-body">
                     <form asp-action="WriteReview" method="post">
@@ -28,9 +28,9 @@
 
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <!-- Lezzet Değerlendirmesi -->
+                        <!-- Taste Rating -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Lezzet Değerlendirmesi</label>
+                            <label class="form-label fw-bold">Taste Rating</label>
                             <div class="rating-input mb-2">
                                 <div class="d-flex">
                                     @for (int i = 1; i <= 5; i++)
@@ -47,9 +47,9 @@
                             <span asp-validation-for="TasteRating" class="text-danger"></span>
                         </div>
 
-                        <!-- Servis Değerlendirmesi -->
+                        <!-- Service Rating -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Servis Değerlendirmesi</label>
+                            <label class="form-label fw-bold">Service Rating</label>
                             <div class="rating-input mb-2">
                                 <div class="d-flex">
                                     @for (int i = 1; i <= 5; i++)
@@ -66,9 +66,9 @@
                             <span asp-validation-for="ServiceRating" class="text-danger"></span>
                         </div>
 
-                        <!-- Teslimat Değerlendirmesi -->
+                        <!-- Delivery Rating -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Teslimat Değerlendirmesi</label>
+                            <label class="form-label fw-bold">Delivery Rating</label>
                             <div class="rating-input mb-2">
                                 <div class="d-flex">
                                     @for (int i = 1; i <= 5; i++)
@@ -85,9 +85,9 @@
                             <span asp-validation-for="DeliveryRating" class="text-danger"></span>
                         </div>
 
-                        <!-- Genel Değerlendirme -->
+                        <!-- Overall Rating -->
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Genel Değerlendirme</label>
+                            <label class="form-label fw-bold">Overall Rating</label>
                             <div class="rating-input mb-2">
                                 <div class="d-flex">
                                     @for (int i = 1; i <= 5; i++)
@@ -104,16 +104,16 @@
                             <span asp-validation-for="OverallRating" class="text-danger"></span>
                         </div>
 
-                        <!-- Yorum -->
+                        <!-- Comment -->
                         <div class="mb-4">
-                            <label asp-for="Comment" class="form-label fw-bold">Yorumunuz</label>
-                            <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Deneyiminizi paylaşın..."></textarea>
+                            <label asp-for="Comment" class="form-label fw-bold">Your Comment</label>
+                            <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Share your experience..."></textarea>
                             <span asp-validation-for="Comment" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary py-2">
-                                <i class="fas fa-paper-plane me-2"></i>Değerlendirmeyi Gönder
+                                <i class="fas fa-paper-plane me-2"></i>Submit Review
                             </button>
                         </div>
                     </form>

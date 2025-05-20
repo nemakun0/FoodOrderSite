@@ -52,7 +52,7 @@ namespace FoodOrderSite.Controllers
                 Image = restaurant.Image // ✅ Var olan görseli göstermek için
             };
 
-            string[] weekDays = { "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar" };
+            string[] weekDays = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             foreach (var day in weekDays)
             {
                 var schedule = schedules.FirstOrDefault(s => s.DayOfWeek == day);

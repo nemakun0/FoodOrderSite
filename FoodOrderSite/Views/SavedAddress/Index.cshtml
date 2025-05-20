@@ -31,11 +31,11 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-12">
-            <h2 class="fw-bold mb-4">Adreslerim</h2>
+            <h2 class="fw-bold mb-4">My Addresses</h2>
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <p class="text-muted mb-0">Kayıtlı adreslerinizi buradan yönetebilirsiniz</p>
+                <p class="text-muted mb-0">You can manage your saved addresses here</p>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                    <i class="fas fa-plus me-2"></i>Yeni Adres Ekle
+                    <i class="fas fa-plus me-2"></i>Add New Address
                 </button>
             </div>
         </div>
@@ -48,10 +48,10 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
-                        <h5 class="fw-bold">Kayıtlı Adresiniz Bulunmamaktadır</h5>
-                        <p class="text-muted">Sipariş vermek için yeni bir adres ekleyin</p>
+                        <h5 class="fw-bold">You Don't Have Any Saved Addresses</h5>
+                        <p class="text-muted">Add a new address to place an order</p>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                            <i class="fas fa-plus me-2"></i>Yeni Adres Ekle
+                            <i class="fas fa-plus me-2"></i>Add New Address
                         </button>
                     </div>
                 </div>
@@ -77,12 +77,12 @@
                                     data-bs-toggle="modal"
                                     data-bs-target="#editAddressModal"
                                     data-address-id="@address.AddressId">
-                                <i class="fas fa-edit me-1"></i>Düzenle
+                                <i class="fas fa-edit me-1"></i>Edit
                             </button>
                             <a href="@Url.Action("Delete", "SavedAddress", new { id = address.AddressId })" 
                                class="btn btn-sm btn-outline-danger delete-address"
-                               onclick="return confirm('Bu adresi silmek istediğinizden emin misiniz?');">
-                                <i class="fas fa-trash me-1"></i>Sil
+                               onclick="return confirm('Are you sure you want to delete this address?');">
+                                <i class="fas fa-trash me-1"></i>Delete
                             </a>
                         </div>
                     </div>
@@ -98,32 +98,32 @@
         <div class="modal-content">
             <form asp-action="AddAddress" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addAddressModalLabel">Yeni Adres Ekle</h5>
+                    <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label">Adres Başlığı</label>
+                            <label class="form-label">Address Title</label>
                             <input name="Title" class="form-control" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Şehir</label>
+                            <label class="form-label">City</label>
                             <input name="City" class="form-control" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">İlçe</label>
+                            <label class="form-label">District</label>
                             <input name="District" class="form-control" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Adres</label>
+                            <label class="form-label">Address</label>
                             <textarea name="AddressLine" class="form-control" rows="2" required></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
@@ -136,7 +136,7 @@
         <div class="modal-content">
             <form method="post" asp-action="UpdateAddress" asp-controller="SavedAddress">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editAddressModalLabel">Adresi Düzenle</h5>
+                    <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -145,30 +145,30 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="editTitle" class="form-label">Adres Başlığı</label>
+                            <label for="editTitle" class="form-label">Address Title</label>
                             <input type="text" class="form-control" name="Title" id="editTitle" required />
                         </div>
 
                         <div class="col-12">
-                            <label for="editCity" class="form-label">Şehir</label>
+                            <label for="editCity" class="form-label">City</label>
                             <input type="text" class="form-control" name="City" id="editCity" required />
                         </div>
 
                         <div class="col-12">
-                            <label for="editDistrict" class="form-label">İlçe</label>
+                            <label for="editDistrict" class="form-label">District</label>
                             <input type="text" class="form-control" name="District" id="editDistrict" required />
                         </div>
 
                         <div class="col-12">
-                            <label for="editAddressLine" class="form-label">Adres</label>
+                            <label for="editAddressLine" class="form-label">Address</label>
                             <textarea class="form-control" name="AddressLine" id="editAddressLine" rows="2" required></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">Güncelle</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>
@@ -196,11 +196,11 @@
                             $('#editDistrict').val(data.district);
                             $('#editAddressLine').val(data.addressLine);
                         } else {
-                            alert('Adres bilgileri yüklenemedi!');
+                            alert('Address information could not be loaded!');
                         }
                     },
                     error: function () {
-                        alert('Adres bilgileri yüklenemedi!');
+                        alert('Address information could not be loaded!');
                     }
                 });
             });

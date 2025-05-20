@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_RestaurantLayout.cshtml";
 }
 @{
-    ViewBag.Title = "Restoran Ayarları";
+    ViewBag.Title = "Restaurant Settings";
 }
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
@@ -18,77 +18,77 @@
 <form asp-action="Index" asp-controller="RestaurantSettings" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="RestaurantId" />
     <div class="row mb-4">
-        <!-- Restoran Adı -->
+        <!-- Restaurant Name -->
         <div class="col-md-6 mb-3">
-            <label asp-for="RestaurantName">Restoran Adı</label>
+            <label asp-for="RestaurantName">Restaurant Name</label>
             <input type="text" class="form-control" asp-for="RestaurantName" />
             <span asp-validation-for="RestaurantName" class="text-danger"></span>
         </div>
-        <!-- Restoran Türü -->
+        <!-- Restaurant Type -->
         <div class="col-md-6 mb-3">
-            <label asp-for="RestaurantType">Restoran Türü</label>
+            <label asp-for="RestaurantType">Restaurant Type</label>
             <input type="text" class="form-control" asp-for="RestaurantType" />
             <span asp-validation-for="RestaurantType" class="text-danger"></span>
         </div>
-        <!-- Telefon -->
+        <!-- Phone -->
         <div class="col-md-6 mb-3">
-            <label asp-for="Phone">Telefon</label>
+            <label asp-for="Phone">Phone</label>
             <input type="text" class="form-control" asp-for="Phone" />
             <span asp-validation-for="Phone" class="text-danger"></span>
         </div>
-        <!-- E-posta -->
+        <!-- Email -->
         <div class="col-md-6 mb-3">
-            <label asp-for="Email">E-posta</label>
+            <label asp-for="Email">Email</label>
             <input type="email" class="form-control" asp-for="Email" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
-        <!-- Şehir -->
+        <!-- City -->
         <div class="col-md-6 mb-3">
-            <label asp-for="City">Şehir</label>
+            <label asp-for="City">City</label>
             <input type="text" class="form-control" asp-for="City" />
             <span asp-validation-for="City" class="text-danger"></span>
         </div>
-        <!-- İlçe -->
+        <!-- District -->
         <div class="col-md-6 mb-3">
-            <label asp-for="District">İlçe</label>
+            <label asp-for="District">District</label>
             <input type="text" class="form-control" asp-for="District" />
             <span asp-validation-for="District" class="text-danger"></span>
         </div>
-        <!-- Adres -->
+        <!-- Address -->
         <div class="col-12 mb-3">
-            <label asp-for="Address">Adres</label>
+            <label asp-for="Address">Address</label>
             <input type="text" class="form-control" asp-for="Address" />
             <span asp-validation-for="Address" class="text-danger"></span>
         </div>
-        <!-- Açıklama -->
+        <!-- Description -->
         <div class="col-12 mb-3">
-            <label asp-for="Description">Açıklama</label>
+            <label asp-for="Description">Description</label>
             <textarea class="form-control" rows="3" asp-for="Description"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <!-- Image -->
         <div class="form-group">
-            <label asp-for="ImageFile">Restoran Görseli</label>
+            <label asp-for="ImageFile">Restaurant Image</label>
             <input asp-for="ImageFile" class="form-control" type="file" />
         </div>
         @if (!string.IsNullOrEmpty(Model.Image))
         {
             <div class="mt-2">
-                <p>Mevcut Görsel:</p>
-                <img src="@Model.Image" alt="Restoran Görseli" style="max-width: 200px; border-radius: 8px;" />
+                <p>Current Image:</p>
+                <img src="@Model.Image" alt="Restaurant Image" style="max-width: 200px; border-radius: 8px;" />
             </div>
         }
     </div>
 
-    <!-- Haftanın günleri ve saatleri -->
-    <h4 class="mb-3 text-primary">Haftalık Çalışma Saatleri</h4>
+    <!-- Weekly operating hours -->
+    <h4 class="mb-3 text-primary">Weekly Operating Hours</h4>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-light">
                 <tr>
-                    <th>Gün</th>
-                    <th>Açılış Saati</th>
-                    <th>Kapanış Saati</th>
+                    <th>Day</th>
+                    <th>Opening Time</th>
+                    <th>Closing Time</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,7 +113,7 @@
     </div>
 
     <div class="mt-4">
-        <button type="submit" class="btn btn-success">Güncelle</button>
+        <button type="submit" class="btn btn-success">Update</button>
     </div>
 </form>
 

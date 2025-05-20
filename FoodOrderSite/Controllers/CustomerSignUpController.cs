@@ -26,20 +26,20 @@ namespace FoodOrderSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                // ✅ Email kontrolü
+                // ✅ Email check
                 if (_context.UserTables.Any(u => u.Email == model.Email))
                 {
-                    ModelState.AddModelError("Email", "Bu email zaten kayıtlı.");
+                    ModelState.AddModelError("Email", "This email is already registered.");
                     return View(model);
                 }
 
-                // ✅ Telefon kontrolü
+                // ✅ Phone check
                 if (_context.UserTables.Any(u => u.Phone == model.Phone))
                 {
-                    ModelState.AddModelError("Phone", "Bu telefon numarası zaten kayıtlı.");
+                    ModelState.AddModelError("Phone", "This phone number is already registered.");
                     return View(model);
                 }
-                // 1. UserTable modelini oluştur
+                // 1. Create UserTable model
                 var user = new UserTable
                 {
                     Name = model.Name,
@@ -47,57 +47,57 @@ namespace FoodOrderSite.Controllers
                     BirthDate = model.BirthDate,
                     Email = model.Email,
                     Phone = model.Phone,
-                    Password = model.Password, // Not: Hashleme yapılmalı
-                    Role = "customer"              // Rolü "customer" olarak ayarla
+                    Password = model.Password, // Note: Should be hashed
+                    Role = "customer"          // Set role as "customer"
                 };
 
-                // Kullanıcıyı veritabanına ekle
+                // Add user to database
                 _context.UserTables.Add(user);
                 await _context.SaveChangesAsync();
 
-                // 2. CustomerDeliveryAddress modelini oluştur
+                // 2. Create CustomerDeliveryAddress model
                 var address = new CustomerDeliveryAdderss
                 {
-                    UserId = user.UserId, // az önce oluşturduğumuz kullanıcının ID'si
+                    UserId = user.UserId, // ID of the user we just created
                     Title = model.Title ?? "",
                     AddressLine = model.AddressLine,
                     City = model.City,
                     District = model.District
                 };
 
-                // Debugging: Title değerini loglamak için
-                System.Diagnostics.Debug.WriteLine($"Kaydedilen Adres Başlığı (Title): '{model.Title}'");
+                // Debugging: Log Title value
+                System.Diagnostics.Debug.WriteLine($"Saved Address Title: '{model.Title}'");
 
-                // Adresi veritabanına ekle
+                // Add address to database
                 _context.CustomerDeliveryAdderss.Add(address);
                 await _context.SaveChangesAsync();
 
-                // Kayıt başarılıysa başka bir sayfaya yönlendirme yapabiliriz
-                return RedirectToAction("Index", "SignIn"); // Kayıt başarılı ise bir başarı sayfasına yönlendirme
+                // Redirect to another page if registration is successful
+                return RedirectToAction("Index", "SignIn"); // Redirect to success page if registration is successful
             }
 
-            // Model geçerli değilse, tekrar formu göster
+            // If model is not valid, show the form again
             return View(model);
         }
 
-        // Telefon numarası validasyonu için remote action
+        // Remote action for phone number validation
         [AcceptVerbs("GET", "POST")]
         public IActionResult VerifyPhone(string phone)
         {
             if (_context.UserTables.Any(u => u.Phone == phone))
             {
-                return Json($"Bu telefon numarası zaten kayıtlı: {phone}");
+                return Json($"This phone number is already registered: {phone}");
             }
             return Json(true);
         }
 
-        // Email validasyonu için remote action
+        // Remote action for email validation
         [AcceptVerbs("GET", "POST")]
         public IActionResult VerifyEmail(string email)
         {
             if (_context.UserTables.Any(u => u.Email == email))
             {
-                return Json($"Bu email adresi zaten kayıtlı: {email}");
+                return Json($"This email address is already registered: {email}");
             }
             return Json(true);
         }

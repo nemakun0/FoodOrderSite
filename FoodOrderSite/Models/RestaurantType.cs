@@ -7,9 +7,9 @@ namespace FoodOrderSite.Models
         [Key]
         public int TypeId { get; set; }
 
-        [Required(ErrorMessage = "Mağaza türü adı zorunludur.")]
-        [StringLength(50, ErrorMessage = "Mağaza türü adı en fazla 50 karakter olabilir.")]
-        [Display(Name = "Mağaza Türü Adı")]
+        [Required(ErrorMessage = "Store type name is required.")]
+        [StringLength(50, ErrorMessage = "Store type name cannot exceed 50 characters.")]
+        [Display(Name = "Store Type Name")]
         public string Name { get; set; }
     }
 }

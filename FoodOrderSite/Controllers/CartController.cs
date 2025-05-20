@@ -70,7 +70,7 @@ namespace FoodOrderSite.Controllers
                 // Kullanıcı giriş yapmamışsa ve sepette ürünler varsa uyarı göster
                 if (!User.Identity.IsAuthenticated && cartItems.Any())
                 {
-                    ViewBag.AuthWarning = "Siparişi tamamlamak için giriş yapmanız gerekmektedir.";
+                    ViewBag.AuthWarning = "You must be logged in to complete the order.";
                 }
             }
             

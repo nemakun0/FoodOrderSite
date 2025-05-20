@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -201,19 +201,19 @@
             </a>
             <a href="/Users/Index" class="sidebar-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
                 <i class="fas fa-users"></i>
-                <span>Kullanıcı Yönetimi</span>
+                <span>User Management</span>
             </a>
             <a href="/Restaurants/Index" class="sidebar-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Restaurants" ? "active" : "")">
                 <i class="fas fa-utensils"></i>
-                <span>Restoranlar</span>
+                <span>Restaurants</span>
             </a>
             <a href="/Categories/Index" class="sidebar-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Categories" ? "active" : "")">
                 <i class="fas fa-list"></i>
-                <span>Kategoriler</span>
+                <span>Categories</span>
             </a>
             <a href="/StoreTypes/Index" class="sidebar-item @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StoreTypes" ? "active" : "")">
                 <i class="fas fa-store"></i>
-                <span>Mağaza Türleri</span>
+                <span>Store Types</span>
             </a>
         </div>
     </div>
@@ -227,7 +227,7 @@
                     <i class="fas fa-user-circle profile-icon"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="@Url.Action("Logout", "SignIn")"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Logout", "SignIn")"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
             </div>
         </div>

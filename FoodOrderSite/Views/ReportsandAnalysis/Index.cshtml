@@ -1,38 +1,38 @@
 ﻿@model FoodOrderSite.Models.ViewModels.RestaurantReviewsViewModel
 @{
-    Layout = "~/Views/Shared/_RestaurantLayout.cshtml"; // kendi layout'unuz
-    ViewBag.Title = "Performans ve Raporlar";
+    Layout = "~/Views/Shared/_RestaurantLayout.cshtml"; // your own layout
+    ViewBag.Title = "Performance and Reports";
     var salesData = ViewBag.SalesViewModel as FoodOrderSite.Models.ViewModels.SalesAndProductsViewModel;
 }
 <h2 class="text-center mb-4">@ViewBag.Title</h2>
 
 @if (salesData != null && salesData.HasAnySalesData)
 {
-    <!-- Satış Grafikleri -->
+    <!-- Sales Charts -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
-            <h5 class="text-center">Günlük Satışlar</h5>
+            <h5 class="text-center">Daily Sales</h5>
             <canvas id="dailySalesChart"></canvas>
         </div>
         <div class="col-md-4 mb-3">
-            <h5 class="text-center">Haftalık Satışlar</h5>
+            <h5 class="text-center">Weekly Sales</h5>
             <canvas id="weeklySalesChart"></canvas>
         </div>
         <div class="col-md-4 mb-3">
-            <h5 class="text-center">Aylık Satışlar</h5>
+            <h5 class="text-center">Monthly Sales</h5>
             <canvas id="monthlySalesChart"></canvas>
         </div>
     </div>
 
-    <!-- En Çok Satan Ürünler ve Kategoriler -->
+    <!-- Best Selling Products and Categories -->
     <div class="row mb-4">
         <div class="col-md-6 mb-3">
-            <h5 class="text-center">En Çok Satan Ürünler</h5>
+            <h5 class="text-center">Best Selling Products</h5>
             <ul class="list-group">
                 @if(salesData.TopProducts.Count == 0)
                 {
                     <li class="list-group-item text-center">
-                        <i class="text-muted">Henüz ürün satışı bulunmuyor</i>
+                        <i class="text-muted">No product sales yet</i>
                     </li>
                 }
                 else
@@ -41,19 +41,19 @@
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             @product.ProductName
-                            <span class="badge bg-primary rounded-pill">@product.SalesCount Satış</span>
+                            <span class="badge bg-primary rounded-pill">@product.SalesCount Sales</span>
                         </li>
                     }
                 }
             </ul>
         </div>
         <div class="col-md-6 mb-3">
-            <h5 class="text-center">En Çok Satan Kategoriler</h5>
+            <h5 class="text-center">Best Selling Categories</h5>
             <ul class="list-group">
                 @if(salesData.TopCategories.Count == 0)
                 {
                     <li class="list-group-item text-center">
-                        <i class="text-muted">Henüz kategori satışı bulunmuyor</i>
+                        <i class="text-muted">No category sales yet</i>
                     </li>
                 }
                 else
@@ -62,7 +62,7 @@
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             @category.CategoryName
-                            <span class="badge bg-success rounded-pill">@category.SalesCount Satış</span>
+                            <span class="badge bg-success rounded-pill">@category.SalesCount Sales</span>
                         </li>
                     }
                 }
@@ -70,12 +70,12 @@
         </div>
     </div>
 
-    <!-- Toplam Gelir ve Kar -->
+    <!-- Total Revenue and Profit -->
     <div class="row mb-4">
         <div class="col-md-6 mb-3">
             <div class="card text-white bg-info mb-3">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Toplam Gelir</h5>
+                    <h5 class="card-title">Total Revenue</h5>
                     <p class="card-text" style="font-size:2rem;">₺@salesData.TotalIncome.ToString("N2")</p>
                 </div>
             </div>
@@ -83,20 +83,20 @@
         <div class="col-md-6 mb-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Kar Oranı</h5>
+                    <h5 class="card-title">Profit Margin</h5>
                     <p class="card-text" style="font-size:2rem;">%@salesData.ProfitMargin.ToString("N0")</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Font Awesome ve Bootstrap Icons (Gerekirse kullanılabilir, ancak Chart.js scripti ile birlikte taşınmalı) -->
+    <!-- Font Awesome and Bootstrap Icons (can be used if needed, but should be moved with Chart.js script) -->
     <!-- <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
-    <!-- Chart.js Kütüphanesi -->
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // Grafikler için verileri hazırla
+        // Prepare data for charts
         const dailyLabels = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => s.TimeSlot).ToArray()));
         const dailyData = @Html.Raw(Json.Serialize(salesData.DailySales.Select(s => (double)s.Amount).ToArray()));
         
@@ -106,14 +106,14 @@
         const monthlyLabels = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => s.MonthName).ToArray()));
         const monthlyData = @Html.Raw(Json.Serialize(salesData.MonthlySales.Select(s => (double)s.Amount).ToArray()));
 
-        // Günlük Satışlar Grafiği
+        // Daily Sales Chart
         const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
         const dailyChart = new Chart(ctxDaily, {
             type: 'line',
             data: {
                 labels: dailyLabels,
                 datasets: [{
-                    label: 'Satış (TL)',
+                    label: 'Sales (TL)',
                     data: dailyData,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -124,14 +124,14 @@
             }
         });
 
-        // Haftalık Satışlar Grafiği
+        // Weekly Sales Chart
         const ctxWeekly = document.getElementById('weeklySalesChart').getContext('2d');
         const weeklyChart = new Chart(ctxWeekly, {
             type: 'bar',
             data: {
                 labels: weeklyLabels,
                 datasets: [{
-                    label: 'Satış (TL)',
+                    label: 'Sales (TL)',
                     data: weeklyData,
                     backgroundColor: 'rgba(255, 206, 86, 0.7)',
                     borderColor: 'rgba(255, 206, 86, 1)',
@@ -140,14 +140,14 @@
             }
         });
 
-        // Aylık Satışlar Grafiği
+        // Monthly Sales Chart
         const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
         const monthlyChart = new Chart(ctxMonthly, {
             type: 'line',
             data: {
                 labels: monthlyLabels,
                 datasets: [{
-                    label: 'Satış (TL)',
+                    label: 'Sales (TL)',
                     data: monthlyData,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
@@ -162,31 +162,31 @@ else
 {
     <div class="alert alert-info text-center" role="alert">
         <i class="fas fa-info-circle fa-2x me-2"></i>
-        <span style="font-size: 1.2rem;">Henüz hiç satış yapmadınız :(</span>
+        <span style="font-size: 1.2rem;">You haven't made any sales yet :(</span>
     </div>
 }
 
-<!-- Müşteri Değerlendirmeleri Özeti -->
+<!-- Customer Reviews Summary -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Müşteri Değerlendirmeleri</h5>
+                <h5 class="mb-0">Customer Reviews</h5>
             </div>
             <div class="card-body">
                 @if(Model.TotalReviews == 0)
                 {
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>Henüz değerlendirme bulunmuyor.
+                        <i class="fas fa-info-circle me-2"></i>No reviews yet.
                     </div>
                 }
                 else
                 {
                     <div class="row">
-                        <!-- Solda ortalama puanlar -->
+                        <!-- Average ratings on the left -->
                         <div class="col-md-4 text-center mb-3">
                             <h2 class="display-4 fw-bold text-primary">@Model.AverageOverallRating.ToString("0.0")</h2>
-                            <p class="text-muted mb-2">Genel Değerlendirme</p>
+                            <p class="text-muted mb-2">Overall Rating</p>
                             <div class="mb-3">
                                 @for (int i = 1; i <= 5; i++)
                                 {
@@ -204,15 +204,15 @@ else
                                     }
                                 }
                             </div>
-                            <p class="text-muted">@Model.TotalReviews değerlendirme</p>
+                            <p class="text-muted">@Model.TotalReviews reviews</p>
                         </div>
                         
-                        <!-- Sağda detaylı puanlar -->
+                        <!-- Detailed ratings on the right -->
                         <div class="col-md-8">
                             <div class="row mb-2">
                                 <div class="col-6">
                                     <div class="d-flex align-items-center">
-                                        <div style="width: 120px;">Lezzet</div>
+                                        <div style="width: 120px;">Taste</div>
                                         <div class="progress flex-grow-1" style="height: 8px;">
                                             <div class="progress-bar bg-warning" role="progressbar" style="width: @(Model.AverageTasteRating / 5 * 100)%"></div>
                                         </div>
@@ -221,7 +221,7 @@ else
                                 </div>
                                 <div class="col-6">
                                     <div class="d-flex align-items-center">
-                                        <div style="width: 120px;">Servis</div>
+                                        <div style="width: 120px;">Service</div>
                                         <div class="progress flex-grow-1" style="height: 8px;">
                                             <div class="progress-bar bg-info" role="progressbar" style="width: @(Model.AverageServiceRating / 5 * 100)%"></div>
                                         </div>
@@ -232,7 +232,7 @@ else
                             <div class="row">
                                 <div class="col-6">
                                     <div class="d-flex align-items-center">
-                                        <div style="width: 120px;">Teslimat</div>
+                                        <div style="width: 120px;">Delivery</div>
                                         <div class="progress flex-grow-1" style="height: 8px;">
                                             <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.AverageDeliveryRating / 5 * 100)%"></div>
                                         </div>
@@ -241,7 +241,7 @@ else
                                 </div>
                             </div>
                             
-                            <!-- Yıldız istatistikleri -->
+                            <!-- Star statistics -->
                             <div class="mt-4">
                                 @foreach (var item in new[] { 
                                     new { Stars = 5, Count = Model.FiveStarCount, Percent = Model.TotalReviews > 0 ? (double)Model.FiveStarCount / Model.TotalReviews * 100 : 0 },
@@ -280,18 +280,18 @@ else
     </div>
 </div>
 
-<!-- Müşteri Yorumları Listesi -->
+<!-- Customer Comments List -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Gelen Yorumlar (@Model.TotalReviews)</h5>
+                <h5 class="mb-0">Customer Comments (@Model.TotalReviews)</h5>
             </div>
             <div class="card-body">
                 @if(Model.Reviews.Count == 0)
                 {
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>Henüz yorum bulunmuyor.
+                        <i class="fas fa-info-circle me-2"></i>No comments yet.
                     </div>
                 }
                 else
@@ -308,7 +308,7 @@ else
                                         <div class="fw-bold">@review.UserName</div>
                                         <div class="small text-muted">
                                             <i class="fas fa-calendar-alt me-1"></i>@review.FormattedDate
-                                            <span class="ms-2"><i class="fas fa-shopping-bag me-1"></i>Sipariş: #@review.OrderShortId</span>
+                                            <span class="ms-2"><i class="fas fa-shopping-bag me-1"></i>Order: #@review.OrderShortId</span>
                                         </div>
                                     </div>
                                 </div>
@@ -328,9 +328,9 @@ else
                             </div>
                             
                             <div class="mb-3 small">
-                                <span class="badge bg-light text-dark me-2">Lezzet: @review.TasteRating/5</span>
-                                <span class="badge bg-light text-dark me-2">Servis: @review.ServiceRating/5</span>
-                                <span class="badge bg-light text-dark">Teslimat: @review.DeliveryRating/5</span>
+                                <span class="badge bg-light text-dark me-2">Taste: @review.TasteRating/5</span>
+                                <span class="badge bg-light text-dark me-2">Service: @review.ServiceRating/5</span>
+                                <span class="badge bg-light text-dark">Delivery: @review.DeliveryRating/5</span>
                             </div>
                             
                             @if (!string.IsNullOrEmpty(review.Comment))
@@ -339,7 +339,7 @@ else
                             }
                             else
                             {
-                                <p class="text-muted font-italic mb-0"><i>Yorum eklenmemiş.</i></p>
+                                <p class="text-muted font-italic mb-0"><i>No comment added.</i></p>
                             }
                         </div>
                     }

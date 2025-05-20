@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <!-- Özel stil dosyaları -->
+    <!-- Custom style files -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FoodOrderSite.styles.css" asp-append-version="true" />
     <style>
@@ -58,7 +58,7 @@
         }
     }
 
-    <!-- ✅ HEADER BURADA BAŞLIYOR -->
+    <!-- ✅ HEADER STARTS HERE -->
     <header class="bg-white shadow-sm">
         <div class="container-fluid d-flex justify-content-between align-items-center p-3">
             <!-- Logo -->
@@ -68,10 +68,10 @@
                 </a>
             </div>
 
-            <!-- Sağ Taraf: Sepet ve Profil -->
+            <!-- Right Side: Cart and Profile -->
             <div class="d-flex align-items-center gap-3">
 
-                <!-- 👤 Kullanıcı Profili -->
+                <!-- 👤 User Profile -->
                 <div class="dropdown">
                     <button class="btn border-0 bg-transparent p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-circle fa-2x text-dark"></i>
@@ -79,24 +79,24 @@
                     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 p-2 border-0" aria-labelledby="userDropdown">
                         @if (isAuthenticated)
                         {
-                            <li class="dropdown-header fw-bold text-dark">Merhaba, @username!</li>
+                            <li class="dropdown-header fw-bold text-dark">Hello, @username!</li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SavedAddress")">
                                     <i class="fas fa-map-marker-alt text-primary"></i>
-                                    <span>Kayıtlı Adresler</span>
+                                    <span>Saved Addresses</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("OrderHistory", "Orders")">
                                     <i class="fas fa-history text-primary"></i>
-                                    <span>Siparişlerim</span>
+                                    <span>My Orders</span>
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider my-2" /></li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" href="@Url.Action("Logout", "SignIn")">
                                     <i class="fas fa-sign-out-alt"></i>
-                                    <span>Çıkış Yap</span>
+                                    <span>Log Out</span>
                                 </a>
                             </li>
                         }
@@ -105,20 +105,20 @@
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SignIn")">
                                     <i class="fas fa-sign-in-alt text-primary"></i>
-                                    <span>Giriş Yap</span>
+                                    <span>Sign In</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="@Url.Action("Index", "SignUp")">
                                     <i class="fas fa-user-plus text-primary"></i>
-                                    <span>Kayıt Ol</span>
+                                    <span>Sign Up</span>
                                 </a>
                             </li>
                         }
                     </ul>
                 </div>
 
-                <!-- 🍎 Sepet Butonu -->
+                <!-- 🍎 Cart Button -->
                 <a asp-controller="Cart" asp-action="Index" class="btn position-relative">
                     <i class="fas fa-shopping-cart fa-lg text-dark"></i>
                     @if (count > 0)
@@ -230,7 +230,7 @@
         </div>
     </footer> *@
 
-    <!-- JS Script Dosyaları -->
+    <!-- JS Script Files -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
