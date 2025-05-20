@@ -1,51 +1,105 @@
-﻿<!-- Views/Home/Index.cshtml -->
+﻿<!-- Views/ManageRestaurant/Index.cshtml -->
+@model FoodOrderSite.Models.RestaurantTable
 @{
     Layout = null; // veya ana layout
+    var backgroundStyle = Model != null && !string.IsNullOrEmpty(Model.Image) ? 
+        $"background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{Model.Image}') no-repeat center center; background-size: cover; backdrop-filter: blur(5px);" : 
+        "background-color: #f8f9fa;";
 }
-<style>
-    body {
-        background-color: #f8f9fa;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Restaurant</title>
+    <style>
+        body {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            @Html.Raw(backgroundStyle)
+            filter: blur(5px);
+        }
 
-    .blocks-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* 2 sütun */
-        gap: 20px; /* aralık */
-        justify-items: center; /* blokları ortala */
-        max-width: 600px; /* veya istediğiniz genişlik */
-        margin: 0 auto; /* ortala sayfa içinde */
-    }
+        .blocks-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 sütun */
+            gap: 20px; /* aralık */
+            justify-items: center; /* blokları ortala */
+            max-width: 600px; /* veya istediğiniz genişlik */
+            margin: 0 auto; /* ortala sayfa içinde */
+            z-index: 1;
+        }
 
-    .block {
-        width: 250px; /* veya istediğiniz genişlik */
-        height: 150px; /* veya istediğiniz yükseklik */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #ff7f50;
-        color: #fff;
-        font-size: 1.2rem;
-        font-weight: bold;
-        border-radius: 15px;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        text-align: center;
-    }
+        .block {
+            width: 250px; /* veya istediğiniz genişlik */
+            height: 150px; /* veya istediğiniz yükseklik */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            background: linear-gradient(135deg, rgba(45, 55, 72, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%);
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.1) inset;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
 
         .block:hover {
-            background-color: #ffb36b;
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(37, 99, 235, 0.9) 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(255, 255, 255, 0.2) inset;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-</style>
-
-<div class="blocks-container">
-    <div class="block" onclick="location.href='@Url.Action("Index", "RestaurantSettings")'">Restaurant Settings</div>
-    <div class="block" onclick="location.href='@Url.Action("Index", "ProductandMenu")'">Product and Menu</div>
-    <div class="block" onclick="location.href='@Url.Action("Index", "OrdersandCustomer")'">Orders and Customer</div>
-    <div class="block" onclick="location.href='@Url.Action("Index", "ReportsandAnalysis")'">Reports and Analysis</div>
-</div>
+        
+        h1 {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    @if (Model != null)
+    {
+        <h1>@Model.RestaurantName</h1>
+    }
+    else
+    {
+        <h1>Manage Restaurant</h1>
+    }
+    
+    <div class="blocks-container">
+        <div class="block" onclick="location.href='@Url.Action("Index", "RestaurantSettings")'">Restaurant Settings</div>
+        <div class="block" onclick="location.href='@Url.Action("Index", "ProductandMenu")'">Product and Menu</div>
+        <div class="block" onclick="location.href='@Url.Action("Index", "OrdersandCustomer")'">Orders and Customer</div>
+        <div class="block" onclick="location.href='@Url.Action("Index", "ReportsandAnalysis")'">Reports and Analysis</div>
+    </div>
+</body>
+</html>
