@@ -236,4 +236,30 @@
             document.getElementById("availableNo").checked = true;
         }
     }
+
+    // Sayfa yüklendiğinde çalışacak kod
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if we need to open the edit modal due to validation errors
+        @if (ViewData["OpenEditModal"] != null && (bool)ViewData["OpenEditModal"] == true)
+        {
+            <text>
+            // Get values from ViewData
+            var foodItemId = @ViewData["EditProductId"];
+            var name = @Html.Raw(Json.Serialize(ViewData["EditProductName"]));
+            var description = @Html.Raw(Json.Serialize(ViewData["EditProductDescription"]));
+            var price = @ViewData["EditProductPrice"];
+            var isAvailable = @ViewData["EditProductIsAvailable"].ToString().ToLower();
+            
+            // Call editProduct to open the modal and populate form fields
+            editProduct(foodItemId, name, description, price, '', null, isAvailable);
+            
+            // Display error message
+            var validationError = document.querySelector('[asp-validation-for="SelectedCategoryId"]');
+            if (validationError) {
+                validationError.textContent = 'Lütfen bir kategori seçin.';
+                validationError.style.display = 'block';
+            }
+            </text>
+        }
+    });
 </script>

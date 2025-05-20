@@ -144,7 +144,7 @@ namespace FoodOrderSite.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Restoran bilgileri başarıyla güncellendi.";
+            TempData["RestaurantSuccessMessage"] = "Restoran bilgileri başarıyla güncellendi.";
 
             return RedirectToAction(nameof(Index));
         }
