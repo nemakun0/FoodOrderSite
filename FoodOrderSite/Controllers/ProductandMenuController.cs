@@ -5,6 +5,7 @@ using FoodOrderSite.Models.ViewModels;
 using System.Security.Claims;
 using System.Linq;
 using static FoodOrderSite.Models.ViewModels.ProductAndMenuViewModel;
+using Newtonsoft.Json;
 
 namespace FoodOrderSite.Controllers
 {
@@ -170,6 +171,29 @@ namespace FoodOrderSite.Controllers
                 existingProduct.Image = "/uploads/" + uniqueFileName;
             }
 
+            // Kategori seçimi kontrolü
+            if (model.SelectedCategoryId <= 0) // Assuming 0 or less indicates no category is selected
+            {
+                // Hata mesajını TempData'ya kaydet
+                TempData["CategorySelectionError"] = "Lütfen bir kategori seçin.";
+                
+                // Kullanıcının girdiği verileri TempData'ya kaydet
+                var sanitizedName = model.Name?.Replace("\"", "\\\"").Replace("'", "\\'");
+                var sanitizedDescription = model.Description?.Replace("\"", "\\\"").Replace("'", "\\'");
+                
+                TempData["EditProductData"] = JsonConvert.SerializeObject(new
+                {
+                    model.FoodItemId,
+                    Name = sanitizedName,
+                    Description = sanitizedDescription,
+                    model.Price,
+                    model.IsAvailable
+                });
+                
+                // Index sayfasına yönlendir
+                return RedirectToAction("Index");
+            }
+
             _context.FoodItemTables.Update(existingProduct);
             await _context.SaveChangesAsync();
 
@@ -179,17 +203,32 @@ namespace FoodOrderSite.Controllers
 
             if (existingCategoryRelation != null)
             {
-                // Kategoriyi güncelle
-                existingCategoryRelation.CategoryId = model.SelectedCategoryId;
-                _context.FoodItemCategoriesTables.Update(existingCategoryRelation);
+                // Eğer kategori değişmişse, eski ilişkiyi sil ve yenisini ekle
+                if (existingCategoryRelation.CategoryId != model.SelectedCategoryId)
+                {
+                    _context.FoodItemCategoriesTables.Remove(existingCategoryRelation);
+                    await _context.SaveChangesAsync(); // Değişiklikleri kaydet
+
+                    var newCategoryRelation = new FoodItemCategoriesTable
+                    {
+                        FoodItemId = existingProduct.FoodItemId,
+                        CategoryId = model.SelectedCategoryId
+                    };
+                    _context.FoodItemCategoriesTables.Add(newCategoryRelation);
+                }
+                // Kategori değişmemişse bir şey yapmaya gerek yok.
             }
             else
             {
-                // Eğer ilişki yoksa hata döndür
-                return BadRequest("Bu ürün için bir kategori ilişkisi bulunmamaktadır.");
+                // Eğer daha önce bir kategori ilişkisi yoksa, yenisini oluştur
+                var newCategoryRelation = new FoodItemCategoriesTable
+                {
+                    FoodItemId = existingProduct.FoodItemId,
+                    CategoryId = model.SelectedCategoryId
+                };
+                _context.FoodItemCategoriesTables.Add(newCategoryRelation);
             }
 
-            //_context.FoodItemTables.Update(existingProduct);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index"); // Veya istediğiniz sayfaya yönlendirebilirsiniz
@@ -220,6 +259,24 @@ namespace FoodOrderSite.Controllers
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             List<FoodItemViewModel> productViewModels = new List<FoodItemViewModel>();
             RestaurantTable userRestaurant = null;
+
+            // Check if there's edit data with validation errors in TempData
+            if (TempData["EditProductData"] != null && TempData["CategorySelectionError"] != null)
+            {
+                var editData = JsonConvert.DeserializeObject<dynamic>(TempData["EditProductData"].ToString());
+                var errorMessage = TempData["CategorySelectionError"].ToString();
+                
+                // Pass the validation error to the view
+                ModelState.AddModelError("SelectedCategoryId", errorMessage);
+                
+                // Signal to the view that it should open the edit modal with the product ID
+                ViewData["OpenEditModal"] = true;
+                ViewData["EditProductId"] = (int)editData.FoodItemId;
+                ViewData["EditProductName"] = (string)editData.Name;
+                ViewData["EditProductDescription"] = (string)editData.Description;
+                ViewData["EditProductPrice"] = (decimal)editData.Price;
+                ViewData["EditProductIsAvailable"] = (bool)editData.IsAvailable;
+            }
 
             if (!string.IsNullOrEmpty(userIdString) && int.TryParse(userIdString, out int userId))
             {

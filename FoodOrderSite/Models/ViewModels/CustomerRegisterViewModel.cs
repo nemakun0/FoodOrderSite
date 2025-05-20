@@ -34,7 +34,8 @@ namespace FoodOrderSite.Models.ViewModels
             // Address alanları
             [Required]
             [Display(Name = "Adres Başlığı")]
-            public string AddressTitle { get; set; }
+            [StringLength(100)]
+            public string Title { get; set; }
 
             [Required]
             [Display(Name = "Adres")]
@@ -47,10 +48,6 @@ namespace FoodOrderSite.Models.ViewModels
             [Required]
             [Display(Name = "İlçe")]
             public string District { get; set; }
-
-            [Required(ErrorMessage = "Adres başlığı zorunludur.")]
-            [StringLength(100)]
-            public string Title { get; set; }
 
         }
 

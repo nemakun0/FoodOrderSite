@@ -66,6 +66,12 @@ namespace FoodOrderSite.Controllers
                         RestaurantName = group.Key.RestaurantName,
                         Items = group.ToList()
                     }).ToList();
+                
+                // Kullanıcı giriş yapmamışsa ve sepette ürünler varsa uyarı göster
+                if (!User.Identity.IsAuthenticated && cartItems.Any())
+                {
+                    ViewBag.AuthWarning = "Siparişi tamamlamak için giriş yapmanız gerekmektedir.";
+                }
             }
             
             // Kullanıcı giriş yapmış mı kontrol et ve kayıtlı adresleri yükle
@@ -255,6 +261,14 @@ namespace FoodOrderSite.Controllers
         {
             try
             {
+                // Kullanıcı giriş yapmış mı kontrol et
+                if (!User.Identity.IsAuthenticated)
+                {
+                    // Giriş yapmamışsa, giriş sayfasına yönlendir
+                    TempData["ErrorMessage"] = "Sipariş tamamlamak için lütfen giriş yapın veya kayıt olun.";
+                    return RedirectToAction("Index", "SignIn", new { returnUrl = Url.Action("Index", "Cart") });
+                }
+
                 Debug.WriteLine("========================================================");
                 Debug.WriteLine("Checkout metodu çağrıldı");
                 Debug.WriteLine($"PaymentMethod: {model.PaymentMethod}");
