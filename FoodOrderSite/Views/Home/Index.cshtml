@@ -200,6 +200,30 @@
                 });
             }
 
+            // Get user role
+            function getUserRole() {
+                @if (ViewContext.HttpContext.User.Identity != null && ViewContext.HttpContext.User.Identity.IsAuthenticated)
+                {
+                    @:let userRole = '@ViewContext.HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value';
+                    @:return userRole || '';
+                }
+                return '';
+            }
+
+            // Function to redirect based on role
+            function redirectBasedOnRole() {
+                const role = getUserRole();
+                console.log('Current user role from ClaimTypes.Role:', role); 
+                
+                if (role === 'admin') { 
+                    return '/Admin';
+                } else if (role === 'seller') { 
+                    return '/ManageRestaurant';
+                } else {
+                    return '/Discover/Index';
+                }
+            }
+
             const categoryItems = document.querySelectorAll('.category-item');
             categoryItems.forEach(function (item) {
                 const card = item.querySelector('.category-card');
@@ -208,7 +232,13 @@
                         const categoryNameElement = card.querySelector('p.fw-semibold');
                         if (categoryNameElement) {
                             const categoryName = categoryNameElement.textContent.trim();
-                            window.location.href = '/Discover/Index?category=' + encodeURIComponent(categoryName);
+                            const redirectPath = redirectBasedOnRole();
+                            
+                            if (redirectPath === '/Discover/Index') {
+                                window.location.href = redirectPath + '?category=' + encodeURIComponent(categoryName);
+                            } else {
+                                window.location.href = redirectPath;
+                            }
                         }
                     });
                 }
@@ -235,16 +265,23 @@
             const searchDistrictBtn = document.getElementById('searchDistrictBtn');
             if (searchDistrictBtn) {
                 searchDistrictBtn.addEventListener('click', function() {
+                    const redirectPath = redirectBasedOnRole();
+                    
+                    if (redirectPath !== '/Discover/Index') {
+                        window.location.href = redirectPath;
+                        return;
+                    }
+                    
                     const districtSelect = document.getElementById('districtSelect');
                     if (districtSelect) {
                         const selectedValue = districtSelect.value;
                         // Check if the selected value is not the placeholder value (which is not a valid district name)
                         if (selectedValue && districtSelect.selectedIndex > 0) { 
-                            window.location.href = '/Discover/Index?district=' + encodeURIComponent(selectedValue);
+                            window.location.href = redirectPath + '?district=' + encodeURIComponent(selectedValue);
                         } else {
                             // Optionally, alert the user or handle the case where no district is selected
                             // For now, if it's a text input or placeholder is selected, do nothing or redirect to general Discover page
-                             window.location.href = '/Discover/Index'; // Or alert('Please select a district.');
+                            window.location.href = redirectPath;
                         }
                     }
                 });

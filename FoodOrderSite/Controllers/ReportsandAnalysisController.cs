@@ -249,6 +249,11 @@ namespace FoodOrderSite.Controllers
                 .Where(o => o.RestaurantId == restaurantId)
                 .SumAsync(o => o.TotalAmount);
 
+            // Satış verisi olup olmadığını kontrol et
+            viewModel.HasAnySalesData = viewModel.TotalIncome > 0;
+
+            // Kar marjını hesapla (örnek, gerçek iş mantığınıza göre ayarlayın)
+
             return viewModel;
         }
     }

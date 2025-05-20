@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FoodOrderSite.Controllers
@@ -37,9 +38,22 @@ namespace FoodOrderSite.Controllers
             }
         }
 
-        public async Task<IActionResult> Index(string district = null, string restaurantType = null, string sortBy = null,
-                                string searchTerm = null, int page = 1)
+        public async Task<IActionResult> Index(string? district = null, string? restaurantType = null, string? sortBy = null,
+                                string? searchTerm = null, int page = 1)
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userRole == "admin")
+                {
+                    return RedirectToAction("Index", "Admin"); // Assuming Admin controller has an Index action
+                }
+                else if (userRole == "seller")
+                {
+                    return RedirectToAction("Index", "ManageRestaurant"); // Assuming ManageRestaurant controller has an Index action
+                }
+            }
+
             var allRestaurantsQuery = _db.RestaurantTables.Where(r => r.IsActive).AsQueryable();
             var totalRestaurantCount = await allRestaurantsQuery.CountAsync();
 
@@ -62,9 +76,9 @@ namespace FoodOrderSite.Controllers
             var model = new DiscoverViewModel
             {
                 SelectedDistrict = district,
-                AllDistricts = allDistricts,
+                AllDistricts = allDistricts!,
                 SelectedRestaurantType = restaurantType,
-                AllRestaurantTypes = allRestaurantTypes,
+                AllRestaurantTypes = allRestaurantTypes!,
                 SortBy = sortBy,
                 SearchTerm = searchTerm,
                 CurrentPage = page,
@@ -89,7 +103,7 @@ namespace FoodOrderSite.Controllers
         }
 
         private IQueryable<RestaurantTable> FilterRestaurantTables(IQueryable<RestaurantTable> restaurants,
-                                                                 string district, string restaurantType, string searchTerm)
+                                                                 string? district, string? restaurantType, string? searchTerm)
         {
             var filtered = restaurants;
 
@@ -115,7 +129,7 @@ namespace FoodOrderSite.Controllers
             return filtered;
         }
         
-        private List<Restaurant> SortRestaurants(List<Restaurant> restaurants, string sortBy)
+        private List<Restaurant> SortRestaurants(List<Restaurant> restaurants, string? sortBy)
         {
             return sortBy switch
             {
@@ -129,7 +143,7 @@ namespace FoodOrderSite.Controllers
 
         private Restaurant MapRestaurantTableToRestaurant(RestaurantTable rt)
         {
-            if (rt == null) return null;
+            if (rt == null) return new Restaurant();
 
             return new Restaurant
             {
@@ -142,14 +156,33 @@ namespace FoodOrderSite.Controllers
                 DeliveryFee = 5.99m,    
                 MinOrderAmount = 20.00m, 
                 Rating = CalculateRating(rt.RestaurantId), 
-                ImageUrl = rt.Image,
+                ImageUrl = rt.Image ?? string.Empty,
                 DeliveryTime = 30
             };
         }
         
         private double CalculateRating(int restaurantId)
         {
-            return Math.Round(3.5 + (restaurantId % 15) / 10.0, 1);
+            var reviews = _db.ReviewTable.Where(r => r.RestaurantId == restaurantId).ToList();
+            
+            if (reviews.Count == 0)
+            {
+                return 0; // No reviews available
+            }
+            
+            double totalRating = 0;
+            int reviewCount = reviews.Count;
+            
+            foreach (var review in reviews)
+            {
+                // Calculate average of all rating types for each review
+                double reviewAverage = (review.TasteRating + review.ServiceRating + 
+                                        review.DeliveryRating + review.OverallRating) / 4.0;
+                totalRating += reviewAverage;
+            }
+            
+            // Calculate and round to 1 decimal place
+            return Math.Round(totalRating / reviewCount, 1);
         }
 
         private List<Restaurant> MapRestaurantTablesToRestaurants(List<RestaurantTable> rts)
