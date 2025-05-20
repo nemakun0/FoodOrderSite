@@ -1,4 +1,169 @@
-﻿@{
+﻿@model FoodOrderSite.Models.ViewModels.AllRestaurantsSalesViewModel
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Admin Dashboard";
 }
+
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    .card {
+        height: 100%;
+    }
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+    .chart-title {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+    @if (Model.HasAnySalesData)
+    {
+        <!-- Satış Grafikleri -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center chart-title">Günlük Satışlar</h5>
+                        <div class="chart-container">
+                            <canvas id="dailySalesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center chart-title">Haftalık Satışlar</h5>
+                        <div class="chart-container">
+                            <canvas id="weeklySalesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="text-center chart-title">Aylık Satışlar</h5>
+                        <div class="chart-container">
+                            <canvas id="monthlySalesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toplam Gelir -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Toplam Gelir</h5>
+                        <p class="card-text" style="font-size:2rem;">₺@Model.TotalIncome.ToString("N2")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart.js Kütüphanesi -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Grafikler için verileri hazırla
+            const dailyLabels = @Html.Raw(Json.Serialize(Model.DailySales.Select(s => s.TimeSlot).ToArray()));
+            const dailyData = @Html.Raw(Json.Serialize(Model.DailySales.Select(s => (double)s.Amount).ToArray()));
+            
+            const weeklyLabels = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => s.DayName).ToArray()));
+            const weeklyData = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => (double)s.Amount).ToArray()));
+            
+            const monthlyLabels = @Html.Raw(Json.Serialize(Model.MonthlySales.Select(s => s.MonthName).ToArray()));
+            const monthlyData = @Html.Raw(Json.Serialize(Model.MonthlySales.Select(s => (double)s.Amount).ToArray()));
+
+            // Ortak grafik seçenekleri
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            };
+
+            // Günlük Satışlar Grafiği
+            const ctxDaily = document.getElementById('dailySalesChart').getContext('2d');
+            new Chart(ctxDaily, {
+                type: 'line',
+                data: {
+                    labels: dailyLabels,
+                    datasets: [{
+                        label: 'Satış (TL)',
+                        data: dailyData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Haftalık Satışlar Grafiği
+            const ctxWeekly = document.getElementById('weeklySalesChart').getContext('2d');
+            new Chart(ctxWeekly, {
+                type: 'bar',
+                data: {
+                    labels: weeklyLabels,
+                    datasets: [{
+                        label: 'Satış (TL)',
+                        data: weeklyData,
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Aylık Satışlar Grafiği
+            const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
+            new Chart(ctxMonthly, {
+                type: 'line',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [{
+                        label: 'Satış (TL)',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+        </script>
+    }
+    else
+    {
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            Henüz hiç satış verisi bulunmuyor.
+        </div>
+    }
+</div>
 
